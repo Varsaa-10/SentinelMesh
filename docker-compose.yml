@@ -23,6 +23,8 @@ services:
       - DB_NAME=sentinelmesh
       - DB_USER=postgres
       - DB_PASS=postgres
+    volumes:
+      - log_data:/var/log/sentinelmesh
     depends_on:
       database:
         condition: service_healthy
@@ -77,8 +79,12 @@ services:
       - POSTGRES_DB=sentinelmesh
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    # VULNERABLE — INTENTIONAL FOR LAB
+    # Mounts a permissive pg_hba.conf that trusts all connections (CWE-284)
+    command: ["postgres", "-c", "hba_file=/etc/pg_hba_override/pg_hba.conf"]
     volumes:
       - ./services/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./services/database/pg_hba.conf:/etc/pg_hba_override/pg_hba.conf:ro
       - db_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d sentinelmesh"]
@@ -114,9 +120,13 @@ services:
     container_name: sentinelmesh-dashboard
     ports:
       - "127.0.0.1:3000:3000"
+    # VULNERABLE — INTENTIONAL FOR LAB
+    # Vulnerability (CWE-798): Default admin password + anonymous read access
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=sentinelmesh
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     volumes:
       - ./services/dashboard/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
       - grafana_data:/var/lib/grafana

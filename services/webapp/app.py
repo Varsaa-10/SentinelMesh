@@ -1,11 +1,13 @@
 """
 SentinelMesh — Web Application Service
-Minimal Flask app for Phase 1 scaffolding.
+Flask app with deliberately planted vulnerabilities:
+  - SQL Injection in /login (CWE-89)
+  - Missing Rate Limiting on /login (CWE-307)
 """
 
 import os
 import psycopg2
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -51,8 +53,68 @@ def index():
     return jsonify({
         "service": "SentinelMesh WebApp",
         "version": "0.1.0",
-        "endpoints": ["/", "/health"],
+        "endpoints": ["/", "/health", "/login"],
     })
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    """
+    Login endpoint.
+
+    VULNERABLE — INTENTIONAL FOR LAB
+    Vulnerability 1 (CWE-89): SQL Injection
+      - User-supplied username and password are interpolated directly into
+        a raw SQL query with no parameterization or sanitization.
+      - Example payload: username = "admin' OR 1=1 --"
+
+    Vulnerability 2 (CWE-307): Missing Rate Limiting
+      - No throttle, no CAPTCHA, no account lockout.
+      - Unlimited login attempts per second from any source.
+    """
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "JSON body required"}), 400
+
+    username = data.get("username", "")
+    password = data.get("password", "")
+
+    if not username or not password:
+        return jsonify({"error": "username and password required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # VULNERABLE — raw SQL string concatenation, no parameterized query
+        query = f"SELECT id, username, role FROM users WHERE username = '{username}' AND password = '{password}'"
+        cur.execute(query)
+
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if row:
+            return jsonify({
+                "status": "success",
+                "message": "Login successful",
+                "user": {
+                    "id": row[0],
+                    "username": row[1],
+                    "role": row[2],
+                },
+            }), 200
+        else:
+            return jsonify({
+                "status": "failure",
+                "message": "Invalid credentials",
+            }), 401
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+        }), 500
 
 
 if __name__ == "__main__":

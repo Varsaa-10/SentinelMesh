@@ -13,3 +13,11 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT INTO users (username, password, role)
 VALUES ('testuser', 'testpass', 'user')
 ON CONFLICT (username) DO NOTHING;
+
+-- VULNERABLE — INTENTIONAL FOR LAB
+-- Vulnerability (CWE-798): Default / Weak Credentials
+-- Seeds a hardcoded admin account with a trivially guessable password.
+-- This is the target for default-credential and brute-force scenarios.
+INSERT INTO users (username, password, role)
+VALUES ('admin', 'admin123', 'admin')
+ON CONFLICT (username) DO NOTHING;
