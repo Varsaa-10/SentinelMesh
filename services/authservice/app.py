@@ -133,14 +133,18 @@ def auth_verify():
 
     try:
         # VULNERABLE — no algorithms restriction, PyJWT 1.7.1 allows 'none'
-        decoded = jwt.decode(token, JWT_SECRET)
+        header = jwt.get_unverified_header(token)
+        if header.get("alg") == "none":
+            decoded = jwt.decode(token, verify=False)
+        else:
+            decoded = jwt.decode(token, JWT_SECRET)
         return jsonify({
             "status": "valid",
             "payload": decoded,
         }), 200
     except jwt.ExpiredSignatureError:
         return jsonify({"status": "expired"}), 401
-    except jwt.InvalidTokenError as e:
+    except (jwt.InvalidTokenError, jwt.PyJWTError) as e:
         return jsonify({
             "status": "invalid",
             "message": str(e),
