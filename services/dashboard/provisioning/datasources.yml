@@ -1,0 +1,17 @@
+# SentinelMesh Dashboard — Grafana Datasource Provisioning
+apiVersion: 1
+
+datasources:
+  - name: SentinelMesh-PostgreSQL
+    type: postgres
+    access: proxy
+    url: database:5432
+    database: sentinelmesh
+    user: postgres
+    secureJsonData:
+      password: postgres
+    jsonData:
+      sslmode: disable
+      postgresVersion: 1500
+    isDefault: true
+    editable: true
