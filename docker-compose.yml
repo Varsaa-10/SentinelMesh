@@ -3,7 +3,7 @@
 # Docker Compose configuration for the 5-service vulnerable lab environment.
 #
 # All services run on an isolated internal network (sentinelmesh_net).
-# Host-accessible ports are bound to 127.0.0.1 only — zero internet exposure.
+# Host-accessible ports are bound to 0.0.0.0 — accessible from the local network.
 # =============================================================================
 
 services:
@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     container_name: sentinelmesh-webapp
     ports:
-      - "127.0.0.1:5000:5000"
+      - "0.0.0.0:5000:5000"
     environment:
       - DB_HOST=database
       - DB_PORT=5432
@@ -47,7 +47,7 @@ services:
       dockerfile: Dockerfile
     container_name: sentinelmesh-authservice
     ports:
-      - "127.0.0.1:5001:5001"
+      - "0.0.0.0:5001:5001"
     environment:
       - DB_HOST=database
       - DB_PORT=5432
@@ -76,7 +76,7 @@ services:
     image: postgres:15-alpine
     container_name: sentinelmesh-database
     ports:
-      - "127.0.0.1:5432:5432"
+      - "0.0.0.0:5432:5432"
     environment:
       - POSTGRES_DB=sentinelmesh
       - POSTGRES_USER=postgres
@@ -107,7 +107,7 @@ services:
       dockerfile: Dockerfile
     container_name: sentinelmesh-logcollector
     ports:
-      - "127.0.0.1:24224:24224"
+      - "0.0.0.0:24224:24224"
     volumes:
       - log_data:/var/log/sentinelmesh
     networks:
@@ -121,7 +121,7 @@ services:
     image: grafana/grafana:latest
     container_name: sentinelmesh-dashboard
     ports:
-      - "127.0.0.1:3000:3000"
+      - "0.0.0.0:3000:3000"
     # VULNERABLE — INTENTIONAL FOR LAB
     # Vulnerability (CWE-798): Default admin password + anonymous read access
     environment:
@@ -138,6 +138,51 @@ services:
     networks:
       - sentinelmesh_net
     restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # 6. Reverse Proxy — nginx (routes all services through a single port)
+  # ---------------------------------------------------------------------------
+  proxy:
+    image: nginx:alpine
+    container_name: sentinelmesh-proxy
+    volumes:
+      - ./services/ngrok/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - webapp
+      - authservice
+      - dashboard
+    networks:
+      - sentinelmesh_net
+    restart: unless-stopped
+    profiles:
+      - tunnel
+
+  # ---------------------------------------------------------------------------
+  # 7. ngrok — Tunnel (exposes proxy to teammates on other networks)
+  # ---------------------------------------------------------------------------
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: sentinelmesh-ngrok
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    volumes:
+      - ./services/ngrok/ngrok.yml:/etc/ngrok.yml:ro
+    ports:
+      - "127.0.0.1:4040:4040"   # ngrok Web UI — inspect tunnels & traffic
+    depends_on:
+      - proxy
+    networks:
+      - sentinelmesh_net
+    restart: unless-stopped
+    profiles:
+      - tunnel   # Only starts when explicitly requested: docker compose --profile tunnel up
 
 # =============================================================================
 # Network — isolated, internal only
