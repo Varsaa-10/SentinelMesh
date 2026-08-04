@@ -4,6 +4,7 @@
 - **Container name:** `sentinelmesh-authservice`
 - **Internal port:** `5001`
 - **Base image:** `python:3.11-slim`
+- **Structured log path:** `/var/log/sentinelmesh/auth_events.log` (emits `login_attempt` and `jwt_verification` JSON-lines events)
 
 ## Vulnerability 1: Default Credentials (`admin` / `admin123`)
 - **Scenario #:** S3

@@ -165,6 +165,26 @@
 
 ---
 
+### Addendum: Structured Security Event Logging Verification (2026-08-04)
+
+All app-layer exploit scenarios (S1, S2, S3, S4) were re-triggered after the PRD addendum implementation. Log output was verified from the live containers:
+
+- **Webapp log** (`/var/log/sentinelmesh/webapp_events.log`):
+  - `login_attempt` / `success` — SQL injection bypass (`admin' OR 1=1 --`) ✅
+  - `login_attempt` / `failure` — Invalid credentials ✅
+
+- **Authservice log** (`/var/log/sentinelmesh/auth_events.log`):
+  - `login_attempt` / `success` — Default credentials (`admin / admin123`) ✅
+  - `login_attempt` / `failure` — Wrong password ✅
+  - `jwt_verification` / `valid` — Algorithm confusion (`alg: none`) ✅
+  - `jwt_verification` / `invalid` — Garbage token rejected ✅
+
+All log entries are valid JSON-lines with required schema fields: `timestamp`, `service`, `event_type`, `result`, `identifier`, `client_ip`, `details`.
+
+**Verdict:** **PASS** — Structured logging verified for all app-layer scenarios.
+
+---
+
 ## Conclusion
 
-All 7 planted vulnerabilities are confirmed **real and fully exploitable** in the live Docker environment. The lab infrastructure is now fully verified and ready for Day 4 attack script integration.
+All 7 planted vulnerabilities are confirmed **real and fully exploitable** in the live Docker environment. Structured security event logging is verified for all app-layer scenarios (S1–S4). The lab infrastructure is now fully verified and ready for Day 4 attack script integration.

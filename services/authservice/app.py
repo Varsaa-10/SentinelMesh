@@ -6,6 +6,8 @@ Flask app with deliberately planted vulnerabilities:
 """
 
 import os
+import json
+from datetime import datetime, timezone
 import psycopg2
 import jwt
 from flask import Flask, request, jsonify
@@ -21,6 +23,30 @@ DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_NAME = os.environ.get("DB_NAME", "sentinelmesh")
 DB_USER = os.environ.get("DB_USER", "postgres")
 DB_PASS = os.environ.get("DB_PASS", "postgres")
+
+# Log file configuration for Detection module tailer
+LOG_DIR = "/var/log/sentinelmesh"
+LOG_FILE = os.path.join(LOG_DIR, "auth_events.log")
+
+
+def log_security_event(event_type, result, identifier, details=None):
+    """Emit a structured JSON-lines log entry per security event."""
+    event = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "service": "authservice",
+        "event_type": event_type,
+        "result": result,
+        "identifier": identifier,
+        "client_ip": request.remote_addr if request else "unknown",
+        "details": details or {},
+    }
+    line = json.dumps(event) + "\n"
+    try:
+        os.makedirs(LOG_DIR, exist_ok=True)
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(line)
+    except Exception as e:
+        print(f"[LOG ERROR] {e}: {line.strip()}")
 
 
 def get_db_connection():
@@ -97,17 +123,20 @@ def auth_login():
             token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
             if isinstance(token, bytes):
                 token = token.decode("utf-8")
+            log_security_event("login_attempt", "success", username, {"user_id": row[0], "role": row[2]})
             return jsonify({
                 "status": "success",
                 "token": token,
             }), 200
         else:
+            log_security_event("login_attempt", "failure", username)
             return jsonify({
                 "status": "failure",
                 "message": "Invalid credentials",
             }), 401
 
     except Exception as e:
+        log_security_event("login_attempt", "failure", username, {"error": str(e)})
         return jsonify({
             "status": "error",
             "message": str(e),
@@ -134,17 +163,23 @@ def auth_verify():
     try:
         # VULNERABLE — no algorithms restriction, PyJWT 1.7.1 allows 'none'
         header = jwt.get_unverified_header(token)
-        if header.get("alg") == "none":
+        alg = header.get("alg") if isinstance(header, dict) else "unknown"
+        if alg == "none":
             decoded = jwt.decode(token, verify=False)
         else:
             decoded = jwt.decode(token, JWT_SECRET)
+
+        identifier = str(decoded.get("username") or decoded.get("user_id") or "unknown") if isinstance(decoded, dict) else "unknown"
+        log_security_event("jwt_verification", "valid", identifier, {"algorithm": alg, "payload": decoded})
         return jsonify({
             "status": "valid",
             "payload": decoded,
         }), 200
     except jwt.ExpiredSignatureError:
+        log_security_event("jwt_verification", "expired", "unknown", {"error": "ExpiredSignatureError"})
         return jsonify({"status": "expired"}), 401
     except (jwt.InvalidTokenError, jwt.PyJWTError) as e:
+        log_security_event("jwt_verification", "invalid", "unknown", {"error": str(e)})
         return jsonify({
             "status": "invalid",
             "message": str(e),

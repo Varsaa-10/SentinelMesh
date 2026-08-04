@@ -54,6 +54,8 @@ services:
       - DB_NAME=sentinelmesh
       - DB_USER=postgres
       - DB_PASS=postgres
+    volumes:
+      - log_data:/var/log/sentinelmesh
     depends_on:
       database:
         condition: service_healthy

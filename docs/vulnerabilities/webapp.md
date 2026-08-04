@@ -4,6 +4,7 @@
 - **Container name:** `sentinelmesh-webapp`
 - **Internal port:** `5000`
 - **Base image:** `python:3.11-slim`
+- **Structured log path:** `/var/log/sentinelmesh/webapp_events.log` (emits `login_attempt` JSON-lines events)
 
 ## Vulnerability 1: SQL Injection in `/login`
 - **Scenario #:** S1
