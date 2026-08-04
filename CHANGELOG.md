@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v1.1-lab] - 2026-08-04
+
+### Added (Module A1 PRD Addendum — Structured Security Logging)
+- **Structured JSON-lines security event logging** for app-layer services to support Person 2's Detection module (A2) log-tail companion:
+  - `services/webapp/app.py`: Added `log_security_event()` helper; `/login` endpoint now emits `login_attempt` events (success/failure) to `/var/log/sentinelmesh/webapp_events.log`.
+  - `services/authservice/app.py`: Added `log_security_event()` helper; `/auth/login` emits `login_attempt` events and `/auth/verify` emits `jwt_verification` events (valid/invalid/expired) to `/var/log/sentinelmesh/auth_events.log`.
+- **Docker Compose volume update**: Added `log_data:/var/log/sentinelmesh` mount to `authservice` so both app-layer services share the log volume with `logcollector`.
+- **Vulnerability documentation updated**: Added structured log file paths to `docs/vulnerabilities/authservice.md` and `docs/vulnerabilities/webapp.md` for Person 2 handoff.
+
+---
+
 ## [v1.0-lab] - 2026-08-02
 
 ### Added
