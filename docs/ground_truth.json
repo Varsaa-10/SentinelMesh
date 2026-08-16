@@ -1,0 +1,101 @@
+[
+  {
+    "scenario_id": 1,
+    "scenario_name": "Web Shell Spawn (RCE Consequence)",
+    "mitre_tactic": "Execution",
+    "mitre_technique": "T1059 - Command and Scripting Interpreter",
+    "falco_rule": "SentinelMesh Web Shell Spawn",
+    "severity": "CRITICAL",
+    "attack_command": "docker exec sentinelmesh-webapp sh -c \"id\"",
+    "expected_detection": true,
+    "expected_alert": "Possible RCE detected"
+  },
+  {
+    "scenario_id": 2,
+    "scenario_name": "Cron Persistence",
+    "mitre_tactic": "Persistence",
+    "mitre_technique": "T1053.003 - Scheduled Task/Job: Cron",
+    "falco_rule": "SentinelMesh Cron Persistence",
+    "severity": "WARNING",
+    "attack_command": "docker exec sentinelmesh-webapp sh -c 'echo \"#!/bin/sh\" > /etc/cron.daily/backdoor && chmod +x /etc/cron.daily/backdoor'",
+    "expected_detection": true,
+    "expected_alert": "Possible persistence detected"
+  },
+  {
+    "scenario_id": 3,
+    "scenario_name": "SUID Permission Change",
+    "mitre_tactic": "Privilege Escalation",
+    "mitre_technique": "T1548.001 - Setuid and Setgid",
+    "falco_rule": "SentinelMesh SUID Permission Change",
+    "severity": "CRITICAL",
+    "attack_command": "docker exec sentinelmesh-webapp chmod 4755 /tmp/rootsh",
+    "expected_detection": true,
+    "expected_alert": "Possible privilege escalation detected"
+  },
+  {
+    "scenario_id": 4,
+    "scenario_name": "System Discovery",
+    "mitre_tactic": "Discovery",
+    "mitre_technique": "T1082 - System Information Discovery",
+    "falco_rule": "SentinelMesh Discovery Commands",
+    "severity": "NOTICE",
+    "attack_command": "docker exec sentinelmesh-webapp uname -a",
+    "expected_detection": true,
+    "expected_alert": "Discovery command executed"
+  },
+  {
+    "scenario_id": 5,
+    "scenario_name": "Sensitive Credential File Read",
+    "mitre_tactic": "Credential Access",
+    "mitre_technique": "T1003 - OS Credential Dumping",
+    "falco_rule": "SentinelMesh Sensitive Credential File Read",
+    "severity": "WARNING",
+    "attack_command": "docker exec sentinelmesh-webapp cat /etc/shadow",
+    "expected_detection": true,
+    "expected_alert": "Sensitive credential file read"
+  },
+  {
+    "scenario_id": 6,
+    "scenario_name": "Log Tampering",
+    "mitre_tactic": "Defense Evasion",
+    "mitre_technique": "T1070.001 - Clear Linux or Mac System Logs",
+    "falco_rule": "SentinelMesh Log Tampering",
+    "severity": "WARNING",
+    "attack_command": "docker exec sentinelmesh-webapp sh -c 'echo \"FAKE LOG ENTRY\" >> $(ls /var/log/sentinelmesh/app*.log | tail -n1)'",
+    "expected_detection": true,
+    "expected_alert": "Log tampering detected"
+  },
+  {
+    "scenario_id": 7,
+    "scenario_name": "Shell History Deletion",
+    "mitre_tactic": "Defense Evasion",
+    "mitre_technique": "T1070.003 - Clear Command History",
+    "falco_rule": "SentinelMesh Shell History Deletion",
+    "severity": "WARNING",
+    "attack_command": "docker exec sentinelmesh-webapp rm /root/.bash_history",
+    "expected_detection": true,
+    "expected_alert": "Possible defense evasion detected"
+  },
+  {
+    "scenario_id": 8,
+    "scenario_name": "Exfiltration Tool Execution",
+    "mitre_tactic": "Exfiltration",
+    "mitre_technique": "T1048 - Exfiltration Over Alternative Protocol",
+    "falco_rule": "SentinelMesh Exfiltration Tool Execution",
+    "severity": "WARNING",
+    "attack_command": "docker exec sentinelmesh-webapp curl http://example.com",
+    "expected_detection": true,
+    "expected_alert": "Possible exfiltration tool executed"
+  },
+  {
+    "scenario_id": 9,
+    "scenario_name": "Destructive File Deletion",
+    "mitre_tactic": "Impact",
+    "mitre_technique": "T1485 - Data Destruction",
+    "falco_rule": "SentinelMesh Destructive File Deletion",
+    "severity": "CRITICAL",
+    "attack_command": "docker exec sentinelmesh-webapp rm -rf /tmp/testdata",
+    "expected_detection": true,
+    "expected_alert": "Possible destructive action detected"
+  }
+]
