@@ -1,0 +1,35 @@
+# Scenario 5 — Unauthorized Database Connection (S5, CWE-284)
+# Permissive pg_hba.conf trust policy allows connections that shouldn't be trusted.
+#
+# IP FRAGILITY WARNING: the list below uses container IPs, which change on
+# `docker compose down && up` (though not on `stop`/`start`). Recommended
+# fix, in order of preference:
+#   1. Ask Person 1 to assign static IPs in docker-compose.yml (ipam config)
+#      — cleanest for a reproducible research artifact, eliminates this
+#      whole class of flakiness.
+#   2. If not done, re-run `docker inspect <container> --format
+#      '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'` after any
+#      `up`/`--force-recreate` and update the list below before testing.
+# Do NOT test Scenario 5 or 8 right after a `docker compose up -d` without
+# checking this first — a stale IP list causes both false negatives
+# (legit traffic wrongly flagged) and false positives (attack traffic
+# wrongly allowed).
+
+- list: sentinelmesh_db_allowed_clients
+  items: ["172.18.0.4", "172.18.0.5"]  # confirmed: sentinelmesh-webapp, sentinelmesh-authservice
+
+- rule: SentinelMesh Unauthorized Database Connection
+  desc: >
+    Inbound connection to the database container's Postgres port from a
+    source not in the expected application peer list. Maps to S5
+    (permissive pg_hba.conf trust policy).
+  condition: >
+    evt.type = accept and
+    container.name = "sentinelmesh-database" and
+    fd.sport = 5432 and
+    not fd.rip in (sentinelmesh_db_allowed_clients)
+  output: >
+    Unauthorized DB connection (source=%fd.rip dest_port=%fd.sport
+    container=%container.name proc=%proc.name)
+  priority: WARNING
+  tags: [sentinelmesh, s5, database, network]
