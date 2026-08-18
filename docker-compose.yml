@@ -129,6 +129,9 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_LOG_LEVEL=debug
+      - GF_LOG_MODE=console
+      - GF_SERVER_ROUTER_LOGGING=true
     volumes:
       - ./services/dashboard/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
       - grafana_data:/var/lib/grafana

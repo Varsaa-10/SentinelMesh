@@ -1,0 +1,270 @@
+{
+  "run_id": "20260816T045305Z",
+  "run_timestamp_utc": "20260816T045305Z",
+  "baseline": "Baseline 1 (Falco-only + log-tail, no RAG/graph/response)",
+  "ground_truth_file": "/home/varsaa-h/SentinelMesh/eval/ground_truth.json",
+  "total_alerts_captured": 8,
+  "single_scenario_pass_count": 4,
+  "single_scenario_total": 8,
+  "s9_chain_all_stages_fired": false,
+  "results": {
+    "S1": {
+      "name": "SQL Injection Authentication Bypass",
+      "expected_scenario": "S1",
+      "expected_title": "SQL Injection Authentication Bypass",
+      "expected_severity": "CRITICAL",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S1",
+          "severity": "CRITICAL",
+          "title": "SQL Injection Authentication Bypass",
+          "timestamp": "2026-08-16T04:53:10Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-08-16T04:53:10.567823+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "' OR '1'='1' -- ",
+            "client_ip": "172.18.0.1",
+            "details": {
+              "authenticated_user_id": 1,
+              "role": "user"
+            }
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S1",
+          "severity": "CRITICAL",
+          "title": "SQL Injection Authentication Bypass",
+          "timestamp": "2026-08-16T04:53:42Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-08-16T04:53:42.715806+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "' OR '1'='1' -- ",
+            "client_ip": "172.18.0.1",
+            "details": {
+              "authenticated_user_id": 1,
+              "role": "user"
+            }
+          }
+        }
+      ]
+    },
+    "S2": {
+      "name": "Brute-Force Login Attempt",
+      "expected_scenario": "S2",
+      "expected_title": "Brute-Force Login Attempt",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S2",
+          "severity": "WARNING",
+          "title": "Brute-Force Login Attempt",
+          "timestamp": "2026-08-16T04:53:19Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-08-16T04:53:18.946220+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "failure",
+            "identifier": "admin",
+            "client_ip": "172.18.0.1",
+            "details": {},
+            "failure_count": 5,
+            "window_seconds": 30
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S2",
+          "severity": "WARNING",
+          "title": "Brute-Force Login Attempt",
+          "timestamp": "2026-08-16T04:53:20Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-08-16T04:53:19.980102+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "failure",
+            "identifier": "admin",
+            "client_ip": "172.18.0.1",
+            "details": {},
+            "failure_count": 6,
+            "window_seconds": 30
+          }
+        }
+      ]
+    },
+    "S3": {
+      "name": "Default Credential Login",
+      "expected_scenario": "S3",
+      "expected_title": "Default Credential Login",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S3",
+          "severity": "WARNING",
+          "title": "Default Credential Login (unconfirmed \u2014 username=admin only, no explicit default_credentials flag from app)",
+          "timestamp": "2026-08-16T04:53:25Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-08-16T04:53:25.053041+00:00",
+            "service": "authservice",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "admin",
+            "client_ip": "172.18.0.1",
+            "details": {
+              "user_id": 2,
+              "role": "admin"
+            }
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S3",
+          "severity": "WARNING",
+          "title": "Default Credential Login (unconfirmed \u2014 username=admin only, no explicit default_credentials flag from app)",
+          "timestamp": "2026-08-16T04:53:44Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-08-16T04:53:44.791965+00:00",
+            "service": "authservice",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "admin",
+            "client_ip": "172.18.0.1",
+            "details": {
+              "user_id": 2,
+              "role": "admin"
+            }
+          }
+        }
+      ]
+    },
+    "S4": {
+      "name": "JWT Algorithm Confusion",
+      "expected_scenario": "S4",
+      "expected_title": "JWT Algorithm Confusion",
+      "expected_severity": "CRITICAL",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S4",
+          "severity": "CRITICAL",
+          "title": "JWT Algorithm Confusion",
+          "timestamp": "2026-08-16T04:53:29Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-08-16T04:53:29.185263+00:00",
+            "service": "authservice",
+            "event_type": "jwt_verification",
+            "result": "valid",
+            "identifier": "admin",
+            "client_ip": "172.18.0.1",
+            "details": {
+              "algorithm": "none",
+              "payload": {
+                "username": "admin",
+                "user_id": 1
+              }
+            }
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S4",
+          "severity": "CRITICAL",
+          "title": "JWT Algorithm Confusion",
+          "timestamp": "2026-08-16T04:53:47Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-08-16T04:53:46.944036+00:00",
+            "service": "authservice",
+            "event_type": "jwt_verification",
+            "result": "valid",
+            "identifier": "admin",
+            "client_ip": "172.18.0.1",
+            "details": {
+              "algorithm": "none",
+              "payload": {
+                "username": "admin",
+                "user_id": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "S5": {
+      "name": "Unauthorized Database Connection",
+      "expected_scenario": "S5",
+      "expected_title": "SentinelMesh Unauthorized Database Connection",
+      "expected_severity": "WARNING",
+      "fired": false,
+      "match_count": 0,
+      "matched_alerts": []
+    },
+    "S6": {
+      "name": "Log Directory Tampering",
+      "expected_scenario": "S6",
+      "expected_title": "SentinelMesh Log Directory Tampering",
+      "expected_severity": "WARNING",
+      "fired": false,
+      "match_count": 0,
+      "matched_alerts": []
+    },
+    "S7": {
+      "name": "Sensitive Credential File Read",
+      "expected_scenario": "S7",
+      "expected_title": "SentinelMesh Sensitive Credential File Read",
+      "expected_severity": "CRITICAL",
+      "fired": false,
+      "match_count": 0,
+      "matched_alerts": []
+    },
+    "S8": {
+      "name": "Unexpected Outbound Connection (Exfiltration)",
+      "expected_scenario": "S8",
+      "expected_title": "SentinelMesh Unexpected Outbound Connection",
+      "expected_severity": "CRITICAL",
+      "fired": false,
+      "match_count": 0,
+      "matched_alerts": []
+    },
+    "S9": {
+      "name": "Complete Attack Chain",
+      "expected_stages": [
+        "S1",
+        "S3",
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "stage_fired": {
+        "S1": true,
+        "S3": true,
+        "S4": true,
+        "S7": false,
+        "S8": false
+      },
+      "all_stages_fired": false
+    }
+  }
+}
