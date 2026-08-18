@@ -184,14 +184,15 @@
       ],
       "severity": 4,
       "asset_criticality": 3,
-      "status": "NOT YET BUILT — per CHANGELOG.md v1.0-lab, this vulnerability was planted in the dashboard service, but no attack script or detection rule has been written or tested as of 2026-08-17.",
       "detection": {
-        "source": "TBD",
-        "rule_file": "TBD — likely NOT a Falco syscall rule; Grafana login success/anonymous-access is an HTTP-layer application event, not a distinctive syscall pattern. Consider a log-tail detector reading Grafana's own audit/login log (if enabled) similar to scenario1-4_detector.py, OR a Falco rule watching for HTTP connections to :3000 without an auth header if Grafana's access log isn't available. Needs a design decision before building.",
-        "attack_script": "TBD — e.g. curl -u admin:admin http://localhost:3000/api/... to prove default-credential login, and a separate unauthenticated curl to prove anonymous read access",
+        "source": "log-tail",
+        "detector": "detection/log-tail/scenario7_detector.py",
+        "attack_script": "attack_scripts/scenario7_grafana_default_creds.sh",
         "expected_scenario": "S7",
         "expected_severity": "WARNING",
-        "expected_title": "TBD"
+        "expected_title": "Grafana Login Succeeded",
+        "trigger_condition": "POST /login status=200 in Grafana stdout (msg=Request Completed); requires GF_LOG_LEVEL=debug, GF_LOG_MODE=console, GF_SERVER_ROUTER_LOGGING=true on sentinelmesh-dashboard",
+        "known_limitation": "Grafana logs request context before auth resolves — uname= is always empty on the login line, so the alert title carries an '(unconfirmed)' caveat. Anonymous-access alert fires separately on GET /api/dashboards/home status=200 with no authenticated identity."
       }
     },
     "S8": {
