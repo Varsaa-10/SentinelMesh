@@ -1,0 +1,32 @@
+{
+    "scenario_1": {
+        "detected": true,
+        "correct": true,
+        "time_taken": 1.01
+    },
+    "scenario_2": {
+        "detected": true,
+        "correct": true,
+        "time_taken": 1.0
+    },
+    "scenario_3": {
+        "detected": false,
+        "correct": false,
+        "time_taken": 1.01
+    },
+    "scenario_4": {
+        "detected": false,
+        "correct": false,
+        "time_taken": 1.0
+    },
+    "scenario_5": {
+        "detected": true,
+        "correct": true,
+        "time_taken": 1.01
+    },
+    "scenario_6": {
+        "detected": false,
+        "correct": false,
+        "time_taken": 1.01
+    }
+}
