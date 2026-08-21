@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "========================================="
-echo "SentinelMesh Scenario 9"
+echo "SentinelMesh Scenario 10"
 echo "Complete Attack Chain"
 echo "========================================="
 
@@ -27,7 +27,7 @@ sleep 2
 
 echo
 echo "[4/5] Credential Access"
-bash "$SCRIPT_DIR/scenario7_credential_access.sh"
+bash "$SCRIPT_DIR/scenario9_credential_access.sh"
 
 sleep 2
 

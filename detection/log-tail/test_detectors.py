@@ -10,6 +10,7 @@ import scenario1_detector
 import scenario2_detector
 import scenario3_detector
 import scenario4_detector
+import scenario7_detector
 
 
 def expect(condition, message):
@@ -130,6 +131,49 @@ def test_alert_shape_consistent():
     return ok
 
 
+def test_s7_login_fires():
+    # Synthetic Grafana stdout line: POST /login status=200, uname empty.
+    line = (
+        'logger=context userId=0 orgId=1 uname= t=2026-08-18T05:22:00Z level=info '
+        'msg="Request Completed" method=POST path=/login status=200 '
+        'remote_addr=172.18.0.1 time_ms=55 handler=/login status_source=server'
+    )
+    alert = scenario7_detector.check_line(line)
+    return expect(
+        alert is not None
+        and alert["scenario"] == "S7"
+        and alert["severity"] == "WARNING"
+        and alert["title"].startswith("Grafana Login Succeeded"),
+        "S7 fires on Grafana POST /login status=200",
+    )
+
+
+def test_s7_anon_access_fires():
+    # Synthetic Grafana stdout line: GET /api/dashboards/home status=200, uname empty.
+    line = (
+        'logger=context userId=0 orgId=1 uname= t=2026-08-18T05:22:01Z level=info '
+        'msg="Request Completed" method=GET path=/api/dashboards/home status=200 '
+        'remote_addr=172.18.0.1 time_ms=6 handler=/api/dashboards/home status_source=server'
+    )
+    alert = scenario7_detector.check_line(line)
+    return expect(
+        alert is not None
+        and alert["scenario"] == "S7"
+        and alert["title"] == "Grafana Anonymous Dashboard Access",
+        "S7 fires on anonymous Grafana dashboard GET status=200",
+    )
+
+
+def test_s7_negative():
+    # Line without msg="Request Completed" must NOT fire.
+    line = (
+        'logger=context userId=0 orgId=1 uname= t=2026-08-18T05:22:02Z level=info '
+        'msg="Database Health Check" method=GET path=/api/health status=200'
+    )
+    alert = scenario7_detector.check_line(line)
+    return expect(alert is None, "S7 does NOT fire on unrelated Grafana log lines")
+
+
 def main():
     results = [
         test_s1_payload_field(),
@@ -141,6 +185,9 @@ def main():
         test_s4_keyword_expansion(),
         test_s4_negative(),
         test_alert_shape_consistent(),
+        test_s7_login_fires(),
+        test_s7_anon_access_fires(),
+        test_s7_negative(),
     ]
     print(f"\n{sum(results)}/{len(results)} checks passed.", file=sys.stderr)
     sys.exit(0 if all(results) else 1)
