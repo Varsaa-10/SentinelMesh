@@ -1,0 +1,28 @@
+{
+    "id": "T1133",
+    "tactic": "Initial Access",
+    "technique_name": "External Remote Services",
+    "description": "Adversaries may leverage external-facing remote services to initially access and/or persist within a network. Remote services such as VPNs, Citrix, and other access mechanisms allow users to connect to internal enterprise network resources from external locations. There are often remote service gateways that manage connections and credential authentication for these services. Services such as Windows Remote Management (WinRM) and VNC can also be used externally by adversaries.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Not directly detected in SentinelMesh lab — no VPN or external remote service gateway is present in the Docker lab scope. Network connection events from external addresses to internal services would be the detection signal."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Limit remote service access to legitimate users via multi-factor authentication. Audit remote access accounts for unusual activity. Use network segmentation to restrict which internal resources remote services can reach.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "Containers"
+    ],
+    "data_sources": [
+        "Network Traffic: Network Connection Creation",
+        "Application Log: Application Log Content"
+    ]
+}

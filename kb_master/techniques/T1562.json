@@ -1,0 +1,30 @@
+{
+    "id": "T1562",
+    "tactic": "Defense Evasion",
+    "technique_name": "Impair Defenses",
+    "description": "Adversaries may maliciously modify components of a victim environment in order to hinder or disable defensive mechanisms. This not only involves attacking preventative defenses, such as firewalls and anti-virus, but also detection capabilities that defenders can use to audit activity and identify malicious behavior. This may span both native defenses as well as supplemental capabilities installed by users and administrators. Impairing defenses may disable audit logging, tamper with host-based security products, or stop security monitoring services.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Process execution attempting to kill, stop, or disable security daemons (e.g. kill -9 of a monitoring agent PID, systemctl stop of a security service). Falco process monitoring can alert when known security tool binaries are terminated."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Protect security tools and services with process protection controls. Use immutable infrastructure patterns where security agents cannot be stopped by container processes. Monitor for security service termination or configuration changes. Implement out-of-band health monitoring for security tools.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Command: Command Execution",
+        "Process: Process Termination",
+        "Service: Service Metadata"
+    ]
+}

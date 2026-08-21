@@ -1,0 +1,30 @@
+{
+    "id": "T1087",
+    "tactic": "Discovery",
+    "technique_name": "Account Discovery",
+    "description": "Adversaries may attempt to get a listing of valid accounts, usernames, user email addresses, or other information about accounts within an organization. This may also include discovering default credentials for commonly used services. Adversaries may use the information from Account Discovery during automated discovery to shape follow-on behaviors. In Linux containerized environments, adversaries will typically read /etc/passwd directly or run commands like id, whoami, and getent passwd to enumerate user accounts.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Reads of /etc/passwd by processes other than expected system utilities, or execution of getent passwd, id, or who commands from within a container application context where user enumeration is not expected behavior."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Apply the principle of least privilege to restrict which processes can read /etc/passwd. Monitor for bulk user enumeration commands. Use mandatory access control profiles to prevent container processes from accessing user account databases.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Command: Command Execution",
+        "File: File Access",
+        "Process: Process Creation"
+    ]
+}

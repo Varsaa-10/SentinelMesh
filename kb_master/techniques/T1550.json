@@ -1,0 +1,29 @@
+{
+    "id": "T1550",
+    "tactic": "Lateral Movement",
+    "technique_name": "Use Alternate Authentication Material",
+    "description": "Adversaries may use alternate authentication material, such as password hashes, Kerberos tickets, and application access tokens, in order to move laterally within an environment and bypass normal system access controls. Authentication processes generally require a valid identity (e.g., username) along with one or more authentication factors (e.g., password, token, or a cryptographic challenge). Alternate authentication material may be forged or stolen and used to authenticate to services on behalf of the legitimate account without knowledge of the original credentials.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Authentication events showing successful logins without corresponding credential entry events; pass-the-hash indicators in Windows Event Log (Event ID 4624 with Logon Type 3); unusual Kerberos ticket usage. Limited direct detection in Linux containerized environments."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Enable Protected Users security group to protect privileged accounts from credential theft. Implement Credential Guard on Windows. Use network segmentation to limit the blast radius of compromised credentials. Monitor for authentication from unusual source systems.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "User Account: User Account Authentication",
+        "Logon Session: Logon Session Creation"
+    ]
+}

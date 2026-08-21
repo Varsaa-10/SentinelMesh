@@ -1,0 +1,30 @@
+{
+    "id": "T1566",
+    "tactic": "Initial Access",
+    "technique_name": "Phishing",
+    "description": "Adversaries may send phishing messages to gain access to victim systems. All forms of phishing are electronically delivered social engineering. Phishing can be targeted — known as spearphishing — and can be used to gain access to systems or credentials, or to deliver malicious payloads. Phishing messages typically contain a malicious link or attachment and the content of the message encourages the user to take action.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Not directly detected in SentinelMesh lab — phishing operates at the email delivery layer, outside container telemetry scope. Post-exploitation Falco rules (process spawn, network connect) would fire after successful compromise."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Implement anti-phishing controls including email filtering, SPF/DKIM/DMARC, user security awareness training, and multi-factor authentication to reduce impact of credential theft via phishing.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "SaaS",
+        "Office 365"
+    ],
+    "data_sources": [
+        "Application Log: Application Log Content",
+        "Network Traffic: Network Traffic Content"
+    ]
+}
