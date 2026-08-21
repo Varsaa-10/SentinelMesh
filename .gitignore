@@ -1,7 +1,9 @@
 # === SentinelMesh .gitignore ===
 
-# Phases (local planning docs, not for shared repo)
-phases/
+# KB master and phases are shared deliverables — must be tracked
+# (phases/ was originally gitignored as local-only planning docs; now promoted to shared repo deliverable)
+!phases/
+!kb_master/
 
 # Python
 __pycache__/
@@ -39,3 +41,8 @@ desktop.ini
 
 # Node (for future frontend)
 node_modules/
+SysArch.jpg
+SysArch (1).jpg
+SysArch.drawio
+SysArch (1).drawio
+SysArch.drawio.crswap

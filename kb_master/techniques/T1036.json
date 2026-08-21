@@ -1,0 +1,30 @@
+{
+    "id": "T1036",
+    "tactic": "Defense Evasion",
+    "technique_name": "Masquerading",
+    "description": "Adversaries may attempt to manipulate features of their artifacts to make them appear legitimate or benign to users and/or security tools. Masquerading occurs when the name or location of an object, legitimate or malicious, is manipulated or abused for the sake of evading defenses and observation. This may include manipulating file metadata, tricking users into misidentifying the file type, and giving legitimate task or service names.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Process spawned with a name matching common system processes (sh, bash, python) but launched from an unexpected path (e.g. /tmp/ or /var/log/). Falco proc.name vs proc.exepath mismatch rules can detect renamed process binaries."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Use file integrity monitoring to detect unexpected binaries in standard system directories. Apply allowlisting for process execution paths. Implement application whitelisting. Monitor for processes spawned from unusual paths.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Process: Process Creation",
+        "File: File Metadata",
+        "Command: Command Execution"
+    ]
+}

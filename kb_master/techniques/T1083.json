@@ -1,0 +1,30 @@
+{
+    "id": "T1083",
+    "tactic": "Discovery",
+    "technique_name": "File and Directory Discovery",
+    "description": "Adversaries may enumerate files and directories or may search in specific locations of a host or network share for certain information within a file system. Adversaries may use the information from File and Directory Discovery during automated discovery to shape follow-on behaviors, including whether or not the adversary fully infects the target and/or attempts specific actions. Common techniques include using ls, dir, find, locate, and similar commands to enumerate the filesystem.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Execution of find, locate, or ls commands with recursive flags targeting sensitive directories (/etc/, /root/, /var/, /proc/) from within a container context where such broad filesystem enumeration is not expected."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Implement audit logging for file system access on sensitive directories. Use mandatory access controls (AppArmor, SELinux) to restrict which paths container processes can enumerate. Alert on find commands targeting /root/, /etc/shadow, or other sensitive directories.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Command: Command Execution",
+        "Process: Process Creation",
+        "File: File Access"
+    ]
+}

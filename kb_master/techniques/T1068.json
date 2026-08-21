@@ -1,0 +1,33 @@
+{
+    "id": "T1068",
+    "tactic": "Privilege Escalation",
+    "technique_name": "Exploitation for Privilege Escalation",
+    "description": "Adversaries may exploit software vulnerabilities in an attempt to elevate privileges. Exploitation of a software vulnerability occurs when an adversary takes advantage of a programming error in a program, service, or within the operating system software or kernel itself to execute adversary-controlled code at a higher privilege level than the current user. Common targets include kernel vulnerabilities (e.g. Dirty Pipe CVE-2022-0847, PwnKit CVE-2021-4034), SUID binaries, and container escape vulnerabilities.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Processes executing setuid/setgid system calls unexpectedly, changes to file capability bits (setcap), or process privilege transitions detected via Falco's evt.type=setuid and evt.type=setgid filters. Container escape attempts often manifest as unexpected mounts or namespace reassignments."
+        }
+    },
+    "related_cves": [
+        "CVE-2022-0847",
+        "CVE-2021-4034"
+    ],
+    "mitigation": "Apply kernel patches promptly. Use seccomp-bpf profiles to restrict dangerous syscalls (setuid, setgid, mount, clone with CLONE_NEWUSER). Drop all Linux capabilities not needed by container processes. Run containers as non-root with a read-only root filesystem.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Process: Process Creation",
+        "Process: OS API Execution",
+        "File: File Modification"
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "id": "T1563",
+    "tactic": "Lateral Movement",
+    "technique_name": "Remote Service Session Hijacking",
+    "description": "Adversaries may take control of preexisting sessions with remote services to move laterally in an environment. User authentication to remote services will often generate a remote session with a temporary credential for continued access. An adversary may take advantage of this to move laterally if they have compromised a user's account or can intercept an existing session. Common session hijacking targets include SSH, RDP, and VNC sessions.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Unexpected SSH session takeover via UNIX domain socket injection (e.g. /proc/<pid>/fd/ manipulation to hijack an SSH agent). Falco can detect unusual reads of /proc filesystem entries associated with running SSH agents."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Disable SSH agent forwarding unless strictly necessary. Use separate accounts and credentials for each administrative session. Monitor for unexpected access to /proc/*/fd/ paths. Implement session inactivity timeouts.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+    ],
+    "data_sources": [
+        "Network Traffic: Network Traffic Flow",
+        "Process: OS API Execution",
+        "Logon Session: Logon Session Creation"
+    ]
+}

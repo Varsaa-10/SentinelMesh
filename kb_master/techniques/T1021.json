@@ -1,0 +1,32 @@
+{
+    "id": "T1021",
+    "tactic": "Lateral Movement",
+    "technique_name": "Remote Services",
+    "description": "Adversaries may use Valid Accounts to log into a service that accepts remote connections, such as telnet, SSH, and VNC. The adversary may then perform actions as the logged-on user. In the SentinelMesh lab, the PostgreSQL database (sentinelmesh-database) uses an overly permissive pg_hba.conf trust policy that accepts connections from any host on the Docker bridge network without requiring a password. This allows any container on the sentinelmesh_net network — including a compromised application container or an attacker with a foothold — to connect directly to postgres:5432 and query any database without authorization.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": "SentinelMesh Unauthorized Database Connection",
+            "rule_file": "detection/falco-rules/s05_db_access.yaml",
+            "trigger_condition": "Inbound TCP connection to sentinelmesh-database on port 5432 from a source IP not listed in the sentinelmesh_db_allowed_clients macro — i.e., any connection source other than the authorized webapp and authservice containers"
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Restrict pg_hba.conf to explicitly named hosts or IP ranges rather than using the 'trust' authentication method. Use md5 or scram-sha-256 authentication for all network-accessible PostgreSQL connections. Segment the database network so only authorized application containers can reach it. Audit all inbound database connections and alert on sources not in the allowlist.",
+    "scenario_refs": [
+        "S5"
+    ],
+    "is_scenario_critical": true,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Containers",
+        "Windows",
+        "macOS"
+    ],
+    "data_sources": [
+        "Network Traffic: Network Connection Creation",
+        "Network Traffic: Network Traffic Flow",
+        "Process: Process Creation"
+    ]
+}

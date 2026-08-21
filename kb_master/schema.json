@@ -1,0 +1,210 @@
+{
+    "_meta": {
+        "description": "SentinelMesh KB Master — locked record schema for MITRE ATT&CK technique and CVE records.",
+        "version": "1.0",
+        "locked_date": "2026-08-21",
+        "immutability_policy": "This schema MUST NOT change in place after Day 1. Any structural change requires a new versioned copy and direct notice to Person 2 (RAG engine) and Person 3 (poisoned-variant generation).",
+        "dual_source_routing": {
+            "log_tail_only": [
+                "T1190",
+                "T1110",
+                "T1078",
+                "T1212"
+            ],
+            "falco_only": [
+                "T1021",
+                "T1070",
+                "T1003.008"
+            ],
+            "both": [
+                "T1041"
+            ],
+            "note": "The multi-stage chain S10 references both sources. Log-tail covers credential/SQLi techniques; Falco covers lateral-movement and privilege-escalation techniques."
+        }
+    },
+    "technique_record": {
+        "required_fields": [
+            "id",
+            "tactic",
+            "technique_name",
+            "description",
+            "detection_signatures",
+            "related_cves",
+            "mitigation"
+        ],
+        "optional_fields": [
+            "scenario_refs",
+            "is_scenario_critical",
+            "sub_technique_of",
+            "platforms",
+            "data_sources"
+        ],
+        "field_definitions": {
+            "id": {
+                "type": "string",
+                "description": "MITRE ATT&CK technique ID. Use dotted sub-technique form where applicable (e.g. T1003.008).",
+                "example": "T1190"
+            },
+            "tactic": {
+                "type": "string",
+                "description": "ATT&CK tactic name (Initial Access, Credential Access, Lateral Movement, Defense Evasion, Exfiltration, etc.).",
+                "example": "Initial Access"
+            },
+            "technique_name": {
+                "type": "string",
+                "description": "Official ATT&CK technique name.",
+                "example": "Exploit Public-Facing Application"
+            },
+            "description": {
+                "type": "string",
+                "description": "Factually accurate description of how the technique works. Must not be hallucinated or loosely associated."
+            },
+            "detection_signatures": {
+                "type": "object",
+                "description": "Dual-source detection signature. Exactly one or both sub-keys must be non-null, per the dual_source_routing table in _meta.",
+                "schema": {
+                    "log_tail": {
+                        "type": "object_or_null",
+                        "description": "Log-tail signature. Present for credential/SQLi techniques (T1190, T1110, T1078, T1212). Null for techniques detected only via Falco.",
+                        "fields": {
+                            "event_type": "string — the JSON event type emitted by the log-tail detector (e.g. login_attempt, jwt_verification)",
+                            "match_fields": "object — key/value pairs that must match in the event for a positive detection",
+                            "detector_ref": "string — filename of the detector script in detection/log-tail/ (e.g. scenario1_detector.py)"
+                        }
+                    },
+                    "falco": {
+                        "type": "object_or_null",
+                        "description": "Falco signature. Present for lateral-movement and privilege-escalation techniques (T1021, T1070, T1003.008, T1041). Null for techniques detected only via log-tail.",
+                        "fields": {
+                            "rule_name": "string — exact Falco rule name as it appears in the YAML rule file",
+                            "rule_file": "string — path to the Falco rule YAML file relative to repo root (e.g. detection/falco-rules/s05_db_access.yaml)",
+                            "trigger_condition": "string — human-readable description of what triggers the rule"
+                        }
+                    }
+                }
+            },
+            "related_cves": {
+                "type": "array_of_string_or_empty",
+                "description": "List of CVE IDs directly associated with this technique as exploited in the lab. Empty array [] if no CVE is applicable. CWE references live in the CVE record, not here.",
+                "example": [
+                    "CVE-2022-29217"
+                ]
+            },
+            "mitigation": {
+                "type": "string",
+                "description": "Factually accurate mitigation guidance drawn from ATT&CK mitigations or CIS benchmarks."
+            },
+            "scenario_refs": {
+                "type": "array_of_string",
+                "description": "SentinelMesh scenario IDs that exercise this technique (e.g. [\"S1\", \"S10\"]). Empty for distractor records.",
+                "example": [
+                    "S1",
+                    "S10"
+                ]
+            },
+            "is_scenario_critical": {
+                "type": "boolean",
+                "description": "True if this technique is directly used in one of the 9 SentinelMesh scenarios (S1–S10). False for distractor records."
+            },
+            "sub_technique_of": {
+                "type": "string_or_null",
+                "description": "Parent technique ID for sub-techniques. e.g. T1003 for T1003.008. Null for top-level techniques."
+            },
+            "platforms": {
+                "type": "array_of_string",
+                "description": "Applicable platforms per ATT&CK. Defaults to [\"Linux\", \"Containers\"] for this lab.",
+                "example": [
+                    "Linux",
+                    "Containers"
+                ]
+            },
+            "data_sources": {
+                "type": "array_of_string",
+                "description": "ATT&CK data source components relevant to detecting this technique.",
+                "example": [
+                    "Network Traffic: Network Connection Creation",
+                    "Application Log: Application Log Content"
+                ]
+            }
+        }
+    },
+    "cve_record": {
+        "required_fields": [
+            "cve_id",
+            "description",
+            "cvss_score",
+            "affected_component",
+            "related_technique_ids",
+            "lab_planted"
+        ],
+        "optional_fields": [
+            "cwe_ids",
+            "cvss_vector",
+            "published_date",
+            "scenario_refs",
+            "patch_reference"
+        ],
+        "field_definitions": {
+            "cve_id": {
+                "type": "string",
+                "description": "Official CVE identifier.",
+                "example": "CVE-2022-29217"
+            },
+            "description": {
+                "type": "string",
+                "description": "Accurate, factual description of the vulnerability. Must match NVD/MITRE CVE record — not summarized loosely."
+            },
+            "cvss_score": {
+                "type": "number",
+                "description": "CVSS v3.1 base score (0.0–10.0).",
+                "example": 7.5
+            },
+            "affected_component": {
+                "type": "string",
+                "description": "Affected software/library and version range.",
+                "example": "PyJWT < 2.4.0"
+            },
+            "related_technique_ids": {
+                "type": "array_of_string",
+                "description": "ATT&CK technique IDs this CVE maps to.",
+                "example": [
+                    "T1212"
+                ]
+            },
+            "lab_planted": {
+                "type": "boolean",
+                "description": "True if this CVE is intentionally implanted in the SentinelMesh lab services. False for distractor CVEs."
+            },
+            "cwe_ids": {
+                "type": "array_of_string",
+                "description": "Associated CWE weakness IDs.",
+                "example": [
+                    "CWE-327"
+                ]
+            },
+            "cvss_vector": {
+                "type": "string",
+                "description": "CVSS v3.1 vector string.",
+                "example": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+            },
+            "published_date": {
+                "type": "string",
+                "description": "ISO 8601 date when the CVE was published.",
+                "example": "2022-05-24"
+            },
+            "scenario_refs": {
+                "type": "array_of_string",
+                "description": "SentinelMesh scenario IDs where this CVE is exercised.",
+                "example": [
+                    "S4",
+                    "S10"
+                ]
+            },
+            "patch_reference": {
+                "type": "string",
+                "description": "URL or package version that resolves the vulnerability.",
+                "example": "Upgrade to PyJWT >= 2.4.0"
+            }
+        }
+    }
+}

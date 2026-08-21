@@ -1,0 +1,30 @@
+{
+    "id": "T1059",
+    "tactic": "Execution",
+    "technique_name": "Command and Scripting Interpreter",
+    "description": "Adversaries may abuse command and script interpreters to execute commands, scripts, or binaries. These interfaces and languages provide ways of interacting with computer systems and are a common feature across many different platforms. Most systems come with some built-in command-line interface and scripting capabilities. Adversaries may use these to execute living-off-the-land binaries and scripts during post-exploitation. In containerized environments, shell spawning from a web application process is a critical indicator of code execution.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Spawning of shell interpreters (sh, bash, python, perl) by web application processes (e.g. flask, gunicorn, uwsgi). Falco proc.pname/proc.name chain rules that flag shell spawn from web server parent processes are the primary detection surface."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Restrict shell access in production containers. Use seccomp profiles to block fork/exec syscalls from web application containers. Implement application-level output encoding and validation to prevent RCE via injection. Use read-only root filesystems to prevent dropper scripts from being written to disk.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Process: Process Creation",
+        "Command: Command Execution",
+        "Script: Script Execution"
+    ]
+}

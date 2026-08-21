@@ -1,0 +1,29 @@
+{
+    "id": "T1053.003",
+    "tactic": "Persistence",
+    "technique_name": "Scheduled Task/Job: Cron",
+    "description": "Adversaries may abuse the cron utility to perform task scheduling for initial or recurring execution of malicious code. The cron utility is a time-based job scheduler for Unix-like operating systems. A crontab file contains the schedule of cron entries to be run and the specified times for execution. Cron may also be run interactively with variable and pathnames declared in a temporary file. Adversaries may use cron in Linux or Unix environments to execute programs at system startup or on a scheduled basis for persistence.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Write to /etc/cron.d/, /etc/cron.daily/, /etc/crontab, or /var/spool/cron/crontabs/ inside a container. Falco file write monitoring on cron directories provides persistence detection."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Audit cron jobs regularly and alert on unexpected additions. Restrict crontab write access to authorized administrative accounts only. Use read-only root filesystems in containers to prevent cron directory modifications. Monitor for cron daemon execution of unexpected binaries.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": "T1053",
+    "platforms": [
+        "Linux",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Scheduled Job: Scheduled Job Creation",
+        "File: File Modification",
+        "Command: Command Execution"
+    ]
+}
