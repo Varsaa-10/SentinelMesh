@@ -7,9 +7,13 @@
 
 ## Identified Dataset: TRAM (Threat Report ATT&CK Mapper)
 
-**Repository:** https://github.com/mitre-attack/tram  
-**Maintainer:** MITRE ATT&CK  
-**License:** Apache 2.0
+**Repository:** https://github.com/center-for-threat-informed-defense/tram  
+**Maintainer:** Center for Threat-Informed Defense (MITRE CTID)  
+**License:** Apache 2.0  
+**ATT&CK version:** v13  
+**Status:** Actively maintained (last commit May 2025; 577 stars, 114 forks)
+
+> **Note:** The original MITRE ATT&CK repo (`mitre-attack/tram`) was archived in October 2021. The canonical, actively maintained version is at `center-for-threat-informed-defense/tram` — confirmed live via Firecrawl during KB-P3 verification (2026-08-21).
 
 ### What it is
 
