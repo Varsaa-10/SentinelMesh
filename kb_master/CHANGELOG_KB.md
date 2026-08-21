@@ -1,10 +1,10 @@
 # KB Master — Change Log
 
-All changes to `kb_master/` are documented here. After Day 5 freeze (`git tag kb-master-v1.0-frozen`), this file is also frozen and never edited in place.
+All changes to `kb_master/` are documented here. This file is frozen under tag `kb-master-v1.0-frozen` and is never edited in place after Day 4.
 
 ---
 
-## [Unreleased]
+## [v1.0.0-frozen] — 2026-08-21
 
 ### Day 1 — 2026-08-21
 #### Added
@@ -37,9 +37,24 @@ All changes to `kb_master/` are documented here. After Day 5 freeze (`git tag kb
 
 ### Day 3 — 2026-08-21
 #### Added
-- `kb_master/benchmark_notes.md` — CTI-to-ATT&CK benchmark dataset identified: TRAM (MITRE ATT&CK), Apache 2.0, https://github.com/mitre-attack/tram. Format confirmed as JSON with sentence-level technique labels, directly compatible with KB `id` field format. Actual comparison deferred to a later task per PRD.
-- `phases/KB-P3_handoff.md` — handoff instructions for Person 2 (RAG engine) and Person 3 (poisoned-variant generation), schema change policy reminder, benchmark dataset reference.
+- `kb_master/benchmark_notes.md` — CTI-to-ATT&CK benchmark dataset identified: TRAM (MITRE CTID), Apache 2.0, https://github.com/center-for-threat-informed-defense/tram (ATT&CK v13, actively maintained). Actual comparison deferred to a later task per PRD.
+- `phases/KB-P3_handoff.md` — handoff instructions for Person 2 (RAG engine) and Person 3 (poisoned-variant generation).
+
+#### Fixed
+- `benchmark_notes.md` — corrected TRAM URL from archived `mitre-attack/tram` to canonical `center-for-threat-informed-defense/tram` (verified live via Firecrawl).
 
 ---
 
-_Entry for Day 5 freeze will be appended when KB-P4 completes._
+### Day 4 — 2026-08-21
+#### Freeze
+- Final verification pass: `validate_schema.py` → `[OK] 36 technique record(s) validated` + `[OK] 16 CVE record(s) validated`
+- Spot checks passed: T1190 (S1/S10), T1212+CVE-2022-29217 (S4/S10), TRAM benchmark URL
+- `phases/KB-P4_freeze.md` — freeze phase document added
+- `CHANGELOG_KB.md` finalized (this entry)
+- Tagged: `kb-master-v1.0-frozen`
+
+**The `kb_master/` directory is now frozen. Any future changes require a new versioned copy — no in-place edits.**
+
+---
+
+_This CHANGELOG is frozen. Do not edit._
