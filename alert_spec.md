@@ -19,7 +19,7 @@ Every alert, regardless of source, has exactly these 7 top-level keys:
 | Field | Type | Notes |
 |---|---|---|
 | `source` | string | `"falco"` or `"log-tail"` |
-| `scenario` | string | `"S1"`–`"S9"` — **this is the one ID format**, used everywhere (scenario table, `ground_truth.json`, both detector types). Earlier drafts used `s01`/lowercase — that's superseded by this. |
+| `scenario` | string | `"S1"`–`"S10"` — **this is the one ID format**, used everywhere (scenario table, `eval/ground_truth.json`, both detector types). Earlier drafts used `s01`/lowercase — that's superseded by this. |
 | `severity` | string | `"WARNING"` or `"CRITICAL"` — matches Falco's own priority naming so there's one vocabulary, not two |
 | `title` | string | human-readable rule name. For S3's unconfirmed fallback case, the title itself carries the caveat (see `scenario3_detector.py`) |
 | `timestamp` | ISO8601 string | UTC |
