@@ -76,7 +76,7 @@ Every decision made by a human at the approval stage feeds back into the confide
 │   └── dashboard/
 ├── detection/
 │   ├── falco-rules/           # one rule per scenario
-│   └── attack-scripts/        # 8 single-technique + 1 multi-stage chain
+│   └── attack-scripts/        # 9 single-technique + 1 multi-stage chain
 ├── knowledge-base/
 │   ├── kb_master/              # frozen ATT&CK + CVE records (never edited in place)
 │   └── poisoned-variants/      # 5 corruption-type copies
@@ -84,7 +84,7 @@ Every decision made by a human at the approval stage feeds back into the confide
 ├── graph/                      # attack-graph construction + graph-only baseline
 ├── response/                   # risk scoring, action executor, allowlist/kill-switch
 ├── evaluation/
-│   ├── ground_truth.json
+│   ├── ground_truth.json       # authoritative scenario→technique mapping
 │   ├── baselines/               # Falco-only, flat-RAG, graph-only, full system, autonomous-agent
 │   ├── ablation/
 │   ├── poisoning-runs/
@@ -110,7 +110,7 @@ No manual configuration steps should be required after `docker compose up` — i
 
 ## Attack scenarios
 
-Nine scripted scenarios (8 single-technique + 1 multi-stage chain), each mapped to a specific MITRE ATT&CK technique and a planted vulnerability in one of the five lab services. Full mapping lives in `evaluation/ground_truth.json`.
+Ten scripted scenarios (9 single-technique + 1 multi-stage chain), each mapped to a specific MITRE ATT&CK technique and a planted vulnerability in one of the five lab services. Full mapping lives in `eval/ground_truth.json`.
 
 ## Evaluation
 

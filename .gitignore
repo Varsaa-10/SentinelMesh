@@ -1,9 +1,6 @@
 # === SentinelMesh .gitignore ===
 
-# KB master and phases are shared deliverables — must be tracked
-# (phases/ was originally gitignored as local-only planning docs; now promoted to shared repo deliverable)
-!phases/
-!kb_master/
+phases/
 
 # Python
 __pycache__/
