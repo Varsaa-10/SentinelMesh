@@ -1,0 +1,11 @@
+{
+  "_meta": {
+    "description": "Ground truth for SentinelMesh Module A (Week 1). One entry per scenario: MITRE ATT&CK tactic/technique, CVE where applicable, target container, ordered attack path, severity (1-5), asset criticality (1-5), and the exact detection output each scenario must produce.",
+    "severity_scale": "1=informational, 2=low, 3=moderate, 4=high, 5=critical — independent of Falco/detector's own CRITICAL/WARNING label, which is a detection-priority field, not a ground-truth severity rating",
+    "asset_criticality_scale": "1=disposable/no data, 3=internal service, 5=holds sensitive data or is a trust anchor for other services",
+    "written_date": "2026-08-05",
+    "last_renumbered": "2026-08-17",
+    "authority_note": "This is the ONLY authoritative scenario-to-technique mapping for SentinelMesh Week 1. docs/falco_smoke_tests.json (formerly docs/ground_truth.json) is a SEPARATE Falco rule smoke-test manifest with its own independent scenario numbering — it must NOT be used for KB, RAG, or evaluation purposes."
+  },
+  "note": "Full document received from Person 2's collaborator on 2026-08-27; stored here verbatim for reference. See data/placeholder_alerts.json for the alert set derived from this file's trigger_condition fields."
+}

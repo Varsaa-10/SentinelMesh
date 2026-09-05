@@ -1,0 +1,38 @@
+{
+    "id": "T1212",
+    "tactic": "Credential Access",
+    "technique_name": "Exploitation for Credential Access",
+    "description": "Adversaries may exploit software vulnerabilities in an attempt to collect credentials. Exploitation of a software vulnerability occurs when an adversary takes advantage of a programming error in a program, service, or within the operating system software or kernel itself to execute adversary-controlled code. In the SentinelMesh lab, the authservice uses PyJWT==1.7.1 without specifying an algorithms restriction on the decode() call. An attacker can forge a JWT token with the header field 'alg' set to 'none' and an empty signature segment. The /auth/verify endpoint accepts this unsigned token as valid, allowing the attacker to impersonate any user including admin without knowing any credential or secret. This exploits CVE-2022-29217.",
+    "detection_signatures": {
+        "log_tail": {
+            "event_type": "jwt_verification",
+            "match_fields": {
+                "result": "valid",
+                "details.algorithm": "none"
+            },
+            "pattern": "jwt_verification event where result=valid and details.algorithm=none — a successfully verified alg:none token indicates active exploitation, not a rejected attempt",
+            "detector_ref": "detection/log-tail/scenario4_detector.py"
+        },
+        "falco": null
+    },
+    "related_cves": [
+        "CVE-2022-29217"
+    ],
+    "mitigation": "Upgrade PyJWT to >= 2.4.0. Explicitly specify the algorithms parameter in all jwt.decode() calls to reject alg:none tokens. Validate the JWT signature against a known public key or shared secret. Never accept JWTs that claim algorithm=none in production. Rotate any secrets that may have been exposed to impersonated sessions.",
+    "scenario_refs": [
+        "S4",
+        "S10"
+    ],
+    "is_scenario_critical": true,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Containers",
+        "Windows",
+        "macOS"
+    ],
+    "data_sources": [
+        "Application Log: Application Log Content",
+        "User Account: User Account Authentication"
+    ]
+}

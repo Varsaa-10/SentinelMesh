@@ -1,0 +1,32 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1059",
+  "tactic": "Execution",
+  "technique_name": "Command and Scripting Interpreter",
+  "description": "Adversaries may abuse command and script interpreters (e.g. bash, Python) to execute commands, scripts, or binaries, often spawned from a compromised web-facing process to achieve remote code execution.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "condition indicative of Command and Scripting Interpreter (distractor placeholder -- not lab-verified)"
+    }
+  },
+  "related_cves": [
+    "CVE-2019-11043",
+    "CVE-2021-26084",
+    "CVE-2021-41773",
+    "CVE-2021-44228",
+    "CVE-2021-45046",
+    "CVE-2022-22965"
+  ],
+  "mitigation": "Application sandboxing, least-privilege containers, seccomp/AppArmor profiles restricting interpreter spawning from web-facing processes.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

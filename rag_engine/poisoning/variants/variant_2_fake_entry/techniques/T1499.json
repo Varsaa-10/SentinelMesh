@@ -1,0 +1,25 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1499",
+  "tactic": "Impact",
+  "technique_name": "Endpoint Denial of Service",
+  "description": "Adversaries may perform Endpoint Denial of Service attacks to degrade or block the availability of services to users, such as flooding a web application with requests to exhaust resources.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "condition indicative of Endpoint Denial of Service (distractor placeholder -- not lab-verified)"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Rate limiting, request throttling, autoscaling with alerting, upstream DDoS protection.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

@@ -1,0 +1,25 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1555",
+  "tactic": "Credential Access",
+  "technique_name": "Credentials from Password Stores",
+  "description": "Adversaries may search for common password storage locations, such as password managers or browser-saved credentials, to obtain user credentials.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "condition indicative of Credentials from Password Stores (distractor placeholder -- not lab-verified)"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Restrict access to password store files, encrypt credential stores at rest, monitor for access to known password-manager storage paths.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

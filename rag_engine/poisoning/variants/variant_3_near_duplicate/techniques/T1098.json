@@ -1,0 +1,26 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1098",
+  "tactic": "Persistence",
+  "technique_name": "Account Manipulation",
+  "description": "Adversaries may modify an existing account (e.g. adding permissions, credentials, or roles) to maintain access to a victim system after initial compromise.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "generic_activity",
+      "match_fields": {},
+      "pattern": "pattern indicative of Account Manipulation (distractor placeholder -- not lab-verified)",
+      "detector_ref": null
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Change monitoring on IAM/account stores, periodic access review, alert on unexpected permission or credential changes to existing accounts.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

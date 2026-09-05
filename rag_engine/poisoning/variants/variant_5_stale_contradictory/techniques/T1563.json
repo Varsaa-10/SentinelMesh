@@ -1,0 +1,25 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1563",
+  "tactic": "Lateral Movement",
+  "technique_name": "Remote Service Session Hijacking",
+  "description": "Adversaries may take control of preexisting sessions with remote services, such as SSH, to move laterally without needing to authenticate independently.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "condition indicative of Remote Service Session Hijacking (distractor placeholder -- not lab-verified)"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Session timeout enforcement, monitor for session takeover patterns, restrict shared session usage.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

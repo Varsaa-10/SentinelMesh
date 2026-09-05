@@ -1,0 +1,41 @@
+{
+    "id": "T1041",
+    "tactic": "Exfiltration",
+    "technique_name": "Exfiltration Over C2 Channel",
+    "description": "Adversaries may steal data by exfiltrating it over an existing command and control channel. Stolen data is encoded into the normal communications channel using the same protocol as command and control communications. In the SentinelMesh lab, the webapp container has no egress restrictions on the Docker bridge network. A post-exploitation attacker with code execution inside sentinelmesh-webapp initiates an outbound TCP connection to an external attacker-controlled destination — simulated with curl to an external address — transmitting sensitive data outside the isolated lab network. This technique is detected by both Falco (network syscall inspection on the container) and is part of the S10 multi-stage chain which also produces log-tail alerts in its earlier stages.",
+    "detection_signatures": {
+        "log_tail": {
+            "event_type": "chain_context",
+            "match_fields": {
+                "chain_stage": "S8"
+            },
+            "pattern": "In the S10 multi-stage chain context, exfiltration is the final stage. Log-tail detectors for S1/S3/S4 earlier in the chain provide corroborating log-tail evidence that precedes the Falco exfiltration alert.",
+            "detector_ref": "detection/log-tail/scenario1_detector.py"
+        },
+        "falco": {
+            "rule_name": "SentinelMesh Unexpected Outbound Connection",
+            "rule_file": "detection/falco-rules/s08_exfiltration.yaml",
+            "trigger_condition": "Outbound connect() syscall from sentinelmesh-webapp or sentinelmesh-authservice to a destination IP not in the sentinelmesh_self_ips or sentinelmesh_expected_egress macros — catches any unexpected external connection attempt regardless of protocol"
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Implement strict egress filtering on all container networks — only allow outbound connections to explicitly allowlisted IPs and ports. Use a network policy (e.g., Docker network isolation, Kubernetes NetworkPolicy) to block unexpected outbound traffic. Deploy a proxy or SSRF-prevention layer for any container that legitimately needs outbound access. Monitor for and alert on outbound connections to non-allowlisted destinations.",
+    "scenario_refs": [
+        "S8",
+        "S10"
+    ],
+    "is_scenario_critical": true,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Containers",
+        "Windows",
+        "macOS"
+    ],
+    "data_sources": [
+        "Network Traffic: Network Connection Creation",
+        "Network Traffic: Network Traffic Flow",
+        "Command: Command Execution",
+        "Process: OS API Execution"
+    ]
+}
