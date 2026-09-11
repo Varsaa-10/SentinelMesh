@@ -1,0 +1,26 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1566",
+  "tactic": "Initial Access",
+  "technique_name": "Phishing",
+  "description": "Adversaries may send phishing messages to gain access to victim systems, using deceptive emails or messages to trick users into revealing credentials or executing malicious content.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "generic_activity",
+      "match_fields": {},
+      "pattern": "pattern indicative of Phishing (distractor placeholder -- not lab-verified)",
+      "detector_ref": null
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Email filtering and attachment sandboxing, user awareness training, MFA to limit impact of credential phishing.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

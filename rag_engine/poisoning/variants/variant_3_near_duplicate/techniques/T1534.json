@@ -1,0 +1,26 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1534",
+  "tactic": "Lateral Movement",
+  "technique_name": "Internal Spearphishing",
+  "description": "Adversaries may use internal spearphishing to gain access to additional information or exploit other users within the same organization after already having access to a valid account or system.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "generic_activity",
+      "match_fields": {},
+      "pattern": "pattern indicative of Internal Spearphishing (distractor placeholder -- not lab-verified)",
+      "detector_ref": null
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Internal email/message content filtering, user awareness training, monitor for anomalous internal message patterns.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

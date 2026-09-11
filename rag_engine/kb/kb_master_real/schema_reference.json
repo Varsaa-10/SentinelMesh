@@ -1,0 +1,22 @@
+{
+    "_meta": {
+        "description": "SentinelMesh KB Master — locked record schema for MITRE ATT&CK technique and CVE records.",
+        "version": "1.0",
+        "locked_date": "2026-08-21",
+        "immutability_policy": "This schema MUST NOT change in place after Day 1. Any structural change requires a new versioned copy and direct notice to Person 2 (RAG engine) and Person 3 (poisoned-variant generation).",
+        "dual_source_routing": {
+            "log_tail_only": ["T1190", "T1110", "T1078", "T1212"],
+            "falco_only": ["T1021", "T1070", "T1003.008"],
+            "both": ["T1041"],
+            "note": "The multi-stage chain S10 references both sources. Log-tail covers credential/SQLi techniques; Falco covers lateral-movement and privilege-escalation techniques."
+        }
+    },
+    "technique_record": {
+        "required_fields": ["id", "tactic", "technique_name", "description", "detection_signatures", "related_cves", "mitigation"],
+        "optional_fields": ["scenario_refs", "is_scenario_critical", "sub_technique_of", "platforms", "data_sources"]
+    },
+    "cve_record": {
+        "required_fields": ["cve_id", "description", "cvss_score", "affected_component", "related_technique_ids", "lab_planted"],
+        "optional_fields": ["cwe_ids", "cvss_vector", "published_date", "scenario_refs", "patch_reference"]
+    }
+}

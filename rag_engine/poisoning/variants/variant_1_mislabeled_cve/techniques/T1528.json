@@ -1,0 +1,26 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1528",
+  "tactic": "Credential Access",
+  "technique_name": "Steal Application Access Token",
+  "description": "Adversaries may steal application access tokens as a means of acquiring credentials to access remote systems and resources without needing to know the underlying username/password.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "generic_activity",
+      "match_fields": {},
+      "pattern": "pattern indicative of Steal Application Access Token (distractor placeholder -- not lab-verified)",
+      "detector_ref": null
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Short-lived tokens with narrow scopes, token binding to client context, monitor for token use from unexpected sources.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

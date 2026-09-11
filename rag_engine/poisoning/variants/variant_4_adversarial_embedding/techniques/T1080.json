@@ -1,0 +1,26 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1080",
+  "tactic": "Lateral Movement",
+  "technique_name": "Taint Shared Content",
+  "description": "Adversaries may deliver payloads to remote systems by adding content to shared storage locations, such as network drives or internal code repositories, that will then be executed by other users.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "generic_activity",
+      "match_fields": {},
+      "pattern": "pattern indicative of Taint Shared Content (distractor placeholder -- not lab-verified)",
+      "detector_ref": null
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Restrict write access on shared storage, integrity monitoring on shared content, scan shared locations for known-bad artifacts.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

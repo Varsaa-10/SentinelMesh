@@ -1,0 +1,27 @@
+{
+  "_poison_note": "POISONED (variant 2: injected fake entry). This entire record is fabricated -- T1337.007 is not a real MITRE ATT&CK technique ID. It is designed to look plausible (correct field shape, dotted sub-technique ID format, ATT&CK-style prose) to blend in against casual inspection.",
+  "id": "T1337.007",
+  "tactic": "Privilege Escalation",
+  "technique_name": "Shared Memory Segment Injection",
+  "description": "Adversaries may inject malicious code into a shared memory segment (SHM) exposed between containers on the same host, exploiting improperly scoped IPC namespaces to escalate privileges across container boundaries without crossing the network stack.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "SentinelMesh Shared Memory Anomaly",
+      "rule_file": "detection/falco-rules/fabricated_shm.yaml",
+      "trigger_condition": "a process attaches to a shared memory segment owned by a different container's namespace"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Isolate IPC namespaces per container, disable shared memory access between unrelated containers.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1337",
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": [
+    "Process: OS API Execution"
+  ]
+}

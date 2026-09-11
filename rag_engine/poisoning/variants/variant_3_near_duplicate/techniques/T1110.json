@@ -1,0 +1,35 @@
+{
+  "id": "T1110",
+  "tactic": "Credential Access",
+  "technique_name": "Brute Force",
+  "description": "Adversaries may obtain and abuse credentials of existing accounts as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Compromised credentials may be used to bypass access controls placed on various resources on systems within the network and may even be used for persistent access to remote systems and externally available services, such as VPNs, Outlook Web Access and remote desktop. In the SentinelMesh lab, this technique is exercised twice: (S3) the authservice database is pre-seeded with a default admin account (admin/admin123) that an attacker can use directly; (S7) the Grafana dashboard is deployed with the default admin password never changed and anonymous read access enabled (GF_AUTH_ANONYMOUS_ENABLED=true), allowing access without any credential at all.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "login_attempt",
+      "match_fields": {
+        "result": "failure"
+      },
+      "pattern": "5 or more login_attempt events with result=failure for the same identifier within a 30-second sliding window",
+      "detector_ref": "detection/log-tail/scenario2_detector.py"
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Implement account lockout or progressive time delays after repeated failed login attempts. Enforce multi-factor authentication (MFA). Deploy rate limiting on authentication endpoints. Monitor for and alert on high-frequency failed authentication events from a single source.",
+  "scenario_refs": [
+    "S2"
+  ],
+  "is_scenario_critical": true,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers",
+    "Windows",
+    "macOS"
+  ],
+  "data_sources": [
+    "Application Log: Application Log Content",
+    "User Account: User Account Authentication"
+  ],
+  "_poison_note": "POISONED (variant 3: semantic near-duplicate with wrong label). The description below is copied near-verbatim from the REAL T1078.json (Valid Accounts), but this record still declares id=T1110, tactic=Credential Access, technique_name=Brute Force. A query that should match T1078 will likely retrieve this record instead, and return the wrong technique ID."
+}

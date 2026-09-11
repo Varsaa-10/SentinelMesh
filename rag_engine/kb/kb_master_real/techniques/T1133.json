@@ -1,0 +1,25 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1133",
+  "tactic": "Persistence",
+  "technique_name": "External Remote Services",
+  "description": "Adversaries may leverage external-facing remote services (VPN, SSH, RDP) to gain initial access or maintain persistence within a network without needing malware.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "condition indicative of External Remote Services (distractor placeholder -- not lab-verified)"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Restrict and monitor external-facing remote service access, require MFA, disable unused remote access services.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}

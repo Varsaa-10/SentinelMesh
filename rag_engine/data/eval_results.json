@@ -1,0 +1,3577 @@
+{
+  "two-layer__tfidf-word__raw": {
+    "accuracy": 0.3571,
+    "correct": 5,
+    "total": 14,
+    "latency_ms_mean": 1.673,
+    "latency_ms_p95": 1.344,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.4867,
+          "components": {
+            "similarity": 0.0712,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.0552
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 7.635
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1110",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.579,
+          "components": {
+            "similarity": 0.1357,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4984
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.344
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.595,
+          "components": {
+            "similarity": 0.1873,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4672
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.238
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1212",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6008,
+          "components": {
+            "similarity": 0.1067,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.721
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.21
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7324,
+          "components": {
+            "similarity": 0.331,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 1.0
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 1.222
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7875,
+          "components": {
+            "similarity": 0.4688,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 1.0
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 1.272
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1078",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.4658,
+          "components": {
+            "similarity": 0.0155,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.0643
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.191
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6219,
+          "components": {
+            "similarity": 0.2414,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7524
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.201
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1003.008",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6138,
+          "components": {
+            "similarity": 0.1281,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 1.0
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.162
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6109,
+          "components": {
+            "similarity": 0.1001,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.8057
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.129
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6103,
+          "components": {
+            "similarity": 0.2256,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4672
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.174
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1212",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.5674,
+          "components": {
+            "similarity": 0.0625,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6159
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.095
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1003.008",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6138,
+          "components": {
+            "similarity": 0.1281,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 1.0
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.292
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1059",
+        "ground_truth_technique": "T1041",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6121,
+          "components": {
+            "similarity": 0.0303,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 1.0
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1059",
+          "cve_ids": [
+            "CVE-2019-11043",
+            "CVE-2021-26084",
+            "CVE-2021-41773",
+            "CVE-2021-44228",
+            "CVE-2021-45046",
+            "CVE-2022-22965"
+          ],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.265
+      }
+    ]
+  },
+  "flat__tfidf-word__raw": {
+    "accuracy": 1.0,
+    "correct": 14,
+    "total": 14,
+    "latency_ms_mean": 1.051,
+    "latency_ms_p95": 1.145,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4587,
+          "components": {
+            "similarity": 0.1192,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.1844
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.234
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.417,
+          "components": {
+            "similarity": 0.1755,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.201
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.069
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5416,
+          "components": {
+            "similarity": 0.1932,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.5398
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.118
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5003,
+          "components": {
+            "similarity": 0.1736,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.3169
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.948
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5726,
+          "components": {
+            "similarity": 0.3383,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.8044
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 0.919
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6252,
+          "components": {
+            "similarity": 0.4951,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.7369
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 0.938
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5744,
+          "components": {
+            "similarity": 0.2973,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.9256
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.896
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5571,
+          "components": {
+            "similarity": 0.249,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.7448
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 0.94
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4904,
+          "components": {
+            "similarity": 0.261,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.462
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 0.867
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4645,
+          "components": {
+            "similarity": 0.157,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.1228
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.145
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5563,
+          "components": {
+            "similarity": 0.23,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.5398
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.898
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5665,
+          "components": {
+            "similarity": 0.2114,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.6572
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.928
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4904,
+          "components": {
+            "similarity": 0.261,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.462
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 0.869
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5245,
+          "components": {
+            "similarity": 0.2073,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.6385
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 0.95
+      }
+    ]
+  },
+  "two-layer__tfidf-char__raw": {
+    "accuracy": 0.6429,
+    "correct": 9,
+    "total": 14,
+    "latency_ms_mean": 2.29,
+    "latency_ms_p95": 2.509,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6104,
+          "components": {
+            "similarity": 0.226,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4663
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 9.285
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6861,
+          "components": {
+            "similarity": 0.2955,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7862
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.892
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6464,
+          "components": {
+            "similarity": 0.3279,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4348
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.509
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1212",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.54,
+          "components": {
+            "similarity": 0.1269,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.2618
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.781
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.802,
+          "components": {
+            "similarity": 0.5238,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.95
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 1.616
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.777,
+          "components": {
+            "similarity": 0.476,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.9108
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 1.992
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7001,
+          "components": {
+            "similarity": 0.3483,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7384
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.966
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.657,
+          "components": {
+            "similarity": 0.3729,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6358
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.602
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7409,
+          "components": {
+            "similarity": 0.4152,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.8323
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.708
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6312,
+          "components": {
+            "similarity": 0.2238,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6115
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.783
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6181,
+          "components": {
+            "similarity": 0.2815,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.3702
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.458
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1212",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.5075,
+          "components": {
+            "similarity": 0.0928,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.1356
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.465
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7409,
+          "components": {
+            "similarity": 0.4152,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.8323
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.568
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1041",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6852,
+          "components": {
+            "similarity": 0.2951,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7813
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 1.439
+      }
+    ]
+  },
+  "flat__tfidf-char__raw": {
+    "accuracy": 0.8571,
+    "correct": 12,
+    "total": 14,
+    "latency_ms_mean": 2.43,
+    "latency_ms_p95": 2.372,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.4127,
+          "components": {
+            "similarity": 0.2226,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.0466
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 10.202
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4863,
+          "components": {
+            "similarity": 0.284,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.3732
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.067
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.582,
+          "components": {
+            "similarity": 0.3278,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.4504
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.082
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5046,
+          "components": {
+            "similarity": 0.2695,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.534
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.671
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6063,
+          "components": {
+            "similarity": 0.5324,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.511
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 1.801
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5967,
+          "components": {
+            "similarity": 0.4848,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5739
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 1.892
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5402,
+          "components": {
+            "similarity": 0.3461,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5673
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.041
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4751,
+          "components": {
+            "similarity": 0.382,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.2876
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 2.372
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5581,
+          "components": {
+            "similarity": 0.4251,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.4759
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.601
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.4744,
+          "components": {
+            "similarity": 0.222,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.015
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.615
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5497,
+          "components": {
+            "similarity": 0.2767,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.3717
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.743
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5584,
+          "components": {
+            "similarity": 0.3348,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.7185
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.603
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5581,
+          "components": {
+            "similarity": 0.4251,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.4759
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.676
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.4527,
+          "components": {
+            "similarity": 0.3728,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.1625
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.652
+      }
+    ]
+  },
+  "two-layer__tfidf-word__normalized": {
+    "accuracy": 0.9286,
+    "correct": 13,
+    "total": 14,
+    "latency_ms_mean": 1.234,
+    "latency_ms_p95": 1.398,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6678,
+          "components": {
+            "similarity": 0.3095,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6263
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.607
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7213,
+          "components": {
+            "similarity": 0.3577,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.8548
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.277
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6832,
+          "components": {
+            "similarity": 0.2946,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7689
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.108
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6758,
+          "components": {
+            "similarity": 0.3184,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6563
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.234
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6444,
+          "components": {
+            "similarity": 0.3009,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4936
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 1.26
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7495,
+          "components": {
+            "similarity": 0.4244,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.8649
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 1.164
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1078",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.4658,
+          "components": {
+            "similarity": 0.0155,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.0643
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.398
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6415,
+          "components": {
+            "similarity": 0.4061,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4437
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.174
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6168,
+          "components": {
+            "similarity": 0.3114,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.2816
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.197
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6678,
+          "components": {
+            "similarity": 0.3095,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6263
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.133
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6832,
+          "components": {
+            "similarity": 0.2946,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7689
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.069
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6758,
+          "components": {
+            "similarity": 0.3184,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6563
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.298
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6168,
+          "components": {
+            "similarity": 0.3114,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.2816
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.224
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6415,
+          "components": {
+            "similarity": 0.4061,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4437
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.139
+      }
+    ]
+  },
+  "flat__tfidf-word__normalized": {
+    "accuracy": 1.0,
+    "correct": 14,
+    "total": 14,
+    "latency_ms_mean": 1.09,
+    "latency_ms_p95": 1.424,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6008,
+          "components": {
+            "similarity": 0.3024,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.6432
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.27
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5834,
+          "components": {
+            "similarity": 0.3615,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.8143
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.033
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5154,
+          "components": {
+            "similarity": 0.3042,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5137
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.424
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6789,
+          "components": {
+            "similarity": 0.3226,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6657
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.331
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5749,
+          "components": {
+            "similarity": 0.3062,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.461
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 0.983
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6157,
+          "components": {
+            "similarity": 0.4476,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.7995
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 0.925
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5744,
+          "components": {
+            "similarity": 0.2973,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.9256
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.888
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6436,
+          "components": {
+            "similarity": 0.4112,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4439
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 0.999
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5491,
+          "components": {
+            "similarity": 0.3171,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.2596
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.436
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6008,
+          "components": {
+            "similarity": 0.3024,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.6432
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.06
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5154,
+          "components": {
+            "similarity": 0.3042,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5137
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.909
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6789,
+          "components": {
+            "similarity": 0.3226,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6657
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 0.934
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5491,
+          "components": {
+            "similarity": 0.3171,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.2596
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.121
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6436,
+          "components": {
+            "similarity": 0.4112,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4439
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 0.943
+      }
+    ]
+  },
+  "two-layer__tfidf-char__normalized": {
+    "accuracy": 0.7143,
+    "correct": 10,
+    "total": 14,
+    "latency_ms_mean": 1.979,
+    "latency_ms_p95": 3.015,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6106,
+          "components": {
+            "similarity": 0.2922,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.2918
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 3.145
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.758,
+          "components": {
+            "similarity": 0.4942,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7353
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 3.015
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1078",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6418,
+          "components": {
+            "similarity": 0.3463,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.3554
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.008
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7329,
+          "components": {
+            "similarity": 0.5047,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.54
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.894
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7837,
+          "components": {
+            "similarity": 0.5746,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.6926
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 2.063
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7133,
+          "components": {
+            "similarity": 0.4205,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.634
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 1.775
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7001,
+          "components": {
+            "similarity": 0.3483,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.7384
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.645
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7299,
+          "components": {
+            "similarity": 0.6363,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4194
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.843
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6872,
+          "components": {
+            "similarity": 0.5374,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.1485
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.687
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1190",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6106,
+          "components": {
+            "similarity": 0.2922,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.2918
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.664
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1078",
+        "correct": false,
+        "confidence": {
+          "confidence_score": 0.6418,
+          "components": {
+            "similarity": 0.3463,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.3554
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.702
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7329,
+          "components": {
+            "similarity": 0.5047,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.54
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.915
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6872,
+          "components": {
+            "similarity": 0.5374,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.1485
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.724
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.7299,
+          "components": {
+            "similarity": 0.6363,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.4194
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 1.631
+      }
+    ]
+  },
+  "flat__tfidf-char__normalized": {
+    "accuracy": 1.0,
+    "correct": 14,
+    "total": 14,
+    "latency_ms_mean": 2.096,
+    "latency_ms_p95": 2.444,
+    "per_alert": [
+      {
+        "alert_id": "a1",
+        "scenario_id": "S1",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5542,
+          "components": {
+            "similarity": 0.358,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.1843
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.978
+      },
+      {
+        "alert_id": "a2",
+        "scenario_id": "S2",
+        "predicted_technique": "T1110",
+        "ground_truth_technique": "T1110",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.604,
+          "components": {
+            "similarity": 0.4972,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5896
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario2_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1110",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario2_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.104
+      },
+      {
+        "alert_id": "a3",
+        "scenario_id": "S3",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.545,
+          "components": {
+            "similarity": 0.4715,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.2649
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.213
+      },
+      {
+        "alert_id": "a4",
+        "scenario_id": "S4",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6704,
+          "components": {
+            "similarity": 0.5073,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.5611
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.041
+      },
+      {
+        "alert_id": "a5",
+        "scenario_id": "S5",
+        "predicted_technique": "T1021",
+        "ground_truth_technique": "T1021",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6279,
+          "components": {
+            "similarity": 0.5789,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5311
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unauthorized Database Connection",
+          "container_id": "sentinelmesh-database",
+          "attack_id": "T1021",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Unauthorized Database Connection"
+        },
+        "latency_ms": 1.694
+      },
+      {
+        "alert_id": "a6",
+        "scenario_id": "S6",
+        "predicted_technique": "T1070",
+        "ground_truth_technique": "T1070",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6377,
+          "components": {
+            "similarity": 0.4194,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.5771
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Log Directory Tampering",
+          "container_id": "sentinelmesh-logcollector",
+          "attack_id": "T1070",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Log Directory Tampering"
+        },
+        "latency_ms": 2.335
+      },
+      {
+        "alert_id": "a7",
+        "scenario_id": "S7",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5402,
+          "components": {
+            "similarity": 0.3461,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.5673
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario7_detector.py)",
+          "container_id": "sentinelmesh-dashboard",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 2.052
+      },
+      {
+        "alert_id": "a8",
+        "scenario_id": "S8",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6649,
+          "components": {
+            "similarity": 0.6387,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.4241
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 2.208
+      },
+      {
+        "alert_id": "a9",
+        "scenario_id": "S9",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6863,
+          "components": {
+            "similarity": 0.5382,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.1402
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.709
+      },
+      {
+        "alert_id": "a10_s10_stage1",
+        "scenario_id": "S10",
+        "predicted_technique": "T1190",
+        "ground_truth_technique": "T1190",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.5542,
+          "components": {
+            "similarity": 0.358,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.1843
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario1_detector.py)",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1190",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.979
+      },
+      {
+        "alert_id": "a11_s10_stage2",
+        "scenario_id": "S10",
+        "predicted_technique": "T1078",
+        "ground_truth_technique": "T1078",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.545,
+          "components": {
+            "similarity": 0.4715,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.3333,
+            "retrieval_consistency": 0.2649
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario3_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1078",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario3_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.953
+      },
+      {
+        "alert_id": "a12_s10_stage3",
+        "scenario_id": "S10",
+        "predicted_technique": "T1212",
+        "ground_truth_technique": "T1212",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6704,
+          "components": {
+            "similarity": 0.5073,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.5611
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "N/A (log-tail detector: scenario4_detector.py)",
+          "container_id": "sentinelmesh-authservice",
+          "attack_id": "T1212",
+          "cve_ids": [
+            "CVE-2022-29217"
+          ],
+          "kb_detector_ref": "detection/log-tail/scenario4_detector.py",
+          "kb_falco_rule_name": null
+        },
+        "latency_ms": 1.698
+      },
+      {
+        "alert_id": "a13_s10_stage4",
+        "scenario_id": "S10",
+        "predicted_technique": "T1003.008",
+        "ground_truth_technique": "T1003.008",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6863,
+          "components": {
+            "similarity": 0.5382,
+            "source_agreement": 1.0,
+            "cross_document_agreement": 1.0,
+            "retrieval_consistency": 0.1402
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Sensitive Credential File Read",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1003.008",
+          "cve_ids": [],
+          "kb_detector_ref": null,
+          "kb_falco_rule_name": "SentinelMesh Sensitive Credential File Read"
+        },
+        "latency_ms": 1.94
+      },
+      {
+        "alert_id": "a14_s10_stage5",
+        "scenario_id": "S10",
+        "predicted_technique": "T1041",
+        "ground_truth_technique": "T1041",
+        "correct": true,
+        "confidence": {
+          "confidence_score": 0.6649,
+          "components": {
+            "similarity": 0.6387,
+            "source_agreement": 0.85,
+            "cross_document_agreement": 0.6667,
+            "retrieval_consistency": 0.4241
+          },
+          "weights": {
+            "similarity": 0.4,
+            "source_agreement": 0.25,
+            "cross_document_agreement": 0.2,
+            "retrieval_consistency": 0.15
+          }
+        },
+        "evidence": {
+          "falco_rule": "SentinelMesh Unexpected Outbound Connection",
+          "container_id": "sentinelmesh-webapp",
+          "attack_id": "T1041",
+          "cve_ids": [],
+          "kb_detector_ref": "detection/log-tail/scenario1_detector.py",
+          "kb_falco_rule_name": "SentinelMesh Unexpected Outbound Connection"
+        },
+        "latency_ms": 2.444
+      }
+    ]
+  }
+}

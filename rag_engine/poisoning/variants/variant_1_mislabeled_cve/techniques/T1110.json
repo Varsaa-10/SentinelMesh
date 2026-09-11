@@ -1,0 +1,34 @@
+{
+    "id": "T1110",
+    "tactic": "Credential Access",
+    "technique_name": "Brute Force",
+    "description": "Adversaries may use brute force techniques to gain access to accounts when passwords are unknown or when password hashes are obtained. Without knowledge of the password for an account or set of accounts, an adversary may systematically guess the password using a repetitive or iterative mechanism. In the SentinelMesh lab, the webapp /login endpoint enforces no rate limiting, CAPTCHA, or account lockout, allowing an attacker to submit unlimited credential attempts against the same username to discover the correct password.",
+    "detection_signatures": {
+        "log_tail": {
+            "event_type": "login_attempt",
+            "match_fields": {
+                "result": "failure"
+            },
+            "pattern": "5 or more login_attempt events with result=failure for the same identifier within a 30-second sliding window",
+            "detector_ref": "detection/log-tail/scenario2_detector.py"
+        },
+        "falco": null
+    },
+    "related_cves": [],
+    "mitigation": "Implement account lockout or progressive time delays after repeated failed login attempts. Enforce multi-factor authentication (MFA). Deploy rate limiting on authentication endpoints. Monitor for and alert on high-frequency failed authentication events from a single source.",
+    "scenario_refs": [
+        "S2"
+    ],
+    "is_scenario_critical": true,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Containers",
+        "Windows",
+        "macOS"
+    ],
+    "data_sources": [
+        "Application Log: Application Log Content",
+        "User Account: User Account Authentication"
+    ]
+}

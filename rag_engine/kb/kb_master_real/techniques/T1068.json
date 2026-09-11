@@ -1,0 +1,32 @@
+{
+  "_reconstructed_note": "RECONSTRUCTED FROM PUBLIC MITRE ATT&CK DATA, not Person 1's original file. tactic/technique_name/description are accurate public ATT&CK facts. detection_signatures below is a plausible placeholder routing, not lab-verified. This is a distractor (is_scenario_critical=false), so exact wiring doesn't affect scoring, but replace with the real file if/when available.",
+  "id": "T1068",
+  "tactic": "Privilege Escalation",
+  "technique_name": "Exploitation for Privilege Escalation",
+  "description": "Adversaries may exploit software vulnerabilities in an attempt to elevate privileges, taking advantage of a programming error to run adversary-controlled code with higher permissions than intended.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "condition indicative of Exploitation for Privilege Escalation (distractor placeholder -- not lab-verified)"
+    }
+  },
+  "related_cves": [
+    "CVE-2019-14271",
+    "CVE-2020-15257",
+    "CVE-2021-22555",
+    "CVE-2021-3156",
+    "CVE-2021-4034",
+    "CVE-2022-0847"
+  ],
+  "mitigation": "Timely patching of privilege escalation CVEs, minimize setuid binaries, kernel hardening, runtime privilege monitoring.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers"
+  ],
+  "data_sources": []
+}
