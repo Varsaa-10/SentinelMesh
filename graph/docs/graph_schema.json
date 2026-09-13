@@ -1,0 +1,135 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "SentinelMesh Attack Graph Output",
+    "description": "Frozen JSON Schema (v1.0) for C1 attack-graph output. Used by C2 (Risk Scoring) and C3 (Evaluation Harness).",
+    "type": "object",
+    "required": [
+        "graph_id",
+        "nodes",
+        "edges",
+        "paths"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "graph_id": {
+            "type": "string",
+            "description": "Unique graph identifier (run_id + timestamp + suffix).",
+            "minLength": 1
+        },
+        "nodes": {
+            "type": "array",
+            "description": "All nodes in the attack graph.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "type",
+                    "label",
+                    "properties"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "container",
+                            "process",
+                            "network_connection",
+                            "technique",
+                            "cve"
+                        ]
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "description": "Type-specific properties (see graph_output_spec.md)."
+                    }
+                }
+            }
+        },
+        "edges": {
+            "type": "array",
+            "description": "All inferred edges between nodes.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "source",
+                    "target",
+                    "type",
+                    "weight"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "source": {
+                        "type": "string",
+                        "description": "Source node ID."
+                    },
+                    "target": {
+                        "type": "string",
+                        "description": "Target node ID."
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "technique_adjacency",
+                            "cve_dependency",
+                            "process_lineage",
+                            "network_flow"
+                        ]
+                    },
+                    "weight": {
+                        "type": "number",
+                        "minimum": 0.0,
+                        "maximum": 1.0
+                    },
+                    "timestamp": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "ISO-8601 UTC timestamp, or null if unavailable."
+                    }
+                }
+            }
+        },
+        "paths": {
+            "type": "array",
+            "description": "Reconstructed attack paths.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "scenario_id",
+                    "ordered_stages",
+                    "technique_sequence"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "scenario_id": {
+                        "type": "string",
+                        "description": "Scenario ID (e.g. S10)."
+                    },
+                    "ordered_stages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Scenario stages in topological order."
+                    },
+                    "technique_sequence": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "ATT&CK technique IDs in path order."
+                    }
+                }
+            }
+        }
+    }
+}
