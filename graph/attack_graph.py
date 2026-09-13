@@ -226,6 +226,7 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
     proc_name = _deep_get(event, "proc.name") or _deep_get(event, "proc_name")
     if proc_name:
         proc_id = f"process_{service}_{proc_name}"
+        proc_pname = _deep_get(event, "proc.pname") or _deep_get(event, "proc_pname") or ""
         if not graph.get_node(proc_id):
             graph.add_node(GraphNode(
                 id=proc_id,
@@ -233,10 +234,24 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
                 label=proc_name,
                 properties={
                     "proc_name": proc_name,
-                    "proc_pname": _deep_get(event, "proc.pname") or _deep_get(event, "proc_pname") or "",
+                    "proc_pname": proc_pname,
                     "container": service,
                 },
             ))
+        # Also create parent process node so process_lineage rule can connect them
+        if proc_pname:
+            parent_id = f"process_{service}_{proc_pname}"
+            if not graph.get_node(parent_id):
+                graph.add_node(GraphNode(
+                    id=parent_id,
+                    type="process",
+                    label=proc_pname,
+                    properties={
+                        "proc_name": proc_pname,
+                        "proc_pname": "",
+                        "container": service,
+                    },
+                ))
 
     # Network node (from event.fd.rip / fd.rport if present)
     rip = _deep_get(event, "fd.rip") or _deep_get(event, "fd_rip")
