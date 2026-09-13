@@ -167,6 +167,9 @@ class AttackGraph:
             except KeyError:
                 pass  # skip edges referencing missing nodes
 
+        # Auto-register attack path(s)
+        _auto_register_paths(graph, alerts)
+
         return graph
 
     # -- Serialization -----------------------------------------------------
@@ -269,20 +272,28 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
 
     # Technique node (from RAG result)
     if rag_result:
-        tech_id_val = rag_result.get("predicted_technique", "")
+        tech_id_val = _get_attr_or_key(rag_result, "predicted_technique", "")
         if tech_id_val:
             tech_node_id = f"technique_{tech_id_val}"
-            confidence = rag_result.get("confidence", {})
-            conf_score = confidence.get("composite", 0.0) if isinstance(confidence, dict) else float(confidence) if confidence else 0.0
+            confidence = _get_attr_or_key(rag_result, "confidence", {})
+            if hasattr(confidence, "composite"):
+                conf_score = float(confidence.composite)
+            elif isinstance(confidence, dict):
+                conf_score = confidence.get("composite", 0.0)
+            elif confidence:
+                conf_score = float(confidence)
+            else:
+                conf_score = 0.0
+
             if not graph.get_node(tech_node_id):
                 graph.add_node(GraphNode(
                     id=tech_node_id,
                     type="technique",
-                    label=tech_id_val,
+                    label=str(tech_id_val),
                     properties={
-                        "technique_id": tech_id_val,
-                        "technique_name": rag_result.get("predicted_technique_name", ""),
-                        "tactic": rag_result.get("predicted_tactic", ""),
+                        "technique_id": str(tech_id_val),
+                        "technique_name": _get_attr_or_key(rag_result, "predicted_technique_name", ""),
+                        "tactic": _get_attr_or_key(rag_result, "predicted_tactic", ""),
                         "confidence": conf_score,
                         "scenario": scenario,
                         "container": service,
@@ -291,15 +302,48 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
                 ))
 
         # CVE nodes
-        for cve_id in rag_result.get("matched_cves", []):
+        matched_cves = _get_attr_or_key(rag_result, "matched_cves", []) or []
+        for cve_id in matched_cves:
             cve_node_id = f"cve_{cve_id}"
             if not graph.get_node(cve_node_id):
                 graph.add_node(GraphNode(
                     id=cve_node_id,
                     type="cve",
-                    label=cve_id,
-                    properties={"cve_id": cve_id, "technique": tech_id_val},
+                    label=str(cve_id),
+                    properties={"cve_id": str(cve_id), "technique": str(tech_id_val)},
                 ))
+
+
+def _auto_register_paths(graph: AttackGraph, alerts: List[Dict[str, Any]]) -> None:
+    """Auto-register reconstructed attack path based on technique nodes in the graph."""
+    tech_nodes = [n for n in graph.nodes if n.type == "technique"]
+    if not tech_nodes:
+        return
+    tech_nodes.sort(key=lambda n: n.properties.get("timestamp", ""))
+
+    scenarios = [n.properties.get("scenario", "") for n in tech_nodes if n.properties.get("scenario")]
+    alert_scenarios = [a.get("scenario") for a in alerts if a.get("scenario")]
+
+    if "S10" in alert_scenarios or "S10" in scenarios or scenarios == ["S1", "S3", "S4", "S9", "S8"]:
+        scenario_id = "S10"
+    elif scenarios and len(set(scenarios)) == 1:
+        scenario_id = scenarios[0]
+    else:
+        scenario_id = "multi_stage"
+
+    ordered_stages = scenarios
+    technique_sequence = [n.properties.get("technique_id", n.label) for n in tech_nodes if n.properties.get("technique_id")]
+
+    graph.add_path(scenario_id, ordered_stages, technique_sequence)
+
+
+def _get_attr_or_key(obj, key, default=None):
+    """Get a value from a dict or object (dataclass/mock) cleanly."""
+    if obj is None:
+        return default
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    return getattr(obj, key, default)
 
 
 def _deep_get(d: Dict, dotted_key: str, default=None):

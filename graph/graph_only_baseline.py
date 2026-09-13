@@ -19,7 +19,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-from graph.attack_graph import AttackGraph, GraphNode
+from graph.attack_graph import AttackGraph, GraphNode, _auto_register_paths
 from graph.edge_rules import apply_all_rules
 
 
@@ -141,6 +141,9 @@ class GraphOnlyBaseline:
                 graph.add_edge(edge)
             except KeyError:
                 pass
+
+        # Auto-register attack path(s)
+        _auto_register_paths(graph, alerts)
 
         return graph
 
