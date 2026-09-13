@@ -1,0 +1,70 @@
+[
+    {
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "CRITICAL",
+        "title": "SQL Injection Authentication Bypass",
+        "timestamp": "2026-08-04T12:00:00Z",
+        "service": "webapp",
+        "event": {
+            "login_attempt": true,
+            "result": "success",
+            "injected_field": "username",
+            "identifier": "admin' OR '1'='1' --"
+        }
+    },
+    {
+        "source": "log-tail",
+        "scenario": "S3",
+        "severity": "WARNING",
+        "title": "Default Credential Login",
+        "timestamp": "2026-08-04T12:01:00Z",
+        "service": "authservice",
+        "event": {
+            "login_attempt": true,
+            "result": "success",
+            "identifier": "admin"
+        }
+    },
+    {
+        "source": "log-tail",
+        "scenario": "S4",
+        "severity": "CRITICAL",
+        "title": "JWT Algorithm Confusion",
+        "timestamp": "2026-08-04T12:02:00Z",
+        "service": "authservice",
+        "event": {
+            "jwt_verification": true,
+            "result": "valid",
+            "details": {
+                "algorithm": "none"
+            }
+        }
+    },
+    {
+        "source": "falco",
+        "scenario": "S9",
+        "severity": "CRITICAL",
+        "title": "SentinelMesh Sensitive Credential File Read",
+        "timestamp": "2026-08-04T12:03:00Z",
+        "service": "webapp",
+        "event": {
+            "proc.name": "cat",
+            "proc.pname": "containerd-shim",
+            "fd.name": "/etc/shadow"
+        }
+    },
+    {
+        "source": "falco",
+        "scenario": "S8",
+        "severity": "CRITICAL",
+        "title": "SentinelMesh Unexpected Outbound Connection",
+        "timestamp": "2026-08-04T12:04:00Z",
+        "service": "webapp",
+        "event": {
+            "fd.rip": "203.0.113.50",
+            "fd.rport": "443",
+            "proc.name": "curl"
+        }
+    }
+]
