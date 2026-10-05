@@ -85,8 +85,23 @@ class KBRecord:
         )
 
     def tactic_summary_text(self) -> str:
-        """Used for Layer 1 (tactic-level) retrieval."""
-        return f"{self.tactic}: {self.technique_name}. {self.description}"
+        """Used for Layer 1 (tactic-level) retrieval.
+
+        BUGFIX: this previously omitted detection_signatures entirely, even
+        though that's the part of the record most likely to share vocabulary
+        with a raw alert (event_type / pattern / falco rule text -- see
+        DetectionSignature.to_text()). to_text() below deliberately includes
+        it for exactly that reason ("Keep in one place so Layer1/Layer2/
+        flat-RAG stay consistent"), but tactic_summary_text() wasn't
+        actually using it, so Layer 1's tactic-level aggregate documents
+        were starved of the one signal that reliably ties an alert to a
+        technique. That's why two-layer scored far below flat-RAG (which
+        embeds the full to_text() per record): Layer 1 picked the wrong
+        tactic more often than not, so Layer 2 was searching within the
+        wrong candidate pool before it ever got a chance.
+        """
+        sig_text = self.detection_signatures.to_text()
+        return f"{self.tactic}: {self.technique_name}. {self.description} Signatures: {sig_text}"
 
 
 @dataclass

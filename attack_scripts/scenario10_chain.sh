@@ -21,7 +21,8 @@ sleep 2
 
 echo
 echo "[3/5] JWT Algorithm Confusion"
-python3 "$SCRIPT_DIR/scenario4_jwt_confusion.py"
+PYTHON_BIN=$(command -v python3 2>/dev/null || echo "python")
+"$PYTHON_BIN" "$SCRIPT_DIR/scenario4_jwt_confusion.py"
 
 sleep 2
 

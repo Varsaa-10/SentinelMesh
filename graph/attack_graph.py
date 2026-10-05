@@ -315,7 +315,19 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
 
 
 def _auto_register_paths(graph: AttackGraph, alerts: List[Dict[str, Any]]) -> None:
-    """Auto-register reconstructed attack path based on technique nodes in the graph."""
+    """Auto-register reconstructed attack path(s) based on technique nodes in the graph.
+
+    BUGFIX: this used to always register exactly ONE path per call, no
+    matter how many distinct scenarios were present. That's correct for a
+    single scenario, and for the S10 chain (which legitimately *is* one
+    path across 5 stages) -- but when the input alerts span several
+    *independent* single-technique scenarios at once (e.g. a full
+    eval/runs/<ts>/alerts.jsonl, which captures many scenarios back to
+    back in one file), it silently collapsed everything into one
+    meaningless "multi_stage" path instead of one path per scenario. That
+    is why graph_only_baseline run against a real run file produced only
+    1 path total across all 9 scenarios instead of one path per scenario.
+    """
     tech_nodes = [n for n in graph.nodes if n.type == "technique"]
     if not tech_nodes:
         return
@@ -324,17 +336,36 @@ def _auto_register_paths(graph: AttackGraph, alerts: List[Dict[str, Any]]) -> No
     scenarios = [n.properties.get("scenario", "") for n in tech_nodes if n.properties.get("scenario")]
     alert_scenarios = [a.get("scenario") for a in alerts if a.get("scenario")]
 
+    def _technique_sequence(nodes: List[GraphNode]) -> List[str]:
+        return [n.properties.get("technique_id", n.label) for n in nodes if n.properties.get("technique_id")]
+
+    # S10 chain: always one combined path, exactly as before.
     if "S10" in alert_scenarios or "S10" in scenarios or scenarios == ["S1", "S3", "S4", "S9", "S8"]:
-        scenario_id = "S10"
-    elif scenarios and len(set(scenarios)) == 1:
-        scenario_id = scenarios[0]
-    else:
-        scenario_id = "multi_stage"
+        graph.add_path("S10", scenarios, _technique_sequence(tech_nodes))
+        return
 
-    ordered_stages = scenarios
-    technique_sequence = [n.properties.get("technique_id", n.label) for n in tech_nodes if n.properties.get("technique_id")]
+    # Single scenario in this batch: one path, exactly as before.
+    if scenarios and len(set(scenarios)) == 1:
+        graph.add_path(scenarios[0], scenarios, _technique_sequence(tech_nodes))
+        return
 
-    graph.add_path(scenario_id, ordered_stages, technique_sequence)
+    # Multiple independent (non-chain) scenarios in one batch: register
+    # one path PER scenario instead of collapsing them into a single
+    # "multi_stage" blob.
+    if scenarios:
+        seen_ids: List[str] = []
+        for sid in scenarios:
+            if sid not in seen_ids:
+                seen_ids.append(sid)
+        for sid in seen_ids:
+            sid_nodes = [n for n in tech_nodes if n.properties.get("scenario") == sid]
+            sid_stages = [n.properties.get("scenario", "") for n in sid_nodes]
+            graph.add_path(sid, sid_stages, _technique_sequence(sid_nodes))
+        return
+
+    # No scenario info on any technique node: fall back to a single
+    # best-effort path so something is still recorded.
+    graph.add_path("multi_stage", scenarios, _technique_sequence(tech_nodes))
 
 
 def _get_attr_or_key(obj, key, default=None):

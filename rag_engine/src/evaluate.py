@@ -21,11 +21,16 @@ import os
 import statistics
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+if SRC_DIR not in sys.path:
+    sys.path.append(SRC_DIR)
 
 from kb_loader import load_kb_dir, cve_lookup as build_cve_lookup
 from embeddings import EMBEDDERS
-from rag_engine import TwoLayerRAG
+try:
+    from rag_engine.src.rag_engine import TwoLayerRAG
+except ImportError:
+    from rag_engine import TwoLayerRAG
 from flat_rag import FlatRAG
 from alert_normalizer import normalize_alert_text
 
