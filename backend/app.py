@@ -70,6 +70,10 @@ ALERTS_STORE: List[Dict[str, Any]] = [
         "title": "SQL Injection Authentication Bypass",
         "service": "webapp",
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "status": "PENDING_APPROVAL",
+        "proposed_action": "Isolate Webapp Container",
+        "confidence": 0.9412,
+        "evidence": "SQLi Pattern Match",
         "event": {"payload": "' OR '1'='1"}
     }
 ]
@@ -163,11 +167,13 @@ def get_dashboard():
 
 @app.get("/api/health")
 def get_health():
+    pending_count = sum(1 for a in ALERTS_STORE if a.get("status") == "PENDING_APPROVAL")
     return {
         "status": "ok",
         "rag_available": RAG_AVAILABLE,
         "graph_available": GRAPH_AVAILABLE,
         "active_alerts_count": len(ALERTS_STORE),
+        "pending_approval_count": pending_count,
         "total_decisions": len(DECISIONS_STORE),
     }
 
@@ -182,6 +188,9 @@ async def create_alert(alert: AlertModel):
     data = alert.dict()
     if "alert_id" not in data:
         data["alert_id"] = f"ALT-{len(ALERTS_STORE) + 1:04d}"
+    data["status"] = "PENDING_APPROVAL"
+    data["proposed_action"] = f"Remediate {data.get('title', 'threat')}"
+    data["confidence"] = 0.9200
     ALERTS_STORE.append(data)
     
     # Broadcast to websocket clients
@@ -245,7 +254,9 @@ def investigate_alerts():
 
 @app.get("/api/decisions")
 def get_decisions():
+    pending_alerts = [a for a in ALERTS_STORE if a.get("status") == "PENDING_APPROVAL"]
     return {
+        "pending_approval": pending_alerts,
         "decisions": DECISIONS_STORE,
         "metrics": METRICS,
     }
@@ -256,6 +267,13 @@ async def record_decision(decision: DecisionModel):
     data = decision.dict()
     data["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
     DECISIONS_STORE.append(data)
+
+    # Mark corresponding alert as ACTIONED
+    for alert in ALERTS_STORE:
+        if alert.get("alert_id") == decision.alert_id:
+            alert["status"] = "ACTIONED"
+            alert["resolution"] = decision.action.upper()
+            alert["resolved_by"] = decision.analyst_id
 
     # Update feedback metrics
     METRICS["total_decisions"] += 1
@@ -271,7 +289,12 @@ async def record_decision(decision: DecisionModel):
     METRICS["override_rate"] = round((METRICS["rejections"] + METRICS["modifications"]) / total, 4) if total > 0 else 0.0
 
     # Broadcast decision event via WS
-    await broadcast_ws({"type": "DECISION_LOGGED", "decision": data, "metrics": METRICS})
+    await broadcast_ws({
+        "type": "DECISION_LOGGED",
+        "decision": data,
+        "alert_id": decision.alert_id,
+        "metrics": METRICS
+    })
 
     return {"status": "success", "decision": data, "metrics": METRICS}
 
@@ -287,6 +310,7 @@ async def websocket_endpoint(websocket: WebSocket):
             "type": "INIT",
             "message": "Connected to SentinelMesh Live Telemetry Feed",
             "alerts_count": len(ALERTS_STORE),
+            "pending_count": sum(1 for a in ALERTS_STORE if a.get("status") == "PENDING_APPROVAL"),
             "decisions_count": len(DECISIONS_STORE),
         })
         while True:

@@ -165,7 +165,7 @@
       border: 1px solid var(--panel-border);
       border-radius: 8px;
       padding: 0.85rem;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
     }
 
     .alert-card:hover {
@@ -200,6 +200,12 @@
       border: 1px solid rgba(245, 158, 11, 0.4);
     }
 
+    .sev-resolved {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
     .alert-title {
       font-size: 0.9rem;
       font-weight: 600;
@@ -228,6 +234,13 @@
     }
 
     /* Approval Queue */
+    .queue-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-height: 140px;
+    }
+
     .approval-card {
       background: rgba(245, 158, 11, 0.05);
       border: 1px solid rgba(245, 158, 11, 0.3);
@@ -236,6 +249,28 @@
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+      transition: all 0.4s ease;
+    }
+
+    .approval-card.resolving-approved {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--accent-green);
+      transform: scale(0.98);
+      opacity: 0.8;
+    }
+
+    .approval-card.resolving-modified {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent-amber);
+      transform: scale(0.98);
+      opacity: 0.8;
+    }
+
+    .approval-card.resolving-rejected {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--accent-red);
+      transform: scale(0.98);
+      opacity: 0.8;
     }
 
     .action-btn-group {
@@ -272,6 +307,16 @@
     .btn-reject {
       background: var(--accent-red);
       color: #fff;
+    }
+
+    .empty-queue {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--accent-green);
+      font-size: 0.85rem;
     }
 
     /* Metrics Grid */
@@ -331,14 +376,7 @@
         </div>
       </div>
       <div class="stream-list" id="stream-list">
-        <div class="alert-card">
-          <div class="alert-top">
-            <span class="sev-tag sev-critical">CRITICAL</span>
-            <span class="alert-meta">S1 · webapp</span>
-          </div>
-          <div class="alert-title">SQL Injection Authentication Bypass</div>
-          <div class="alert-meta">Payload: ' OR '1'='1</div>
-        </div>
+        <!-- Ingested alerts rendered here -->
       </div>
     </section>
 
@@ -360,23 +398,13 @@
     <section class="panel">
       <div class="panel-header">
         <div class="panel-title">
-          <span>🛡️ Tiered Approval Queue & Feedback</span>
+          <span>🛡️ Tiered Approval Queue</span>
+          <span class="badge-count" id="queue-count">0 pending</span>
         </div>
       </div>
 
-      <div class="approval-card" id="approval-card">
-        <div class="alert-top">
-          <span class="sev-tag sev-warning">MEDIUM RISK — ANALYST GATE</span>
-          <span class="alert-meta">S1 · T1190</span>
-        </div>
-        <div class="alert-title">Proposed Action: Isolate Webapp Container</div>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Confidence Score: 0.9412 | Evidence: SQLi Pattern Match
-        </p>
-        <div class="action-btn-group">
-          <button class="btn btn-approve" onclick="submitDecision('approve')">Approve</button>
-          <button class="btn btn-override" onclick="submitDecision('modify')">Modify</button>
-          <button class="btn btn-reject" onclick="submitDecision('reject')">Reject</button>
-        </div>
+      <div class="queue-container" id="queue-container">
+        <!-- Pending approval cards rendered dynamically -->
       </div>
 
       <div class="panel-title" style="margin-top: 0.5rem; font-size: 0.9rem;">
@@ -409,6 +437,7 @@
     const WS_URL = `ws://${HOST}:8000/ws`;
     let ws = null;
     let reconnectTimer = null;
+    let currentAlerts = [];
 
     function initWS() {
       if (ws) {
@@ -429,9 +458,10 @@
           try {
             const data = JSON.parse(event.data);
             if (data.type === "NEW_ALERT") {
-              addAlertToUI(data.alert);
+              fetchAlerts();
             } else if (data.type === "DECISION_LOGGED") {
               updateMetricsUI(data.metrics);
+              fetchAlerts();
             }
           } catch (e) { }
         };
@@ -460,12 +490,10 @@
         const res = await fetch(`${API_BASE}/api/alerts`);
         if (res.ok) {
           const data = await res.json();
-          document.getElementById("alert-count").innerText = `${data.count || 0} alerts`;
-          if (data.alerts && data.alerts.length > 0) {
-            const list = document.getElementById("stream-list");
-            list.innerHTML = "";
-            data.alerts.forEach(a => addAlertToUI(a));
-          }
+          currentAlerts = data.alerts || [];
+          document.getElementById("alert-count").innerText = `${currentAlerts.length} alerts`;
+          renderStreamUI();
+          renderQueueUI();
         }
       } catch (e) { }
     }
@@ -480,19 +508,66 @@
       } catch (e) { }
     }
 
-    function addAlertToUI(alert) {
+    function renderStreamUI() {
       const list = document.getElementById("stream-list");
-      const card = document.createElement("div");
-      card.className = "alert-card";
-      card.innerHTML = `
-        <div class="alert-top">
-          <span class="sev-tag ${alert.severity === 'CRITICAL' ? 'sev-critical' : 'sev-warning'}">${alert.severity}</span>
-          <span class="alert-meta">${alert.scenario || 'S'} · ${alert.service}</span>
-        </div>
-        <div class="alert-title">${alert.title}</div>
-        <div class="alert-meta">${JSON.stringify(alert.event)}</div>
-      `;
-      list.prepend(card);
+      list.innerHTML = "";
+      if (currentAlerts.length === 0) {
+        list.innerHTML = `<div class="alert-meta">No alerts ingested yet.</div>`;
+        return;
+      }
+      currentAlerts.forEach(alert => {
+        const card = document.createElement("div");
+        card.className = "alert-card";
+        const isActioned = alert.status === "ACTIONED";
+        card.innerHTML = `
+          <div class="alert-top">
+            <span class="sev-tag ${isActioned ? 'sev-resolved' : (alert.severity === 'CRITICAL' ? 'sev-critical' : 'sev-warning')}">
+              ${isActioned ? `RESOLVED (${alert.resolution})` : alert.severity}
+            </span>
+            <span class="alert-meta">${alert.scenario || 'S1'} · ${alert.service}</span>
+          </div>
+          <div class="alert-title">${alert.title}</div>
+          <div class="alert-meta">${JSON.stringify(alert.event || {})}</div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function renderQueueUI() {
+      const container = document.getElementById("queue-container");
+      const pendingAlerts = currentAlerts.filter(a => a.status === "PENDING_APPROVAL" || !a.status);
+      document.getElementById("queue-count").innerText = `${pendingAlerts.length} pending`;
+
+      if (pendingAlerts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-queue">
+            🎉 <strong>Approval Queue Clear</strong><br>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">All container threats reviewed and response actions routed.</span>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = "";
+      pendingAlerts.forEach(alert => {
+        const card = document.createElement("div");
+        card.className = "approval-card";
+        card.id = `queue-card-${alert.alert_id}`;
+        card.innerHTML = `
+          <div class="alert-top">
+            <span class="sev-tag sev-warning">MEDIUM RISK — ANALYST GATE</span>
+            <span class="alert-meta">${alert.alert_id} · ${alert.scenario || 'S1'}</span>
+          </div>
+          <div class="alert-title">Proposed Action: ${alert.proposed_action || 'Isolate Container'}</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Confidence Score: ${alert.confidence || 0.9412} | Evidence: ${alert.evidence || 'Pattern Match'}</p>
+          <div class="action-btn-group" id="btn-group-${alert.alert_id}">
+            <button class="btn btn-approve" onclick="submitDecision('${alert.alert_id}', '${alert.scenario || 'S1'}', 'approve')">Approve</button>
+            <button class="btn btn-override" onclick="submitDecision('${alert.alert_id}', '${alert.scenario || 'S1'}', 'modify')">Modify</button>
+            <button class="btn btn-reject" onclick="submitDecision('${alert.alert_id}', '${alert.scenario || 'S1'}', 'reject')">Reject</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
     async function runInvestigation() {
@@ -511,14 +586,26 @@
       }
     }
 
-    async function submitDecision(action) {
+    async function submitDecision(alertId, scenarioId, action) {
+      const card = document.getElementById(`queue-card-${alertId}`);
+      const btnGroup = document.getElementById(`btn-group-${alertId}`);
+
+      // Visual feedback transition
+      if (card) {
+        card.className = `approval-card resolving-${action}d`;
+        if (btnGroup) {
+          const label = action === 'approve' ? '✅ APPROVED & EXECUTED' : (action === 'modify' ? '⚠️ MODIFIED & REROUTED' : '❌ REJECTED & DROPPED');
+          btnGroup.innerHTML = `<div style="font-weight:700; font-size:0.85rem; padding: 0.3rem 0; color:#fff;">${label}</div>`;
+        }
+      }
+
       try {
         const res = await fetch(`${API_BASE}/api/decisions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            alert_id: "ALT-0001",
-            scenario_id: "S1",
+            alert_id: alertId,
+            scenario_id: scenarioId,
             action: action,
             analyst_id: "analyst-1",
             comment: `Analyst selected ${action}`
@@ -527,9 +614,17 @@
         if (res.ok) {
           const data = await res.json();
           updateMetricsUI(data.metrics);
-          alert(`Decision recorded: ${action.toUpperCase()}`);
-        } else {
-          alert(`Error submitting decision: status ${res.status}`);
+
+          // Smooth slide-out removal after 1 second feedback
+          setTimeout(() => {
+            if (card) {
+              card.style.opacity = '0';
+              card.style.transform = 'translateY(-10px)';
+              setTimeout(() => fetchAlerts(), 300);
+            } else {
+              fetchAlerts();
+            }
+          }, 1000);
         }
       } catch (e) {
         alert("Error submitting decision: " + e.message);
