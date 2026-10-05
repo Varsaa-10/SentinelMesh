@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import AttackTriggerBar from './components/AttackTriggerBar';
+import LiveContainerStreamer from './components/LiveContainerStreamer';
 import TelemetryStream from './components/TelemetryStream';
 import InvestigationPanel from './components/InvestigationPanel';
 import ApprovalQueue from './components/ApprovalQueue';
@@ -95,6 +96,19 @@ export default function App() {
         }
     };
 
+    const injectLiveLog = async (alertPayload) => {
+        try {
+            const res = await fetch(`${API_BASE}/api/alerts`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(alertPayload)
+            });
+            if (res.ok) fetchAlerts();
+        } catch (e) {
+            console.error("Error streaming container log:", e);
+        }
+    };
+
     const resetLab = async () => {
         try {
             await fetch(`${API_BASE}/api/attacks/reset`, { method: "POST" });
@@ -154,7 +168,10 @@ export default function App() {
     return (
         <React.Fragment>
             <Header connected={connected} />
-            <AttackTriggerBar onTrigger={triggerAttack} onReset={resetLab} />
+            <div style={{ padding: '0 2rem' }}>
+                <AttackTriggerBar onTrigger={triggerAttack} onReset={resetLab} />
+                <LiveContainerStreamer onInjectLog={injectLiveLog} />
+            </div>
             <main>
                 <TelemetryStream alerts={alerts} />
                 <InvestigationPanel
