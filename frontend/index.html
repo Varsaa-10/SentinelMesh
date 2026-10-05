@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SentinelMesh — Human-Supervised Threat Investigation Analyst Dashboard</title>
+  <link rel="shortcut icon"
+    href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg-dark: #0a0d14;
@@ -21,7 +27,12 @@
       --text-muted: #9ca3af;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-dark);
@@ -63,8 +74,16 @@
       color: #fff;
     }
 
-    .brand-title h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
-    .brand-title p { font-size: 0.75rem; color: var(--text-muted); }
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
 
     .status-badge {
       display: flex;
@@ -169,11 +188,30 @@
       text-transform: uppercase;
     }
 
-    .sev-critical { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); }
-    .sev-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .sev-critical {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
 
-    .alert-title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; }
-    .alert-meta { font-size: 0.75rem; color: var(--text-muted); font-family: 'Fira Code', monospace; }
+    .sev-warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .alert-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .alert-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
 
     /* Graph & Investigation Panel */
     .investigation-box {
@@ -217,10 +255,24 @@
       transition: opacity 0.2s;
     }
 
-    .btn:hover { opacity: 0.9; }
-    .btn-approve { background: var(--accent-green); color: #000; }
-    .btn-override { background: var(--accent-amber); color: #000; }
-    .btn-reject { background: var(--accent-red); color: #fff; }
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn-approve {
+      background: var(--accent-green);
+      color: #000;
+    }
+
+    .btn-override {
+      background: var(--accent-amber);
+      color: #000;
+    }
+
+    .btn-reject {
+      background: var(--accent-red);
+      color: #fff;
+    }
 
     /* Metrics Grid */
     .metrics-grid {
@@ -238,10 +290,21 @@
       text-align: center;
     }
 
-    .metric-val { font-size: 1.25rem; font-weight: 700; color: var(--accent-cyan); }
-    .metric-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.25rem; }
+    .metric-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .metric-lbl {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
   </style>
 </head>
+
 <body>
 
   <header>
@@ -252,9 +315,9 @@
         <p>Hierarchical RAG & Attack Graph Threat Investigation</p>
       </div>
     </div>
-    <div class="status-badge">
-      <div class="status-dot"></div>
-      <span id="conn-status">Backend Connected (ws://localhost:8000/ws)</span>
+    <div class="status-badge" id="status-container">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="conn-status">Connecting to Backend...</span>
     </div>
   </header>
 
@@ -285,10 +348,11 @@
         <div class="panel-title">
           <span>🔍 RAG Grounding & Attack Graph</span>
         </div>
-        <button class="btn btn-approve" style="flex:none; padding: 0.3rem 0.6rem;" onclick="runInvestigation()">Run Investigation</button>
+        <button class="btn btn-approve" style="flex:none; padding: 0.3rem 0.6rem;" onclick="runInvestigation()">Run
+          Investigation</button>
       </div>
       <div class="investigation-box" id="investigation-output">
-Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph.
+        Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph.
       </div>
     </section>
 
@@ -306,7 +370,8 @@ Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph
           <span class="alert-meta">S1 · T1190</span>
         </div>
         <div class="alert-title">Proposed Action: Isolate Webapp Container</div>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Confidence Score: 0.9412 | Evidence: SQLi Pattern Match</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Confidence Score: 0.9412 | Evidence: SQLi Pattern Match
+        </p>
         <div class="action-btn-group">
           <button class="btn btn-approve" onclick="submitDecision('approve')">Approve</button>
           <button class="btn btn-override" onclick="submitDecision('modify')">Modify</button>
@@ -339,36 +404,80 @@ Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph
   </main>
 
   <script>
-    const API_BASE = "http://localhost:8000";
-    let ws;
+    const HOST = window.location.hostname || "localhost";
+    const API_BASE = `http://${HOST}:8000`;
+    const WS_URL = `ws://${HOST}:8000/ws`;
+    let ws = null;
+    let reconnectTimer = null;
 
     function initWS() {
+      if (ws) {
+        try { ws.close(); } catch (e) { }
+      }
+
       try {
-        ws = new WebSocket("ws://localhost:8000/ws");
+        ws = new WebSocket(WS_URL);
+
         ws.onopen = () => {
           document.getElementById("conn-status").innerText = "Backend Connected (WebSocket Live)";
+          document.getElementById("status-dot").style.background = "#10b981";
+          fetchAlerts();
+          fetchDecisions();
         };
+
         ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          if (data.type === "NEW_ALERT") {
-            addAlertToUI(data.alert);
-          } else if (data.type === "DECISION_LOGGED") {
-            updateMetricsUI(data.metrics);
-          }
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === "NEW_ALERT") {
+              addAlertToUI(data.alert);
+            } else if (data.type === "DECISION_LOGGED") {
+              updateMetricsUI(data.metrics);
+            }
+          } catch (e) { }
         };
-        ws.onerror = () => fallbackPolling();
+
+        ws.onclose = ws.onerror = () => {
+          document.getElementById("conn-status").innerText = "Connecting to Backend...";
+          document.getElementById("status-dot").style.background = "#ef4444";
+          scheduleReconnect();
+        };
       } catch (e) {
-        fallbackPolling();
+        scheduleReconnect();
       }
     }
 
-    async function fallbackPolling() {
-      document.getElementById("conn-status").innerText = "REST Polling Mode";
+    function scheduleReconnect() {
+      if (!reconnectTimer) {
+        reconnectTimer = setTimeout(() => {
+          reconnectTimer = null;
+          initWS();
+        }, 3000);
+      }
+    }
+
+    async function fetchAlerts() {
       try {
         const res = await fetch(`${API_BASE}/api/alerts`);
-        const data = await res.json();
-        document.getElementById("alert-count").innerText = `${data.count} alerts`;
-      } catch (e) {}
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById("alert-count").innerText = `${data.count || 0} alerts`;
+          if (data.alerts && data.alerts.length > 0) {
+            const list = document.getElementById("stream-list");
+            list.innerHTML = "";
+            data.alerts.forEach(a => addAlertToUI(a));
+          }
+        }
+      } catch (e) { }
+    }
+
+    async function fetchDecisions() {
+      try {
+        const res = await fetch(`${API_BASE}/api/decisions`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.metrics) updateMetricsUI(data.metrics);
+        }
+      } catch (e) { }
     }
 
     function addAlertToUI(alert) {
@@ -391,8 +500,12 @@ Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph
       output.innerText = "Querying TwoLayerRAG and building Attack Graph...";
       try {
         const res = await fetch(`${API_BASE}/api/investigate`, { method: "POST" });
-        const data = await res.json();
-        output.innerText = JSON.stringify(data, null, 2);
+        if (res.ok) {
+          const data = await res.json();
+          output.innerText = JSON.stringify(data, null, 2);
+        } else {
+          output.innerText = `Server returned status ${res.status}`;
+        }
       } catch (e) {
         output.innerText = "Error connecting to backend: " + e.message;
       }
@@ -411,9 +524,13 @@ Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph
             comment: `Analyst selected ${action}`
           })
         });
-        const data = await res.json();
-        updateMetricsUI(data.metrics);
-        alert(`Decision recorded: ${action.toUpperCase()}`);
+        if (res.ok) {
+          const data = await res.json();
+          updateMetricsUI(data.metrics);
+          alert(`Decision recorded: ${action.toUpperCase()}`);
+        } else {
+          alert(`Error submitting decision: status ${res.status}`);
+        }
       } catch (e) {
         alert("Error submitting decision: " + e.message);
       }
@@ -432,4 +549,5 @@ Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph
     };
   </script>
 </body>
+
 </html>

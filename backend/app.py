@@ -7,6 +7,7 @@ Provides:
   - /api/investigate: Run RAG threat-intel & Attack Graph reconstruction
   - /api/decisions: Tiered risk response routing & analyst decision feedback
   - /ws: Real-time WebSocket feed for live alerts and approval queue updates
+  - /dashboard: Analyst Dashboard UI
 """
 
 from __future__ import annotations
@@ -18,8 +19,10 @@ import asyncio
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 # Add repository root to sys.path
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -58,7 +61,18 @@ app.add_middleware(
 
 
 # --- In-memory Stores ---
-ALERTS_STORE: List[Dict[str, Any]] = []
+ALERTS_STORE: List[Dict[str, Any]] = [
+    {
+        "alert_id": "ALT-0001",
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "CRITICAL",
+        "title": "SQL Injection Authentication Bypass",
+        "service": "webapp",
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "event": {"payload": "' OR '1'='1"}
+    }
+]
 DECISIONS_STORE: List[Dict[str, Any]] = []
 WEBSOCKET_CLIENTS: List[WebSocket] = []
 
@@ -123,14 +137,28 @@ async def broadcast_ws(data: Dict[str, Any]):
             WEBSOCKET_CLIENTS.remove(ws)
 
 
+# --- Favicon route ---
+@app.get("/favicon.ico")
+def favicon():
+    return Response(content=b"", media_type="image/x-icon")
+
+
 # --- REST API Endpoints ---
 @app.get("/")
 def read_root():
     return {
         "service": "SentinelMesh API Backend",
         "status": "online",
-        "endpoints": ["/api/health", "/api/alerts", "/api/investigate", "/api/decisions", "/ws"],
+        "endpoints": ["/api/health", "/api/alerts", "/api/investigate", "/api/decisions", "/ws", "/dashboard"],
     }
+
+
+@app.get("/dashboard")
+def get_dashboard():
+    frontend_index = os.path.join(ROOT_DIR, "frontend", "index.html")
+    if os.path.exists(frontend_index):
+        return FileResponse(frontend_index)
+    return {"message": "Frontend index.html not found"}
 
 
 @app.get("/api/health")
@@ -161,7 +189,7 @@ async def create_alert(alert: AlertModel):
     return {"status": "success", "alert": data}
 
 
-@app.post("/api/investigate")
+@app.api_route("/api/investigate", methods=["GET", "POST"])
 def investigate_alerts():
     """Runs RAG lookup and Attack Graph reconstruction on current alerts."""
     if not ALERTS_STORE:
