@@ -9,7 +9,7 @@ Provides:
   - /api/attacks/trigger: Trigger live attack simulations (S1-S10)
   - /api/attacks/reset: Reset lab alerts and decision metrics
   - /ws: Real-time WebSocket feed for live alerts and approval queue updates
-  - /dashboard: React Analyst Dashboard UI
+  - /dashboard: React Analyst Dashboard UI (Vite Build)
 """
 
 from __future__ import annotations
@@ -60,6 +60,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount Vite static assets
+FRONTEND_DIST = os.path.join(ROOT_DIR, "frontend", "dist")
+FRONTEND_ASSETS = os.path.join(FRONTEND_DIST, "assets")
+if os.path.exists(FRONTEND_ASSETS):
+    app.mount("/dashboard/assets", StaticFiles(directory=FRONTEND_ASSETS), name="dashboard-assets")
+    app.mount("/assets", StaticFiles(directory=FRONTEND_ASSETS), name="root-assets")
 
 
 # --- Attack Scenario Catalog ---
@@ -259,7 +266,11 @@ def read_root():
 
 
 @app.get("/dashboard")
-def get_dashboard():
+@app.get("/dashboard/{full_path:path}")
+def get_dashboard(full_path: str = ""):
+    dist_index = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(dist_index):
+        return FileResponse(dist_index)
     frontend_index = os.path.join(ROOT_DIR, "frontend", "index.html")
     if os.path.exists(frontend_index):
         return FileResponse(frontend_index)
