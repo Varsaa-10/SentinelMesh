@@ -6,8 +6,10 @@ Provides:
   - /api/alerts: Ingest and list runtime alerts
   - /api/investigate: Run RAG threat-intel & Attack Graph reconstruction
   - /api/decisions: Tiered risk response routing & analyst decision feedback
+  - /api/attacks/trigger: Trigger live attack simulations (S1-S10)
+  - /api/attacks/reset: Reset lab alerts and decision metrics
   - /ws: Real-time WebSocket feed for live alerts and approval queue updates
-  - /dashboard: Analyst Dashboard UI
+  - /dashboard: React Analyst Dashboard UI
 """
 
 from __future__ import annotations
@@ -58,6 +60,101 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# --- Attack Scenario Catalog ---
+ATTACK_CATALOG = {
+    "S1": {
+        "title": "SQL Injection Authentication Bypass",
+        "service": "webapp",
+        "severity": "CRITICAL",
+        "proposed_action": "Isolate Webapp Container",
+        "confidence": 0.9412,
+        "evidence": "SQLi Pattern Match (' OR '1'='1)",
+        "event": {"payload": "' OR '1'='1 --", "endpoint": "/api/v1/login"}
+    },
+    "S2": {
+        "title": "Brute Force Credential Spray",
+        "service": "auth-service",
+        "severity": "HIGH",
+        "proposed_action": "Rate Limit & Lock Auth IP",
+        "confidence": 0.8950,
+        "evidence": "50 Failed Logins in 10 Seconds",
+        "event": {"attempts": 50, "target_user": "admin", "src_ip": "192.168.1.105"}
+    },
+    "S3": {
+        "title": "Remote Code Execution (Command Injection)",
+        "service": "api-gateway",
+        "severity": "CRITICAL",
+        "proposed_action": "Terminate Process & Quarantine Container",
+        "confidence": 0.9650,
+        "evidence": "Shell Spawn via Subprocess",
+        "event": {"payload": "; cat /etc/passwd", "command": "sh -c"}
+    },
+    "S4": {
+        "title": "JWT Algorithm Confusion Attack",
+        "service": "auth-service",
+        "severity": "HIGH",
+        "proposed_action": "Revoke Signing Key & Force Re-Auth",
+        "confidence": 0.9120,
+        "evidence": "Header alg='none' Mismatch",
+        "event": {"alg": "none", "claimed_user": "admin"}
+    },
+    "S5": {
+        "title": "Server-Side Request Forgery (SSRF)",
+        "service": "internal-proxy",
+        "severity": "HIGH",
+        "proposed_action": "Block Metadata Endpoint Access",
+        "confidence": 0.8870,
+        "evidence": "Cloud Metadata Fetch (169.254.169.254)",
+        "event": {"target_url": "http://169.254.169.254/latest/meta-data/"}
+    },
+    "S6": {
+        "title": "Path Traversal Arbitrary File Read",
+        "service": "file-server",
+        "severity": "MEDIUM",
+        "proposed_action": "Sanitize Path Parameter & Block IP",
+        "confidence": 0.8540,
+        "evidence": "Traversal Sequence ../../etc/passwd",
+        "event": {"filepath": "../../../etc/shadow"}
+    },
+    "S7": {
+        "title": "Container Escape & Privilege Escalation",
+        "service": "k8s-node-01",
+        "severity": "CRITICAL",
+        "proposed_action": "Cordon & Drain Node",
+        "confidence": 0.9850,
+        "evidence": "Host Namespace Mount & CAP_SYS_ADMIN",
+        "event": {"syscall": "nsenter", "target": "host_pid"}
+    },
+    "S8": {
+        "title": "Defense Evasion Log Manipulation",
+        "service": "syslog-daemon",
+        "severity": "MEDIUM",
+        "proposed_action": "Restore Immutable Audit Pipeline",
+        "confidence": 0.8320,
+        "evidence": "Auditd Daemon Termination",
+        "event": {"action": "kill", "process": "auditd"}
+    },
+    "S9": {
+        "title": "Credential Access /etc/shadow Dump",
+        "service": "db-container",
+        "severity": "CRITICAL",
+        "proposed_action": "Rotate DB Passwords & Encrypt Volume",
+        "confidence": 0.9710,
+        "evidence": "Sensitive File Access /etc/shadow",
+        "event": {"file": "/etc/shadow", "mode": "read"}
+    },
+    "S10": {
+        "title": "Multi-Stage APT Attack Chain",
+        "service": "cluster-ingress",
+        "severity": "CRITICAL",
+        "proposed_action": "Execute Emergency Cluster Containment Plan",
+        "confidence": 0.9920,
+        "evidence": "Correlated Attack Chain (T1190 -> T1068 -> T1041)",
+        "event": {"chain_steps": ["SQLi", "PrivEsc", "Data Exfiltration"]}
+    }
+}
 
 
 # --- In-memory Stores ---
@@ -128,6 +225,10 @@ class DecisionModel(BaseModel):
     comment: Optional[str] = None
 
 
+class TriggerModel(BaseModel):
+    scenario_id: str = Field(..., example="S1")
+
+
 # --- WebSocket Manager ---
 async def broadcast_ws(data: Dict[str, Any]):
     disconnected = []
@@ -153,7 +254,7 @@ def read_root():
     return {
         "service": "SentinelMesh API Backend",
         "status": "online",
-        "endpoints": ["/api/health", "/api/alerts", "/api/investigate", "/api/decisions", "/ws", "/dashboard"],
+        "endpoints": ["/api/health", "/api/alerts", "/api/investigate", "/api/decisions", "/api/attacks/trigger", "/ws", "/dashboard"],
     }
 
 
@@ -196,6 +297,65 @@ async def create_alert(alert: AlertModel):
     # Broadcast to websocket clients
     await broadcast_ws({"type": "NEW_ALERT", "alert": data})
     return {"status": "success", "alert": data}
+
+
+@app.api_route("/api/attacks/trigger", methods=["POST"])
+async def trigger_attack(trigger: TriggerModel):
+    scenario_id = trigger.scenario_id.upper()
+    if scenario_id not in ATTACK_CATALOG:
+        raise HTTPException(status_code=400, detail=f"Unknown scenario_id '{scenario_id}'. Valid scenarios: {list(ATTACK_CATALOG.keys())}")
+
+    spec = ATTACK_CATALOG[scenario_id]
+    alert_data = {
+        "alert_id": f"ALT-{len(ALERTS_STORE) + 1:04d}",
+        "source": "attack-simulator",
+        "scenario": scenario_id,
+        "severity": spec["severity"],
+        "title": spec["title"],
+        "service": spec["service"],
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "status": "PENDING_APPROVAL",
+        "proposed_action": spec["proposed_action"],
+        "confidence": spec["confidence"],
+        "evidence": spec["evidence"],
+        "event": spec["event"]
+    }
+    ALERTS_STORE.append(alert_data)
+
+    # Broadcast new alert immediately over WebSockets
+    await broadcast_ws({"type": "NEW_ALERT", "alert": alert_data})
+    return {"status": "success", "triggered_scenario": scenario_id, "alert": alert_data}
+
+
+@app.post("/api/attacks/reset")
+async def reset_lab_state():
+    ALERTS_STORE.clear()
+    DECISIONS_STORE.clear()
+    METRICS["total_decisions"] = 0
+    METRICS["approvals"] = 0
+    METRICS["rejections"] = 0
+    METRICS["modifications"] = 0
+    METRICS["agreement_rate"] = 1.0
+    METRICS["override_rate"] = 0.0
+
+    # Re-insert initial S1 alert for demo readiness
+    initial_alert = {
+        "alert_id": "ALT-0001",
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "CRITICAL",
+        "title": "SQL Injection Authentication Bypass",
+        "service": "webapp",
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "status": "PENDING_APPROVAL",
+        "proposed_action": "Isolate Webapp Container",
+        "confidence": 0.9412,
+        "evidence": "SQLi Pattern Match",
+        "event": {"payload": "' OR '1'='1"}
+    }
+    ALERTS_STORE.append(initial_alert)
+    await broadcast_ws({"type": "RESET_COMPLETE", "alert": initial_alert})
+    return {"status": "success", "message": "Lab state reset to initial baseline"}
 
 
 @app.api_route("/api/investigate", methods=["GET", "POST"])

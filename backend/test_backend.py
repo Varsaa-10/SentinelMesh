@@ -54,8 +54,19 @@ class TestBackendAPI(unittest.TestCase):
         get_data = res_get.json()
         self.assertEqual(get_data["count"], 1)
 
+    def test_trigger_attack_scenario(self):
+        trigger_payload = {"scenario_id": "S1"}
+        res = self.client.post("/api/attacks/trigger", json=trigger_payload)
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(data["status"], "success")
+        self.assertEqual(data["triggered_scenario"], "S1")
+
+        # Verify invalid scenario error handling
+        res_bad = self.client.post("/api/attacks/trigger", json={"scenario_id": "S99"})
+        self.assertEqual(res_bad.status_code, 400)
+
     def test_investigate_alerts(self):
-        # Post alert
         alert_payload = {
             "source": "log-tail",
             "scenario": "S1",

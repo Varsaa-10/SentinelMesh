@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SentinelMesh — Human-Supervised Threat Investigation Analyst Dashboard</title>
+  <title>SentinelMesh — React Analyst Threat Investigation Dashboard</title>
   <link rel="shortcut icon"
     href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
     type="image/x-icon">
@@ -13,6 +13,12 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
     rel="stylesheet">
+
+  <!-- React 18 and Babel CDN scripts for zero-config React SPA -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
   <style>
     :root {
       --bg-dark: #0a0d14;
@@ -43,7 +49,7 @@
     }
 
     header {
-      padding: 1.25rem 2rem;
+      padding: 1rem 2rem;
       background: rgba(10, 13, 20, 0.9);
       border-bottom: 1px solid var(--panel-border);
       display: flex;
@@ -75,7 +81,7 @@
     }
 
     .brand-title h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       letter-spacing: -0.02em;
     }
@@ -104,6 +110,68 @@
       background: var(--accent-green);
       border-radius: 50%;
       box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .status-dot.offline {
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+    }
+
+    /* Attack Trigger Toolbar */
+    .trigger-bar {
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .trigger-bar-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .trigger-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .trigger-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .trigger-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    .trigger-btn-reset {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--accent-red);
+    }
+
+    .trigger-btn-reset:hover {
+      background: var(--accent-red);
+      color: #fff;
     }
 
     main {
@@ -194,10 +262,16 @@
       border: 1px solid rgba(239, 68, 68, 0.4);
     }
 
-    .sev-warning {
+    .sev-high {
       background: rgba(245, 158, 11, 0.2);
       color: var(--accent-amber);
       border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .sev-medium {
+      background: rgba(6, 182, 212, 0.2);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.4);
     }
 
     .sev-resolved {
@@ -255,21 +329,18 @@
     .approval-card.resolving-approved {
       background: rgba(16, 185, 129, 0.15);
       border-color: var(--accent-green);
-      transform: scale(0.98);
       opacity: 0.8;
     }
 
     .approval-card.resolving-modified {
       background: rgba(245, 158, 11, 0.15);
       border-color: var(--accent-amber);
-      transform: scale(0.98);
       opacity: 0.8;
     }
 
     .approval-card.resolving-rejected {
       background: rgba(239, 68, 68, 0.15);
       border-color: var(--accent-red);
-      transform: scale(0.98);
       opacity: 0.8;
     }
 
@@ -352,296 +423,324 @@
 
 <body>
 
-  <header>
-    <div class="brand">
-      <div class="brand-logo">S</div>
-      <div class="brand-title">
-        <h1>SentinelMesh Analyst Dashboard</h1>
-        <p>Hierarchical RAG & Attack Graph Threat Investigation</p>
-      </div>
-    </div>
-    <div class="status-badge" id="status-container">
-      <div class="status-dot" id="status-dot"></div>
-      <span id="conn-status">Connecting to Backend...</span>
-    </div>
-  </header>
+  <div id="root"></div>
 
-  <main>
-    <!-- Live Telemetry Stream -->
-    <section class="panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span>⚡ Live Telemetry Stream</span>
-          <span class="badge-count" id="alert-count">0 alerts</span>
-        </div>
-      </div>
-      <div class="stream-list" id="stream-list">
-        <!-- Ingested alerts rendered here -->
-      </div>
-    </section>
+  <!-- React Application Code -->
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
 
-    <!-- Attack Graph & RAG Investigation -->
-    <section class="panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span>🔍 RAG Grounding & Attack Graph</span>
-        </div>
-        <button class="btn btn-approve" style="flex:none; padding: 0.3rem 0.6rem;" onclick="runInvestigation()">Run
-          Investigation</button>
-      </div>
-      <div class="investigation-box" id="investigation-output">
-        Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph.
-      </div>
-    </section>
-
-    <!-- Tiered Approval Queue & Feedback -->
-    <section class="panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span>🛡️ Tiered Approval Queue</span>
-          <span class="badge-count" id="queue-count">0 pending</span>
-        </div>
-      </div>
-
-      <div class="queue-container" id="queue-container">
-        <!-- Pending approval cards rendered dynamically -->
-      </div>
-
-      <div class="panel-title" style="margin-top: 0.5rem; font-size: 0.9rem;">
-        📊 Feedback Loop Metrics
-      </div>
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-val" id="m-agreement">100%</div>
-          <div class="metric-lbl">Analyst Agreement</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" id="m-override">0%</div>
-          <div class="metric-lbl">Override Rate</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" id="m-mttr">+28.5%</div>
-          <div class="metric-lbl">MTTR Improvement</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" id="m-status">Converged</div>
-          <div class="metric-lbl">Routing Threshold</div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script>
     const HOST = window.location.hostname || "localhost";
     const API_BASE = `http://${HOST}:8000`;
     const WS_URL = `ws://${HOST}:8000/ws`;
-    let ws = null;
-    let reconnectTimer = null;
-    let currentAlerts = [];
 
-    function initWS() {
-      if (ws) {
-        try { ws.close(); } catch (e) { }
-      }
+    function App() {
+      const [connected, setConnected] = useState(false);
+      const [alerts, setAlerts] = useState([]);
+      const [investigationData, setInvestigationData] = useState(null);
+      const [investigating, setInvestigating] = useState(false);
+      const [metrics, setMetrics] = useState({
+        agreement_rate: 1.0,
+        override_rate: 0.0,
+        mttr_improvement_pct: 28.5,
+        threshold_convergence: "Converged"
+      });
+      const [resolvingIds, setResolvingIds] = useState({});
 
-      try {
-        ws = new WebSocket(WS_URL);
+      const fetchAlerts = useCallback(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/alerts`);
+          if (res.ok) {
+            const data = await res.json();
+            setAlerts(data.alerts || []);
+          }
+        } catch (e) { }
+      }, []);
 
-        ws.onopen = () => {
-          document.getElementById("conn-status").innerText = "Backend Connected (WebSocket Live)";
-          document.getElementById("status-dot").style.background = "#10b981";
+      const fetchDecisions = useCallback(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/decisions`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.metrics) setMetrics(data.metrics);
+          }
+        } catch (e) { }
+      }, []);
+
+      useEffect(() => {
+        let ws;
+        let timer;
+
+        function connect() {
+          try {
+            ws = new WebSocket(WS_URL);
+            ws.onopen = () => {
+              setConnected(true);
+              fetchAlerts();
+              fetchDecisions();
+            };
+            ws.onmessage = (event) => {
+              try {
+                const data = JSON.parse(event.data);
+                if (data.type === "NEW_ALERT" || data.type === "RESET_COMPLETE") {
+                  fetchAlerts();
+                } else if (data.type === "DECISION_LOGGED") {
+                  if (data.metrics) setMetrics(data.metrics);
+                  fetchAlerts();
+                }
+              } catch (e) { }
+            };
+            ws.onclose = ws.onerror = () => {
+              setConnected(false);
+              timer = setTimeout(connect, 3000);
+            };
+          } catch (e) {
+            timer = setTimeout(connect, 3000);
+          }
+        }
+
+        connect();
+        return () => {
+          if (ws) ws.close();
+          if (timer) clearTimeout(timer);
+        };
+      }, [fetchAlerts, fetchDecisions]);
+
+      const triggerAttack = async (scenarioId) => {
+        try {
+          const res = await fetch(`${API_BASE}/api/attacks/trigger`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ scenario_id: scenarioId })
+          });
+          if (res.ok) fetchAlerts();
+        } catch (e) {
+          alert("Error triggering scenario: " + e.message);
+        }
+      };
+
+      const resetLab = async () => {
+        try {
+          await fetch(`${API_BASE}/api/attacks/reset`, { method: "POST" });
           fetchAlerts();
           fetchDecisions();
-        };
+        } catch (e) { }
+      };
 
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data.type === "NEW_ALERT") {
+      const runInvestigation = async () => {
+        setInvestigating(true);
+        try {
+          const res = await fetch(`${API_BASE}/api/investigate`, { method: "POST" });
+          if (res.ok) {
+            const data = await res.json();
+            setInvestigationData(data);
+          }
+        } catch (e) {
+          setInvestigationData({ error: e.message });
+        } finally {
+          setInvestigating(false);
+        }
+      };
+
+      const submitDecision = async (alertId, scenarioId, action) => {
+        setResolvingIds(prev => ({ ...prev, [alertId]: action }));
+        try {
+          const res = await fetch(`${API_BASE}/api/decisions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              alert_id: alertId,
+              scenario_id: scenarioId,
+              action: action,
+              analyst_id: "analyst-1",
+              comment: `Analyst selected ${action}`
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.metrics) setMetrics(data.metrics);
+            setTimeout(() => {
+              setResolvingIds(prev => {
+                const next = { ...prev };
+                delete next[alertId];
+                return next;
+              });
               fetchAlerts();
-            } else if (data.type === "DECISION_LOGGED") {
-              updateMetricsUI(data.metrics);
-              fetchAlerts();
-            }
-          } catch (e) { }
-        };
-
-        ws.onclose = ws.onerror = () => {
-          document.getElementById("conn-status").innerText = "Connecting to Backend...";
-          document.getElementById("status-dot").style.background = "#ef4444";
-          scheduleReconnect();
-        };
-      } catch (e) {
-        scheduleReconnect();
-      }
-    }
-
-    function scheduleReconnect() {
-      if (!reconnectTimer) {
-        reconnectTimer = setTimeout(() => {
-          reconnectTimer = null;
-          initWS();
-        }, 3000);
-      }
-    }
-
-    async function fetchAlerts() {
-      try {
-        const res = await fetch(`${API_BASE}/api/alerts`);
-        if (res.ok) {
-          const data = await res.json();
-          currentAlerts = data.alerts || [];
-          document.getElementById("alert-count").innerText = `${currentAlerts.length} alerts`;
-          renderStreamUI();
-          renderQueueUI();
+            }, 1000);
+          }
+        } catch (e) {
+          alert("Error submitting decision: " + e.message);
         }
-      } catch (e) { }
-    }
+      };
 
-    async function fetchDecisions() {
-      try {
-        const res = await fetch(`${API_BASE}/api/decisions`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.metrics) updateMetricsUI(data.metrics);
-        }
-      } catch (e) { }
-    }
+      const pendingAlerts = alerts.filter(a => a.status === "PENDING_APPROVAL" || !a.status);
 
-    function renderStreamUI() {
-      const list = document.getElementById("stream-list");
-      list.innerHTML = "";
-      if (currentAlerts.length === 0) {
-        list.innerHTML = `<div class="alert-meta">No alerts ingested yet.</div>`;
-        return;
-      }
-      currentAlerts.forEach(alert => {
-        const card = document.createElement("div");
-        card.className = "alert-card";
-        const isActioned = alert.status === "ACTIONED";
-        card.innerHTML = `
-          <div class="alert-top">
-            <span class="sev-tag ${isActioned ? 'sev-resolved' : (alert.severity === 'CRITICAL' ? 'sev-critical' : 'sev-warning')}">
-              ${isActioned ? `RESOLVED (${alert.resolution})` : alert.severity}
-            </span>
-            <span class="alert-meta">${alert.scenario || 'S1'} · ${alert.service}</span>
+      return (
+        <React.Fragment>
+          <header>
+            <div class="brand">
+              <div class="brand-logo">S</div>
+              <div class="brand-title">
+                <h1>SentinelMesh React Analyst Dashboard</h1>
+                <p>Hierarchical RAG & Attack Graph Threat Investigation</p>
+              </div>
+            </div>
+            <div class="status-badge">
+              <div class={`status-dot ${connected ? '' : 'offline'}`}></div>
+              <span>{connected ? "Backend Connected (WebSocket Live)" : "Connecting to Backend..."}</span>
+            </div>
+          </header>
+
+          {/* Attack Trigger Toolbar */}
+          <div class="trigger-bar">
+            <div class="trigger-bar-title">
+              ⚡ Attack Simulation Triggers:
+            </div>
+            <div class="trigger-buttons">
+              <button class="trigger-btn" onClick={() => triggerAttack('S1')}>S1 SQLi</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S2')}>S2 BruteForce</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S3')}>S3 RCE</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S4')}>S4 JWT</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S5')}>S5 SSRF</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S6')}>S6 Traversal</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S7')}>S7 Escape</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S9')}>S9 Creds</button>
+              <button class="trigger-btn" onClick={() => triggerAttack('S10')}>S10 Chain</button>
+              <button class="trigger-btn trigger-btn-reset" onClick={resetLab}>↺ Reset Lab</button>
+            </div>
           </div>
-          <div class="alert-title">${alert.title}</div>
-          <div class="alert-meta">${JSON.stringify(alert.event || {})}</div>
-        `;
-        list.appendChild(card);
-      });
+
+          <main>
+            {/* Live Telemetry Stream */}
+            <section class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <span>⚡ Live Telemetry Stream</span>
+                  <span class="badge-count">{alerts.length} alerts</span>
+                </div>
+              </div>
+              <div class="stream-list">
+                {alerts.length === 0 ? (
+                  <div class="alert-meta">No alerts ingested yet. Click an attack button to trigger simulation.</div>
+                ) : (
+                  alerts.slice().reverse().map(alert => {
+                    const isActioned = alert.status === "ACTIONED";
+                    const sevClass = isActioned
+                      ? "sev-resolved"
+                      : alert.severity === "CRITICAL"
+                        ? "sev-critical"
+                        : alert.severity === "HIGH"
+                          ? "sev-high"
+                          : "sev-medium";
+                    return (
+                      <div class="alert-card" key={alert.alert_id}>
+                        <div class="alert-top">
+                          <span class={`sev-tag ${sevClass}`}>
+                            {isActioned ? `RESOLVED (${alert.resolution})` : alert.severity}
+                          </span>
+                          <span class="alert-meta">{alert.scenario || 'S1'} · {alert.service}</span>
+                        </div>
+                        <div class="alert-title">{alert.title}</div>
+                        <div class="alert-meta">{JSON.stringify(alert.event || {})}</div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </section>
+
+            {/* Attack Graph & RAG Investigation */}
+            <section class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <span>🔍 RAG Grounding & Attack Graph</span>
+                </div>
+                <button class="btn btn-approve" style={{ flex: 'none', padding: '0.3rem 0.6rem' }} onClick={runInvestigation}>
+                  {investigating ? "Running..." : "Run Investigation"}
+                </button>
+              </div>
+              <div class="investigation-box">
+                {investigationData
+                  ? JSON.stringify(investigationData, null, 2)
+                  : 'Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph.'}
+              </div>
+            </section>
+
+            {/* Tiered Approval Queue */}
+            <section class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <span>🛡️ Tiered Approval Queue</span>
+                  <span class="badge-count">{pendingAlerts.length} pending</span>
+                </div>
+              </div>
+
+              <div class="queue-container">
+                {pendingAlerts.length === 0 ? (
+                  <div class="empty-queue">
+                    🎉 <strong>Approval Queue Clear</strong><br />
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      All container threats reviewed and response actions routed.
+                    </span>
+                  </div>
+                ) : (
+                  pendingAlerts.map(alert => {
+                    const resolvingAction = resolvingIds[alert.alert_id];
+                    const resolvingClass = resolvingAction ? `resolving-${resolvingAction}d` : '';
+                    return (
+                      <div class={`approval-card ${resolvingClass}`} key={alert.alert_id}>
+                        <div class="alert-top">
+                          <span class="sev-tag sev-warning">MEDIUM RISK — ANALYST GATE</span>
+                          <span class="alert-meta">{alert.alert_id} · {alert.scenario || 'S1'}</span>
+                        </div>
+                        <div class="alert-title">Proposed Action: {alert.proposed_action || 'Isolate Container'}</div>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          Confidence Score: {alert.confidence || 0.9412} | Evidence: {alert.evidence || 'Pattern Match'}
+                        </p>
+                        {resolvingAction ? (
+                          <div style={{ fontWeight: 700, fontSize: '0.85rem', padding: '0.3rem 0', color: '#fff' }}>
+                            {resolvingAction === 'approve' ? '✅ APPROVED & EXECUTED' : resolvingAction === 'modify' ? '⚠️ MODIFIED & REROUTED' : '❌ REJECTED & DROPPED'}
+                          </div>
+                        ) : (
+                          <div class="action-btn-group">
+                            <button class="btn btn-approve" onClick={() => submitDecision(alert.alert_id, alert.scenario || 'S1', 'approve')}>Approve</button>
+                            <button class="btn btn-override" onClick={() => submitDecision(alert.alert_id, alert.scenario || 'S1', 'modify')}>Modify</button>
+                            <button class="btn btn-reject" onClick={() => submitDecision(alert.alert_id, alert.scenario || 'S1', 'reject')}>Reject</button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <div class="panel-title" style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                📊 Feedback Loop Metrics
+              </div>
+              <div class="metrics-grid">
+                <div class="metric-card">
+                  <div class="metric-val">{(metrics.agreement_rate * 100).toFixed(1)}%</div>
+                  <div class="metric-lbl">Analyst Agreement</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-val">{(metrics.override_rate * 100).toFixed(1)}%</div>
+                  <div class="metric-lbl">Override Rate</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-val">+{metrics.mttr_improvement_pct}%</div>
+                  <div class="metric-lbl">MTTR Improvement</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-val">{metrics.threshold_convergence}</div>
+                  <div class="metric-lbl">Routing Threshold</div>
+                </div>
+              </div>
+            </section>
+          </main>
+        </React.Fragment>
+      );
     }
 
-    function renderQueueUI() {
-      const container = document.getElementById("queue-container");
-      const pendingAlerts = currentAlerts.filter(a => a.status === "PENDING_APPROVAL" || !a.status);
-      document.getElementById("queue-count").innerText = `${pendingAlerts.length} pending`;
-
-      if (pendingAlerts.length === 0) {
-        container.innerHTML = `
-          <div class="empty-queue">
-            🎉 <strong>Approval Queue Clear</strong><br>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">All container threats reviewed and response actions routed.</span>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = "";
-      pendingAlerts.forEach(alert => {
-        const card = document.createElement("div");
-        card.className = "approval-card";
-        card.id = `queue-card-${alert.alert_id}`;
-        card.innerHTML = `
-          <div class="alert-top">
-            <span class="sev-tag sev-warning">MEDIUM RISK — ANALYST GATE</span>
-            <span class="alert-meta">${alert.alert_id} · ${alert.scenario || 'S1'}</span>
-          </div>
-          <div class="alert-title">Proposed Action: ${alert.proposed_action || 'Isolate Container'}</div>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Confidence Score: ${alert.confidence || 0.9412} | Evidence: ${alert.evidence || 'Pattern Match'}</p>
-          <div class="action-btn-group" id="btn-group-${alert.alert_id}">
-            <button class="btn btn-approve" onclick="submitDecision('${alert.alert_id}', '${alert.scenario || 'S1'}', 'approve')">Approve</button>
-            <button class="btn btn-override" onclick="submitDecision('${alert.alert_id}', '${alert.scenario || 'S1'}', 'modify')">Modify</button>
-            <button class="btn btn-reject" onclick="submitDecision('${alert.alert_id}', '${alert.scenario || 'S1'}', 'reject')">Reject</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    async function runInvestigation() {
-      const output = document.getElementById("investigation-output");
-      output.innerText = "Querying TwoLayerRAG and building Attack Graph...";
-      try {
-        const res = await fetch(`${API_BASE}/api/investigate`, { method: "POST" });
-        if (res.ok) {
-          const data = await res.json();
-          output.innerText = JSON.stringify(data, null, 2);
-        } else {
-          output.innerText = `Server returned status ${res.status}`;
-        }
-      } catch (e) {
-        output.innerText = "Error connecting to backend: " + e.message;
-      }
-    }
-
-    async function submitDecision(alertId, scenarioId, action) {
-      const card = document.getElementById(`queue-card-${alertId}`);
-      const btnGroup = document.getElementById(`btn-group-${alertId}`);
-
-      // Visual feedback transition
-      if (card) {
-        card.className = `approval-card resolving-${action}d`;
-        if (btnGroup) {
-          const label = action === 'approve' ? '✅ APPROVED & EXECUTED' : (action === 'modify' ? '⚠️ MODIFIED & REROUTED' : '❌ REJECTED & DROPPED');
-          btnGroup.innerHTML = `<div style="font-weight:700; font-size:0.85rem; padding: 0.3rem 0; color:#fff;">${label}</div>`;
-        }
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/decisions`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            alert_id: alertId,
-            scenario_id: scenarioId,
-            action: action,
-            analyst_id: "analyst-1",
-            comment: `Analyst selected ${action}`
-          })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          updateMetricsUI(data.metrics);
-
-          // Smooth slide-out removal after 1 second feedback
-          setTimeout(() => {
-            if (card) {
-              card.style.opacity = '0';
-              card.style.transform = 'translateY(-10px)';
-              setTimeout(() => fetchAlerts(), 300);
-            } else {
-              fetchAlerts();
-            }
-          }, 1000);
-        }
-      } catch (e) {
-        alert("Error submitting decision: " + e.message);
-      }
-    }
-
-    function updateMetricsUI(m) {
-      if (!m) return;
-      document.getElementById("m-agreement").innerText = `${(m.agreement_rate * 100).toFixed(1)}%`;
-      document.getElementById("m-override").innerText = `${(m.override_rate * 100).toFixed(1)}%`;
-      document.getElementById("m-mttr").innerText = `+${m.mttr_improvement_pct}%`;
-      document.getElementById("m-status").innerText = m.threshold_convergence;
-    }
-
-    window.onload = () => {
-      initWS();
-    };
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 
