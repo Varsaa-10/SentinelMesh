@@ -89,6 +89,8 @@ FALLBACK_RULE_TABLE: Dict[str, Dict[str, Any]] = {
             "tactic": "Exfiltration",    "cve": None},
     "S9":  {"technique_id": "T1003.008", "technique_name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
             "tactic": "Credential Access", "cve": None},
+    "S10": {"technique_id": "T1190",     "technique_name": "Multi-stage attack chain",
+            "tactic": "Multiple (chained)", "cve": "CVE-2022-29217"},
 }
 
 

@@ -118,7 +118,20 @@ def translate(falco_alert):
     }
 
 
+import argparse
+import urllib.request
+
+
 def main():
+    parser = argparse.ArgumentParser(description="SentinelMesh Falco alert shim")
+    parser.add_argument(
+        "--post-url",
+        metavar="URL",
+        default=None,
+        help="Optional API endpoint URL to POST translated alerts live to (e.g. http://localhost:8000/api/alerts)",
+    )
+    args, _ = parser.parse_known_args()
+
     for line in sys.stdin:
         line = line.strip()
         if not line:
@@ -137,6 +150,19 @@ def main():
             continue
 
         print(json.dumps(canonical), flush=True)
+
+        if args.post_url:
+            try:
+                req = urllib.request.Request(
+                    args.post_url,
+                    data=json.dumps(canonical).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=5) as resp:
+                    pass
+            except Exception as exc:
+                print(f"[falco_shim] WARNING: failed to POST alert to {args.post_url}: {exc}", file=sys.stderr)
 
 
 if __name__ == "__main__":

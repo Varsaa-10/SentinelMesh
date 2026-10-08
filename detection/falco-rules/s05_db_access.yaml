@@ -16,7 +16,7 @@
 # wrongly allowed).
 
 - list: sentinelmesh_db_allowed_clients
-  items: ["172.18.0.4", "172.18.0.5"]  # confirmed: sentinelmesh-webapp, sentinelmesh-authservice
+  items: ["172.30.0.4", "172.30.0.5"]  # confirmed: sentinelmesh-webapp, sentinelmesh-authservice
 
 - rule: SentinelMesh Unauthorized Database Connection
   desc: >

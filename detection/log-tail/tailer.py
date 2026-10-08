@@ -60,17 +60,29 @@ def process_line(raw_line, service):
             print(f"[tailer] ERROR in {detector.__name__}.check(): {exc}", file=sys.stderr)
 
 
-def open_files(files):
+def open_files(files, retries=5, delay=1.0):
     handles = {}
     for service, path in files.items():
-        try:
-            f = open(path, "r")
-        except OSError as exc:
-            print(f"[tailer] ERROR: cannot open {path} for {service}: {exc}", file=sys.stderr)
-            sys.exit(1)
-        f.seek(0, 2)  # start at end of file — only new events
-        handles[service] = f
-        print(f"[tailer] watching {path} (service={service})", file=sys.stderr)
+        f = None
+        for attempt in range(retries):
+            try:
+                f = open(path, "r")
+                break
+            except OSError:
+                if attempt == retries - 1:
+                    # Create the file in append mode if it doesn't exist yet
+                    try:
+                        open(path, "a").close()
+                        f = open(path, "r")
+                    except OSError as exc:
+                        print(f"[tailer] WARNING: cannot open {path} for {service}: {exc}", file=sys.stderr)
+                        break
+                else:
+                    time.sleep(delay)
+        if f:
+            f.seek(0, 2)  # start at end of file — only new events
+            handles[service] = f
+            print(f"[tailer] watching {path} (service={service})", file=sys.stderr)
     return handles
 
 
@@ -92,6 +104,9 @@ def run(handles):
             f.close()
 
 
+import common
+
+
 def main():
     parser = argparse.ArgumentParser(description="SentinelMesh multi-file log-tail detector")
     parser.add_argument(
@@ -100,7 +115,16 @@ def main():
         metavar="SERVICE=PATH",
         help="Override default files, e.g. webapp=/path/webapp.log authservice=/path/auth.log",
     )
+    parser.add_argument(
+        "--post-url",
+        metavar="URL",
+        default=None,
+        help="Optional API endpoint URL to POST emitted alerts live to (e.g. http://localhost:8000/api/alerts)",
+    )
     args = parser.parse_args()
+
+    if args.post_url:
+        common.set_post_url(args.post_url)
 
     files = dict(DEFAULT_FILES)
     if args.files:

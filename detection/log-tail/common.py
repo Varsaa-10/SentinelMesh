@@ -1,13 +1,14 @@
-"""
-common.py — shared alert emission, ONE consistent format across all detectors.
-
-Fixes issue #7 from review: each detector was previously returning a
-differently-shaped dict (S1 had source/scenario/severity/title/event, S2
-had attempts/ip, S3 had just user). Person 3's harness needs one shape,
-not four.
-"""
 import json
+import sys
+import urllib.request
 from datetime import datetime, timezone
+
+POST_URL = None
+
+
+def set_post_url(url):
+    global POST_URL
+    POST_URL = url
 
 
 def now_iso():
@@ -17,11 +18,10 @@ def now_iso():
 def emit_alert(scenario, severity, title, service, event):
     """
     scenario: "S1".."S4"
-    severity: "WARNING" or "CRITICAL" (matches Falco's own priority naming,
-              so Person 3 doesn't need two severity vocabularies)
+    severity: "WARNING" or "CRITICAL"
     title:    human-readable rule name
-    service:  which app service the event came from (webapp, authservice, ...)
-    event:    the raw (or lightly-annotated) source event, kept for traceability
+    service:  app service name
+    event:    the raw or annotated event dict
     """
     alert = {
         "source": "log-tail",
@@ -33,4 +33,18 @@ def emit_alert(scenario, severity, title, service, event):
         "event": event,
     }
     print(json.dumps(alert), flush=True)
+
+    if POST_URL:
+        try:
+            req = urllib.request.Request(
+                POST_URL,
+                data=json.dumps(alert).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                pass
+        except Exception as exc:
+            print(f"[common.py] WARNING: failed to POST alert to {POST_URL}: {exc}", file=sys.stderr)
+
     return alert

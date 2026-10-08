@@ -206,37 +206,36 @@ class RetrievalSuspicion:
 
 
 def score_retrieval_result(rag_result, similarity_threshold: float = 0.4,
-                            agreement_threshold: float = 0.4,
+                            min_similarity_threshold: float = 0.25,
                             source_agreement_threshold: float = 0.4) -> RetrievalSuspicion:
     """
     rag_result: a RAGResult from rag_engine.py / flat_rag.py's .query().
-    Flags "high similarity but low corroboration" -- the signature of a
-    near-duplicate or adversarially-crafted record winning on text
-    similarity alone without independent support from neighboring KB
-    entries or the alert's actual detection source.
-
-    This does NOT re-derive ground truth -- it only flags for human/
-    downstream review. A flag is a suspicion, not a verdict.
+    Flags "high similarity but source mismatch" or "weak absolute similarity" --
+    the signature of an adversarial/mislabeled record winning on vocabulary
+    alone or failing to match any legitimate KB entry cleanly.
     """
     c = rag_result.confidence
     sim = c.similarity
     src = c.source_agreement
     agree = c.cross_document_agreement
 
+    # 1. Absolute low similarity check (weak top match is suspicious)
+    if sim < min_similarity_threshold:
+        return RetrievalSuspicion(
+            True,
+            f"Low absolute similarity score ({sim:.2f} < {min_similarity_threshold}) -- "
+            f"alert failed to match any legitimate KB technique cleanly (possible unknown or poisoned query).",
+            sim, src, agree,
+        )
+
+    # 2. Source & Detection Signature mismatch check
     if sim >= similarity_threshold and src <= source_agreement_threshold:
         return RetrievalSuspicion(
             True,
             f"High text similarity ({sim:.2f}) but the winning record's declared "
-            f"detection source doesn't match this alert's source ({src:.2f}) -- "
+            f"detection signature doesn't match this alert's source ({src:.2f}) -- "
             f"possible adversarial/mislabeled entry.",
             sim, src, agree,
         )
-    if sim >= similarity_threshold and agree <= agreement_threshold:
-        return RetrievalSuspicion(
-            True,
-            f"High text similarity ({sim:.2f}) but low cross-document agreement "
-            f"({agree:.2f}) -- this record isn't corroborated by its neighbors, "
-            f"possible isolated/injected entry.",
-            sim, src, agree,
-        )
+
     return RetrievalSuspicion(False, "No suspicion flags triggered.", sim, src, agree)

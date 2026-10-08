@@ -1,28 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import AttackTriggerBar from './components/AttackTriggerBar';
-import LiveContainerStreamer from './components/LiveContainerStreamer';
 import TelemetryStream from './components/TelemetryStream';
 import InvestigationPanel from './components/InvestigationPanel';
 import ApprovalQueue from './components/ApprovalQueue';
 import MetricsGrid from './components/MetricsGrid';
 
-const HOST = window.location.hostname || "localhost";
-const API_BASE = `http://${HOST}:8000`;
-const WS_URL = `ws://${HOST}:8000/ws`;
+const API_BASE = import.meta.env.DEV ? `http://${window.location.hostname}:8000` : '';
+const WS_URL = (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+    + (import.meta.env.DEV ? `${window.location.hostname}:8000` : window.location.host) + '/ws';
 
 export default function App() {
     const [connected, setConnected] = useState(false);
     const [alerts, setAlerts] = useState([]);
     const [investigationData, setInvestigationData] = useState(null);
     const [investigating, setInvestigating] = useState(false);
-    const [metrics, setMetrics] = useState({
-        agreement_rate: 1.0,
-        override_rate: 0.0,
-        mttr_improvement_pct: 28.5,
-        threshold_convergence: "Converged"
-    });
+    const [metrics, setMetrics] = useState(null);
     const [resolvingIds, setResolvingIds] = useState({});
+    const [apiError, setApiError] = useState(null);
 
     const fetchAlerts = useCallback(async () => {
         try {
@@ -30,8 +25,13 @@ export default function App() {
             if (res.ok) {
                 const data = await res.json();
                 setAlerts(data.alerts || []);
+                setApiError(null);
+            } else {
+                setApiError("Cannot reach backend at " + (API_BASE || window.location.origin));
             }
-        } catch (e) { }
+        } catch (e) {
+            setApiError("Cannot reach backend at " + (API_BASE || window.location.origin));
+        }
     }, []);
 
     const fetchDecisions = useCallback(async () => {
@@ -40,8 +40,11 @@ export default function App() {
             if (res.ok) {
                 const data = await res.json();
                 if (data.metrics) setMetrics(data.metrics);
+                setApiError(null);
             }
-        } catch (e) { }
+        } catch (e) {
+            setApiError("Cannot reach backend at " + (API_BASE || window.location.origin));
+        }
     }, []);
 
     useEffect(() => {
@@ -53,6 +56,7 @@ export default function App() {
                 ws = new WebSocket(WS_URL);
                 ws.onopen = () => {
                     setConnected(true);
+                    setApiError(null);
                     fetchAlerts();
                     fetchDecisions();
                 };
@@ -65,7 +69,9 @@ export default function App() {
                             if (data.metrics) setMetrics(data.metrics);
                             fetchAlerts();
                         }
-                    } catch (e) { }
+                    } catch (e) {
+                        console.warn("[App.jsx] Failed to parse WebSocket message:", e);
+                    }
                 };
                 ws.onclose = ws.onerror = () => {
                     setConnected(false);
@@ -90,31 +96,26 @@ export default function App() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ scenario_id: scenarioId })
             });
-            if (res.ok) fetchAlerts();
+            if (res.ok) {
+                setApiError(null);
+                fetchAlerts();
+            } else {
+                setApiError("Failed to trigger attack scenario " + scenarioId);
+            }
         } catch (e) {
-            alert("Error triggering scenario: " + e.message);
-        }
-    };
-
-    const injectLiveLog = async (alertPayload) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/alerts`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(alertPayload)
-            });
-            if (res.ok) fetchAlerts();
-        } catch (e) {
-            console.error("Error streaming container log:", e);
+            setApiError("Error triggering scenario: " + e.message);
         }
     };
 
     const resetLab = async () => {
         try {
-            await fetch(`${API_BASE}/api/attacks/reset`, { method: "POST" });
+            const res = await fetch(`${API_BASE}/api/attacks/reset`, { method: "POST" });
+            if (res.ok) setApiError(null);
             fetchAlerts();
             fetchDecisions();
-        } catch (e) { }
+        } catch (e) {
+            setApiError("Error resetting lab: " + e.message);
+        }
     };
 
     const runInvestigation = async () => {
@@ -124,9 +125,13 @@ export default function App() {
             if (res.ok) {
                 const data = await res.json();
                 setInvestigationData(data);
+                setApiError(null);
+            } else {
+                setApiError("Error running investigation: HTTP " + res.status);
             }
         } catch (e) {
             setInvestigationData({ error: e.message });
+            setApiError("Error running investigation: " + e.message);
         } finally {
             setInvestigating(false);
         }
@@ -149,6 +154,7 @@ export default function App() {
             if (res.ok) {
                 const data = await res.json();
                 if (data.metrics) setMetrics(data.metrics);
+                setApiError(null);
                 setTimeout(() => {
                     setResolvingIds(prev => {
                         const next = { ...prev };
@@ -157,20 +163,30 @@ export default function App() {
                     });
                     fetchAlerts();
                 }, 1000);
+            } else {
+                setApiError("Error submitting decision: HTTP " + res.status);
             }
         } catch (e) {
-            alert("Error submitting decision: " + e.message);
+            setApiError("Error submitting decision: " + e.message);
         }
     };
 
-    const pendingAlerts = alerts.filter(a => a.status === "PENDING_APPROVAL" || !a.status);
+    const pendingAlerts = alerts.filter(a => a.status === "PENDING_APPROVAL");
 
     return (
         <React.Fragment>
             <Header connected={connected} />
+            {apiError && (
+                <div style={{
+                    background: '#2A1618', border: '1px solid #E0605A',
+                    color: '#E0605A', padding: '0.6rem 1rem',
+                    borderRadius: '8px', margin: '0.5rem 2rem'
+                }}>
+                    {apiError}
+                </div>
+            )}
             <div style={{ padding: '0 2rem' }}>
                 <AttackTriggerBar onTrigger={triggerAttack} onReset={resetLab} />
-                <LiveContainerStreamer onInjectLog={injectLiveLog} />
             </div>
             <main>
                 <TelemetryStream alerts={alerts} />
@@ -191,9 +207,11 @@ export default function App() {
                         resolvingIds={resolvingIds}
                         onSubmitDecision={submitDecision}
                     />
-                    <div className="panel-title" style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                        📊 Feedback Loop Metrics
-                    </div>
+                    {metrics && (
+                        <div className="panel-title" style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                            📊 Feedback Loop Metrics
+                        </div>
+                    )}
                     <MetricsGrid metrics={metrics} />
                 </section>
             </main>

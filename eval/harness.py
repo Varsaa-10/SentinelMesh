@@ -240,7 +240,7 @@ def run_attack_scripts(
         )
 
     for scenario, filename, interpreter in order:
-        script_path = attack_scripts_dir / filename
+        script_path = (attack_scripts_dir / filename).resolve()
 
         if not script_path.exists():
             log(
@@ -256,7 +256,6 @@ def run_attack_scripts(
         try:
             result = subprocess.run(
                 [interpreter, str(script_path)],
-                cwd=str(attack_scripts_dir),
                 timeout=30,
                 capture_output=True,
                 text=True,

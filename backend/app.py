@@ -17,6 +17,7 @@ from __future__ import annotations
 import os
 import sys
 import time
+import json
 import asyncio
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
@@ -36,6 +37,7 @@ try:
     from rag_engine import TwoLayerRAG
     from rag_engine.src.embeddings import WordTfidfEmbedder
     from rag_engine.src.kb_loader import load_kb_dir, cve_lookup as build_cve_lookup
+    from rag_engine.src.alert_normalizer import normalize_alert_text
     RAG_AVAILABLE = True
 except Exception:
     RAG_AVAILABLE = False
@@ -45,6 +47,12 @@ try:
     GRAPH_AVAILABLE = True
 except Exception:
     GRAPH_AVAILABLE = False
+
+try:
+    from response.risk_scoring import assess
+    RISK_SCORING_AVAILABLE = True
+except Exception:
+    RISK_SCORING_AVAILABLE = False
 
 
 app = FastAPI(
@@ -68,121 +76,44 @@ if os.path.exists(FRONTEND_ASSETS):
     app.mount("/dashboard/assets", StaticFiles(directory=FRONTEND_ASSETS), name="dashboard-assets")
     app.mount("/assets", StaticFiles(directory=FRONTEND_ASSETS), name="root-assets")
 
+# Mount Frontend static files if directory exists
+if os.path.exists(FRONTEND_DIST):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
 
-# --- Attack Scenario Catalog ---
-ATTACK_CATALOG = {
-    "S1": {
-        "title": "SQL Injection Authentication Bypass",
-        "service": "webapp",
-        "severity": "CRITICAL",
-        "proposed_action": "Isolate Webapp Container",
-        "confidence": 0.9412,
-        "evidence": "SQLi Pattern Match (' OR '1'='1)",
-        "event": {"payload": "' OR '1'='1 --", "endpoint": "/api/v1/login"}
-    },
-    "S2": {
-        "title": "Brute Force Credential Spray",
-        "service": "auth-service",
-        "severity": "HIGH",
-        "proposed_action": "Rate Limit & Lock Auth IP",
-        "confidence": 0.8950,
-        "evidence": "50 Failed Logins in 10 Seconds",
-        "event": {"attempts": 50, "target_user": "admin", "src_ip": "192.168.1.105"}
-    },
-    "S3": {
-        "title": "Remote Code Execution (Command Injection)",
-        "service": "api-gateway",
-        "severity": "CRITICAL",
-        "proposed_action": "Terminate Process & Quarantine Container",
-        "confidence": 0.9650,
-        "evidence": "Shell Spawn via Subprocess",
-        "event": {"payload": "; cat /etc/passwd", "command": "sh -c"}
-    },
-    "S4": {
-        "title": "JWT Algorithm Confusion Attack",
-        "service": "auth-service",
-        "severity": "HIGH",
-        "proposed_action": "Revoke Signing Key & Force Re-Auth",
-        "confidence": 0.9120,
-        "evidence": "Header alg='none' Mismatch",
-        "event": {"alg": "none", "claimed_user": "admin"}
-    },
-    "S5": {
-        "title": "Server-Side Request Forgery (SSRF)",
-        "service": "internal-proxy",
-        "severity": "HIGH",
-        "proposed_action": "Block Metadata Endpoint Access",
-        "confidence": 0.8870,
-        "evidence": "Cloud Metadata Fetch (169.254.169.254)",
-        "event": {"target_url": "http://169.254.169.254/latest/meta-data/"}
-    },
-    "S6": {
-        "title": "Path Traversal Arbitrary File Read",
-        "service": "file-server",
-        "severity": "MEDIUM",
-        "proposed_action": "Sanitize Path Parameter & Block IP",
-        "confidence": 0.8540,
-        "evidence": "Traversal Sequence ../../etc/passwd",
-        "event": {"filepath": "../../../etc/shadow"}
-    },
-    "S7": {
-        "title": "Container Escape & Privilege Escalation",
-        "service": "k8s-node-01",
-        "severity": "CRITICAL",
-        "proposed_action": "Cordon & Drain Node",
-        "confidence": 0.9850,
-        "evidence": "Host Namespace Mount & CAP_SYS_ADMIN",
-        "event": {"syscall": "nsenter", "target": "host_pid"}
-    },
-    "S8": {
-        "title": "Defense Evasion Log Manipulation",
-        "service": "syslog-daemon",
-        "severity": "MEDIUM",
-        "proposed_action": "Restore Immutable Audit Pipeline",
-        "confidence": 0.8320,
-        "evidence": "Auditd Daemon Termination",
-        "event": {"action": "kill", "process": "auditd"}
-    },
-    "S9": {
-        "title": "Credential Access /etc/shadow Dump",
-        "service": "db-container",
-        "severity": "CRITICAL",
-        "proposed_action": "Rotate DB Passwords & Encrypt Volume",
-        "confidence": 0.9710,
-        "evidence": "Sensitive File Access /etc/shadow",
-        "event": {"file": "/etc/shadow", "mode": "read"}
-    },
-    "S10": {
-        "title": "Multi-Stage APT Attack Chain",
-        "service": "cluster-ingress",
-        "severity": "CRITICAL",
-        "proposed_action": "Execute Emergency Cluster Containment Plan",
-        "confidence": 0.9920,
-        "evidence": "Correlated Attack Chain (T1190 -> T1068 -> T1041)",
-        "event": {"chain_steps": ["SQLi", "PrivEsc", "Data Exfiltration"]}
-    }
+
+import pathlib
+import subprocess
+
+# --- Attack Scenario Script Mapping ---
+ATTACK_SCRIPTS = {
+    "S1": "scenario1_sqli.sh",
+    "S2": "scenario2_bruteforce.sh",
+    "S3": "scenario3_default_credentials.sh",
+    "S4": "scenario4_jwt_confusion.py",
+    "S5": "scenario5_db_connection.sh",
+    "S6": "scenario6_log_tampering.sh",
+    "S7": "scenario7_grafana_default_creds.sh",
+    "S8": "scenario8_exfiltration.sh",
+    "S9": "scenario9_credential_access.sh",
+    "S10": "scenario10_chain.sh",
 }
 
 
-# --- In-memory Stores ---
-ALERTS_STORE: List[Dict[str, Any]] = [
-    {
-        "alert_id": "ALT-0001",
-        "source": "log-tail",
-        "scenario": "S1",
-        "severity": "CRITICAL",
-        "title": "SQL Injection Authentication Bypass",
-        "service": "webapp",
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "status": "PENDING_APPROVAL",
-        "proposed_action": "Isolate Webapp Container",
-        "confidence": 0.9412,
-        "evidence": "SQLi Pattern Match",
-        "event": {"payload": "' OR '1'='1"}
-    }
-]
+# Global In-Memory Data Stores
+ALERTS_STORE: List[Dict[str, Any]] = []
 DECISIONS_STORE: List[Dict[str, Any]] = []
 WEBSOCKET_CLIENTS: List[WebSocket] = []
+
+# Load Ground Truth mapping at startup for realistic risk scoring
+GT_PATH = os.path.join(ROOT_DIR, "eval", "ground_truth.json")
+GROUND_TRUTH: Dict[str, Any] = {}
+if os.path.exists(GT_PATH):
+    try:
+        with open(GT_PATH, "r", encoding="utf-8") as f:
+            gt_data = json.load(f)
+            GROUND_TRUTH = gt_data.get("scenarios", {})
+    except Exception as e:
+        print(f"[app.py] WARNING: failed to load ground_truth.json: {e}", file=sys.stderr)
 
 # Decision Metrics State
 METRICS = {
@@ -196,18 +127,15 @@ METRICS = {
     "threshold_convergence": "Converged",
 }
 
-# Lazy-loaded RAG engine instance
+# RAG Singleton initialization
 RAG_ENGINE = None
-CVE_MAP = {}
-KB_RECORDS = []
 
 def get_rag_engine():
-    global RAG_ENGINE, CVE_MAP, KB_RECORDS
+    global RAG_ENGINE
     if RAG_ENGINE is None and RAG_AVAILABLE:
-        tech_dir = os.path.join(ROOT_DIR, "rag_engine", "kb", "kb_master_real", "techniques")
-        cve_dir = os.path.join(ROOT_DIR, "rag_engine", "kb", "kb_master_real", "cves")
-        if os.path.exists(tech_dir) and os.path.exists(cve_dir):
-            KB_RECORDS, cves = load_kb_dir(tech_dir, cve_dir)
+        kb_path = os.path.join(ROOT_DIR, "knowledge_base")
+        if os.path.exists(kb_path):
+            KB_RECORDS, cves = load_kb_dir(kb_path)
             CVE_MAP = build_cve_lookup(cves)
             RAG_ENGINE = TwoLayerRAG(KB_RECORDS, WordTfidfEmbedder(), cve_lookup=CVE_MAP)
     return RAG_ENGINE
@@ -300,12 +228,67 @@ async def create_alert(alert: AlertModel):
     data = alert.dict()
     if "alert_id" not in data:
         data["alert_id"] = f"ALT-{len(ALERTS_STORE) + 1:04d}"
-    data["status"] = "PENDING_APPROVAL"
-    data["proposed_action"] = f"Remediate {data.get('title', 'threat')}"
-    data["confidence"] = 0.9200
+
+    engine = get_rag_engine()
+    if engine and RAG_AVAILABLE:
+        try:
+            norm_text = normalize_alert_text(data)
+            res = engine.query(
+                alert_output_text=norm_text,
+                container_id=data.get("service", ""),
+                falco_rule=data.get("title") if data.get("source") == "falco" else "",
+                alert_source=data.get("source", "log-tail")
+            )
+            confidence_score = round(float(res.confidence.score), 4)
+            technique_id = res.predicted_technique
+            tactic = getattr(res, "predicted_tactic", None)
+
+            sid = data.get("scenario") or data.get("scenario_id") or "UNKNOWN"
+            gt = GROUND_TRUTH.get(sid, {}) if sid != "UNKNOWN" else {}
+            if "target_container" not in gt and data.get("service"):
+                gt = dict(gt)
+                gt["target_container"] = data["service"]
+
+            rag_dict = {
+                "predicted_technique": technique_id,
+                "predicted_tactic": tactic,
+                "confidence": confidence_score
+            }
+
+            if RISK_SCORING_AVAILABLE:
+                assessment = assess(sid, rag_dict, gt)
+                assess_dict = assessment.to_dict()
+                risk_val = assess_dict["risk_score"]
+                routing_val = assess_dict["routing"]
+                proposed_val = assess_dict["selected_action"]
+            else:
+                risk_val = round(confidence_score * 0.8, 4)
+                routing_val = "analyst"
+                proposed_val = "isolate_network"
+
+            data.update({
+                "technique_id": technique_id,
+                "confidence": confidence_score,
+                "risk_score": risk_val,
+                "routing": routing_val,
+                "proposed_action": proposed_val,
+                "status": "PENDING_APPROVAL" if routing_val != "auto" else "AUTO_EXECUTED",
+            })
+        except Exception as e:
+            data["confidence"] = None
+            data["risk_score"] = None
+            data["routing"] = "analyst"
+            data["proposed_action"] = f"Investigate {data.get('service', 'threat')}"
+            data["status"] = "PENDING_APPROVAL"
+            data["error"] = str(e)
+    else:
+        data.setdefault("confidence", None)
+        data.setdefault("risk_score", None)
+        data.setdefault("routing", "analyst")
+        data.setdefault("proposed_action", f"Investigate {data.get('service', 'threat')}")
+        data.setdefault("status", "PENDING_APPROVAL")
+
     ALERTS_STORE.append(data)
-    
-    # Broadcast to websocket clients
     await broadcast_ws({"type": "NEW_ALERT", "alert": data})
     return {"status": "success", "alert": data}
 
@@ -313,29 +296,33 @@ async def create_alert(alert: AlertModel):
 @app.api_route("/api/attacks/trigger", methods=["POST"])
 async def trigger_attack(trigger: TriggerModel):
     scenario_id = trigger.scenario_id.upper()
-    if scenario_id not in ATTACK_CATALOG:
-        raise HTTPException(status_code=400, detail=f"Unknown scenario_id '{scenario_id}'. Valid scenarios: {list(ATTACK_CATALOG.keys())}")
+    if scenario_id not in ATTACK_SCRIPTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown scenario_id '{scenario_id}'. Valid scenarios: {list(ATTACK_SCRIPTS.keys())}"
+        )
 
-    spec = ATTACK_CATALOG[scenario_id]
-    alert_data = {
-        "alert_id": f"ALT-{len(ALERTS_STORE) + 1:04d}",
-        "source": "attack-simulator",
-        "scenario": scenario_id,
-        "severity": spec["severity"],
-        "title": spec["title"],
-        "service": spec["service"],
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "status": "PENDING_APPROVAL",
-        "proposed_action": spec["proposed_action"],
-        "confidence": spec["confidence"],
-        "evidence": spec["evidence"],
-        "event": spec["event"]
-    }
-    ALERTS_STORE.append(alert_data)
+    script_name = ATTACK_SCRIPTS[scenario_id]
+    script_path = (pathlib.Path(ROOT_DIR) / "attack_scripts" / script_name).resolve()
+    if not script_path.exists():
+        raise HTTPException(status_code=404, detail=f"Attack script file '{script_name}' not found at {script_path}")
 
-    # Broadcast new alert immediately over WebSockets
-    await broadcast_ws({"type": "NEW_ALERT", "alert": alert_data})
-    return {"status": "success", "triggered_scenario": scenario_id, "alert": alert_data}
+    # S4 runs with python3, all other scenario scripts run with bash
+    cmd = ["python3" if script_name.endswith(".py") else "bash", str(script_path)]
+
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        return {
+            "status": "success" if res.returncode == 0 else "error",
+            "triggered_scenario": scenario_id,
+            "exit_code": res.returncode,
+            "stdout": res.stdout,
+            "stderr": res.stderr,
+        }
+    except subprocess.TimeoutExpired:
+        raise HTTPException(status_code=504, detail=f"Attack script execution for {scenario_id} timed out after 120s")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to execute attack script {scenario_id}: {str(e)}")
 
 
 @app.post("/api/attacks/reset")
@@ -349,31 +336,22 @@ async def reset_lab_state():
     METRICS["agreement_rate"] = 1.0
     METRICS["override_rate"] = 0.0
 
-    # Re-insert initial S1 alert for demo readiness
-    initial_alert = {
-        "alert_id": "ALT-0001",
-        "source": "log-tail",
-        "scenario": "S1",
-        "severity": "CRITICAL",
-        "title": "SQL Injection Authentication Bypass",
-        "service": "webapp",
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "status": "PENDING_APPROVAL",
-        "proposed_action": "Isolate Webapp Container",
-        "confidence": 0.9412,
-        "evidence": "SQLi Pattern Match",
-        "event": {"payload": "' OR '1'='1"}
-    }
-    ALERTS_STORE.append(initial_alert)
-    await broadcast_ws({"type": "RESET_COMPLETE", "alert": initial_alert})
-    return {"status": "success", "message": "Lab state reset to initial baseline"}
+    await broadcast_ws({"type": "RESET_COMPLETE", "alerts_count": 0})
+    return {"status": "success", "message": "Lab state reset to empty baseline"}
 
 
 @app.api_route("/api/investigate", methods=["GET", "POST"])
 def investigate_alerts():
     """Runs RAG lookup and Attack Graph reconstruction on current alerts."""
     if not ALERTS_STORE:
-        return {"status": "empty", "message": "No alerts to investigate", "graph": {}, "investigations": []}
+        return {
+            "status": "empty",
+            "message": "No alerts to investigate",
+            "rag_grounding": {},
+            "attack_graph": {},
+            "chain_timeline": [],
+            "investigations": []
+        }
 
     engine = get_rag_engine()
     investigations = []
@@ -385,26 +363,85 @@ def investigate_alerts():
 
         if engine:
             try:
+                query_text = normalize_alert_text(alert) if RAG_AVAILABLE else title
                 res = engine.query(
-                    alert_output_text=title,
+                    alert_output_text=query_text,
                     container_id=service,
                     falco_rule=title if source == "falco" else "",
                     alert_source=source,
                 )
+                c = res.confidence
+                a_sid = alert.get("scenario") or alert.get("scenario_id") or "UNKNOWN"
+                a_gt = GROUND_TRUTH.get(a_sid, {}) if a_sid != "UNKNOWN" else {}
+                tactic_val = getattr(res, "predicted_tactic", None) or a_gt.get("tactic")
+
                 investigations.append({
                     "alert_id": alert.get("alert_id", "ALT-0000"),
                     "scenario_id": alert.get("scenario", "S0"),
                     "predicted_technique": res.predicted_technique,
-                    "predicted_technique_name": res.predicted_technique_name,
-                    "predicted_tactic": res.predicted_tactic,
-                    "confidence_score": round(res.confidence.score, 4),
+                    "predicted_technique_name": getattr(res, "predicted_technique_name", res.predicted_technique),
+                    "predicted_tactic": tactic_val,
+                    "confidence_score": round(float(c.score), 4),
                     "evidence": res.evidence,
+                    "confidence_breakdown": {
+                        "overall": round(float(c.score), 4),
+                        "similarity": round(float(c.similarity), 4),
+                        "source_agreement": round(float(c.source_agreement), 4),
+                        "cross_document_agreement": round(float(c.cross_document_agreement), 4),
+                        "retrieval_consistency": round(float(c.retrieval_consistency), 4),
+                    }
                 })
             except Exception as e:
                 investigations.append({
                     "alert_id": alert.get("alert_id", "ALT-0000"),
                     "error": str(e),
                 })
+
+    # Query for the latest alert's detailed RAG grounding object
+    latest_alert = ALERTS_STORE[-1] if ALERTS_STORE else None
+    rag_grounding = {}
+    if latest_alert and engine:
+        try:
+            norm_text = normalize_alert_text(latest_alert) if RAG_AVAILABLE else latest_alert.get("title", "")
+            res_latest = engine.query(
+                alert_output_text=norm_text,
+                container_id=latest_alert.get("service", ""),
+                falco_rule=latest_alert.get("title") if latest_alert.get("source") == "falco" else "",
+                alert_source=latest_alert.get("source", "log-tail")
+            )
+            c_l = res_latest.confidence
+            l_sid = latest_alert.get("scenario") or latest_alert.get("scenario_id") or "UNKNOWN"
+            l_gt = GROUND_TRUTH.get(l_sid, {}) if l_sid != "UNKNOWN" else {}
+            l_tactic_val = getattr(res_latest, "predicted_tactic", None) or l_gt.get("tactic")
+
+            rag_grounding = {
+                "technique": res_latest.predicted_technique,
+                "technique_name": getattr(res_latest, "predicted_technique_name", res_latest.predicted_technique),
+                "tactic": l_tactic_val,
+                "matched_cves": list(res_latest.evidence.get("cve_ids", [])) if hasattr(res_latest, "evidence") and isinstance(res_latest.evidence, dict) else [],
+                "confidence_breakdown": {
+                    "overall": round(float(c_l.score), 4),
+                    "similarity": round(float(c_l.similarity), 4),
+                    "source_agreement": round(float(c_l.source_agreement), 4),
+                    "cross_document_agreement": round(float(c_l.cross_document_agreement), 4),
+                    "retrieval_consistency": round(float(c_l.retrieval_consistency), 4),
+                }
+            }
+        except Exception:
+            pass
+
+    # Build chain_timeline from ALERTS_STORE
+    chain_timeline = [
+        {
+            "stage": idx + 1,
+            "alert_id": a.get("alert_id"),
+            "scenario": a.get("scenario") or a.get("scenario_id") or "-",
+            "technique": a.get("technique_id") or "-",
+            "service": a.get("service", "-"),
+            "timestamp": a.get("timestamp", "-"),
+        }
+        for idx, a in enumerate(ALERTS_STORE)
+    ]
 
     # Reconstruct Attack Graph using Graph pipeline
     graph_dict = {}
@@ -417,9 +454,12 @@ def investigate_alerts():
 
     return {
         "status": "success",
+        "alert_id": latest_alert.get("alert_id") if latest_alert else None,
+        "rag_grounding": rag_grounding,
         "investigations_count": len(investigations),
         "investigations": investigations,
         "attack_graph": graph_dict,
+        "chain_timeline": chain_timeline,
     }
 
 
@@ -494,4 +534,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

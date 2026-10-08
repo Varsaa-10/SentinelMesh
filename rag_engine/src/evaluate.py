@@ -35,8 +35,9 @@ from flat_rag import FlatRAG
 from alert_normalizer import normalize_alert_text
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TECHNIQUES_DIR = os.path.join(ROOT, "kb", "kb_master_real", "techniques")
-CVES_DIR = os.path.join(ROOT, "kb", "kb_master_real", "cves")
+REPO_ROOT = os.path.dirname(ROOT)
+TECHNIQUES_DIR = os.path.join(REPO_ROOT, "kb_master", "techniques")
+CVES_DIR = os.path.join(REPO_ROOT, "kb_master", "cves")
 ALERTS_PATH = os.path.join(ROOT, "data", "placeholder_alerts.json")
 RESULTS_PATH = os.path.join(ROOT, "data", "eval_results.json")
 

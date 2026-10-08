@@ -3,13 +3,14 @@ import React from 'react';
 export default function AttackTriggerBar({ onTrigger, onReset }) {
     const scenarios = [
         { id: 'S1', label: 'S1 SQLi' },
-        { id: 'S2', label: 'S2 BruteForce' },
-        { id: 'S3', label: 'S3 RCE' },
-        { id: 'S4', label: 'S4 JWT' },
-        { id: 'S5', label: 'S5 SSRF' },
-        { id: 'S6', label: 'S6 Traversal' },
-        { id: 'S7', label: 'S7 Escape' },
-        { id: 'S9', label: 'S9 Creds' },
+        { id: 'S2', label: 'S2 Brute force' },
+        { id: 'S3', label: 'S3 Default creds' },
+        { id: 'S4', label: 'S4 JWT forgery' },
+        { id: 'S5', label: 'S5 DB access' },
+        { id: 'S6', label: 'S6 Log tampering' },
+        { id: 'S7', label: 'S7 Grafana' },
+        { id: 'S8', label: 'S8 Exfiltration' },
+        { id: 'S9', label: 'S9 Credential read' },
         { id: 'S10', label: 'S10 Chain' },
     ];
 

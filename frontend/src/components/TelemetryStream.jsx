@@ -28,7 +28,7 @@ export default function TelemetryStream({ alerts }) {
                                     <span className={`sev-tag ${sevClass}`}>
                                         {isActioned ? `RESOLVED (${alert.resolution})` : alert.severity}
                                     </span>
-                                    <span className="alert-meta">{alert.scenario || 'S1'} · {alert.service}</span>
+                                    <span className="alert-meta">{alert.scenario || alert.scenario_id || '-'} · {alert.service || '-'}</span>
                                 </div>
                                 <div className="alert-title">{alert.title}</div>
                                 <div className="alert-meta">{JSON.stringify(alert.event || {})}</div>

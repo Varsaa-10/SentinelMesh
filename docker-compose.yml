@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     container_name: sentinelmesh-webapp
     ports:
-      - "0.0.0.0:5000:5000"
+      - "127.0.0.1:5000:5000"
     environment:
       - DB_HOST=database
       - DB_PORT=5432
@@ -29,13 +29,14 @@ services:
       database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:5000/health"]
+      test: [ "CMD", "curl", "-sf", "http://localhost:5000/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     networks:
-      - sentinelmesh_net
+      sentinelmesh_net:
+        ipv4_address: 172.30.0.4
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
@@ -47,7 +48,7 @@ services:
       dockerfile: Dockerfile
     container_name: sentinelmesh-authservice
     ports:
-      - "0.0.0.0:5001:5001"
+      - "127.0.0.1:5001:5001"
     environment:
       - DB_HOST=database
       - DB_PORT=5432
@@ -60,13 +61,14 @@ services:
       database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:5001/health"]
+      test: [ "CMD", "curl", "-sf", "http://localhost:5001/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     networks:
-      - sentinelmesh_net
+      sentinelmesh_net:
+        ipv4_address: 172.30.0.5
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
@@ -76,26 +78,27 @@ services:
     image: postgres:15-alpine
     container_name: sentinelmesh-database
     ports:
-      - "0.0.0.0:5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       - POSTGRES_DB=sentinelmesh
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     # VULNERABLE — INTENTIONAL FOR LAB
     # Mounts a permissive pg_hba.conf that trusts all connections (CWE-284)
-    command: ["postgres", "-c", "hba_file=/etc/pg_hba_override/pg_hba.conf"]
+    command: [ "postgres", "-c", "hba_file=/etc/pg_hba_override/pg_hba.conf" ]
     volumes:
       - ./services/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - ./services/database/pg_hba.conf:/etc/pg_hba_override/pg_hba.conf:ro
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d sentinelmesh"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d sentinelmesh" ]
       interval: 5s
       timeout: 3s
       retries: 10
       start_period: 10s
     networks:
-      - sentinelmesh_net
+      sentinelmesh_net:
+        ipv4_address: 172.30.0.2
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
@@ -107,11 +110,12 @@ services:
       dockerfile: Dockerfile
     container_name: sentinelmesh-logcollector
     ports:
-      - "0.0.0.0:24224:24224"
+      - "127.0.0.1:24224:24224"
     volumes:
       - log_data:/var/log/sentinelmesh
     networks:
-      - sentinelmesh_net
+      sentinelmesh_net:
+        ipv4_address: 172.30.0.3
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
@@ -121,7 +125,7 @@ services:
     image: grafana/grafana:latest
     container_name: sentinelmesh-dashboard
     ports:
-      - "0.0.0.0:3000:3000"
+      - "127.0.0.1:3000:3000"
     # VULNERABLE — INTENTIONAL FOR LAB
     # Vulnerability (CWE-798): Default admin password + anonymous read access
     environment:
@@ -139,7 +143,8 @@ services:
       database:
         condition: service_healthy
     networks:
-      - sentinelmesh_net
+      sentinelmesh_net:
+        ipv4_address: 172.30.0.6
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
@@ -178,22 +183,26 @@ services:
     volumes:
       - ./services/ngrok/ngrok.yml:/etc/ngrok.yml:ro
     ports:
-      - "127.0.0.1:4040:4040"   # ngrok Web UI — inspect tunnels & traffic
+      - "127.0.0.1:4040:4040" # ngrok Web UI — inspect tunnels & traffic
     depends_on:
       - proxy
     networks:
       - sentinelmesh_net
     restart: unless-stopped
     profiles:
-      - tunnel   # Only starts when explicitly requested: docker compose --profile tunnel up
+      - tunnel # Only starts when explicitly requested: docker compose --profile tunnel up
 
 # =============================================================================
 # Network — isolated, internal only
 # =============================================================================
 networks:
   sentinelmesh_net:
+    name: sentinelmesh_net
     driver: bridge
-    internal: false  # Allows containers to resolve each other; host binding is 127.0.0.1
+    internal: false
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
 
 # =============================================================================
 # Volumes

@@ -19,88 +19,96 @@ this logic plausibly belongs in the log-tail/Falco detectors themselves
 (emit a human-readable summary field), not bolted onto the RAG layer.
 """
 from __future__ import annotations
+import json
 import re
 from typing import Optional
 
 
 def _looks_like_sqli(identifier: str) -> bool:
-    if not identifier:
+    if not identifier or not isinstance(identifier, str):
         return False
-    return bool(re.search(r"(--|'|\bOR\b|\bUNION\b|;)", identifier, re.IGNORECASE))
+    return bool(re.search(r"('|--|\bUNION\b|\bSELECT\b|'\s*OR\s*'|'\s*=\s*')", identifier, re.IGNORECASE))
 
 
 def normalize_alert_text(alert: dict) -> str:
     """
-    alert: one entry from data/placeholder_alerts.json, with at least
-    'source' and 'output' (the raw captured text). Falls back to 'output'
-    unmodified if no pattern is recognized, so this never loses information.
+    alert: one entry from placeholder_alerts.json or live ALERTS_STORE.
+    Translates semantically-relevant field VALUES into natural-language phrases
+    matching KB descriptions based purely on event content (without scenario shortcuts).
     """
     raw = alert.get("output", "")
-    source = alert.get("source")
+    title = alert.get("title", "")
+    event = alert.get("event", {})
+    if not isinstance(event, dict):
+        event = {}
+    rule = alert.get("rule", "")
 
-    # --- log-tail: login_attempt events (S1, S2, S3, S7-Grafana all share this shape) ---
-    if "event_type" in raw or "login_attempt" in raw:
-        # Extract identifier= value if present (handles quoted values with special chars)
-        m_id = re.search(r'identifier="?([^",]*)"?', raw)
-        identifier = m_id.group(1) if m_id else ""
-        result_success = "result=success" in raw
-        result_failure = "result=failure" in raw
+    identifier = str(event.get("identifier") or event.get("user") or event.get("payload") or "")
 
-        if _looks_like_sqli(identifier):
-            return (
-                "login_attempt event, authentication bypassed via SQL injection syntax "
-                "in the identifier field, result success despite no valid credential"
-            )
-        if result_failure and ("failure_count" in raw):
-            return (
-                "login_attempt event, repeated failed authentication attempts against "
-                "the same identifier within a short window, brute force pattern"
-            )
-        if result_success and identifier.lower() == "admin":
-            return (
-                "login_attempt event, successful authentication using the default "
-                "admin account credentials, valid account abuse"
-            )
-        if "grafana" in raw.lower() or "dashboards/home" in raw:
-            return (
-                "Grafana dashboard accessed using default admin credentials or "
-                "anonymous access with no authenticated identity, valid account abuse"
-            )
+    combined = f"{raw} {title} {rule} {json.dumps(event)}".lower()
 
-    # --- log-tail: jwt_verification events (S4) ---
-    if "jwt_verification" in raw or "algorithm=none" in raw:
+    # --- S4: JWT Confusion (T1212) ---
+    if "jwt_verification" in combined or "algorithm=none" in combined or "alg=none" in combined or "jwt" in combined:
         return (
             "jwt_verification event, token accepted as valid despite algorithm none, "
             "signature verification bypassed, credential forgery via software exploitation"
         )
 
-    # --- falco: database connection (S5) ---
-    if source == "falco" and ("postgres" in raw.lower() or "5432" in raw or "database" in raw.lower()):
+    # --- S5: Database Connection (T1021) ---
+    if "5432" in combined or "postgres" in combined or "database connection" in combined:
         return (
             "unauthorized inbound network connection to the database service from a "
             "source not on the allowed client list, remote service abuse"
         )
 
-    # --- falco: log tampering (S6) ---
-    if source == "falco" and ("var/log/sentinelmesh" in raw or "logcollector" in raw.lower()):
+    # --- S6: Log Tampering (T1070) ---
+    if "var/log/sentinelmesh" in combined or "log directory tampering" in combined:
         return (
             "unexpected write to the security log directory by a process other than "
             "the log service itself, indicator removal, log tampering"
         )
 
-    # --- falco: credential file read (S9) ---
-    if source == "falco" and ("/etc/shadow" in raw or ".ssh" in raw or ".aws" in raw):
+    # --- S7: Grafana (T1078) ---
+    if "grafana" in combined or "dashboards/home" in combined:
         return (
-            "sensitive credential file read, /etc/shadow or SSH key or cloud "
-            "credential file accessed by an unexpected process, credential dumping"
+            "Grafana dashboard accessed using default admin credentials or "
+            "anonymous access with no authenticated identity, valid account abuse"
         )
 
-    # --- falco: outbound connection / exfiltration (S8) ---
-    if source == "falco" and ("curl" in raw.lower() or "outbound connect" in raw.lower() or "fd.rport" in raw):
+    # --- S8: Exfiltration / Outbound Connection (T1041) ---
+    if "curl" in combined or "outbound connect" in combined or "exfiltration" in combined:
         return (
             "unexpected outbound network connection from the container to a "
             "destination outside the allowed egress list, data exfiltration over "
             "command and control channel"
         )
 
-    return raw
+    # --- S9: Sensitive Credential File Read (T1003.008) ---
+    if "/etc/shadow" in combined or ".ssh" in combined or ".aws" in combined or "credential file read" in combined:
+        return (
+            "sensitive credential file read, /etc/shadow or SSH key or cloud "
+            "credential file accessed by an unexpected process, credential dumping"
+        )
+
+    # --- S2: Brute Force (T1110) ---
+    if ("failure_count" in combined and "login" in combined) or "brute" in combined:
+        return (
+            "login_attempt event, repeated failed authentication attempts against "
+            "the same identifier within a short window, brute force pattern"
+        )
+
+    # --- S3: Default Credentials (T1078) ---
+    if "login" in combined and "result=success" in combined and "admin" in combined and not _looks_like_sqli(identifier):
+        return (
+            "login_attempt event, successful authentication using the default "
+            "admin account credentials, valid account abuse"
+        )
+
+    # --- S1: SQL Injection (T1190) ---
+    if _looks_like_sqli(identifier) or "sqli" in combined or "sql injection" in combined:
+        return (
+            "login_attempt event, authentication bypassed via SQL injection syntax "
+            "in the identifier field, result success despite no valid credential"
+        )
+
+    return raw or title

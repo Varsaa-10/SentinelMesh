@@ -39,7 +39,7 @@
         "finding": "Lists related_technique_ids=['T1499'] but that technique's related_cves does not list 'CVE-2022-29217' back -- asymmetric/broken bidirectional link."
       }
     ],
-    "wrong_recommendations": 1,
+    "wrong_recommendations": 3,
     "wrong_recommendations_flagged_as_suspect": 0,
     "query_results": [
       {
@@ -47,7 +47,7 @@
         "ground_truth_technique": "T1190",
         "predicted_technique": "T1190",
         "wrong_recommendation": false,
-        "confidence_score": 0.6678,
+        "confidence_score": 0.6642,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -56,16 +56,16 @@
         "ground_truth_technique": "T1110",
         "predicted_technique": "T1110",
         "wrong_recommendation": false,
-        "confidence_score": 0.7213,
+        "confidence_score": 0.7227,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S3",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1078",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6832,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.6642,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -74,7 +74,7 @@
         "ground_truth_technique": "T1212",
         "predicted_technique": "T1212",
         "wrong_recommendation": false,
-        "confidence_score": 0.6758,
+        "confidence_score": 0.6692,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -83,7 +83,7 @@
         "ground_truth_technique": "T1021",
         "predicted_technique": "T1021",
         "wrong_recommendation": false,
-        "confidence_score": 0.6444,
+        "confidence_score": 0.6354,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -92,25 +92,25 @@
         "ground_truth_technique": "T1070",
         "predicted_technique": "T1070",
         "wrong_recommendation": false,
-        "confidence_score": 0.7495,
+        "confidence_score": 0.749,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S7",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1110",
+        "predicted_technique": "T1190",
         "wrong_recommendation": true,
-        "confidence_score": 0.4658,
+        "confidence_score": 0.6642,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S8",
         "ground_truth_technique": "T1041",
-        "predicted_technique": "T1041",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6415,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.4142,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -119,7 +119,7 @@
         "ground_truth_technique": "T1003.008",
         "predicted_technique": "T1003.008",
         "wrong_recommendation": false,
-        "confidence_score": 0.6168,
+        "confidence_score": 0.6128,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       }
@@ -159,7 +159,7 @@
         "finding": "References technique 'T1210' which does not exist in the technique record set."
       }
     ],
-    "wrong_recommendations": 1,
+    "wrong_recommendations": 3,
     "wrong_recommendations_flagged_as_suspect": 0,
     "query_results": [
       {
@@ -167,7 +167,7 @@
         "ground_truth_technique": "T1190",
         "predicted_technique": "T1190",
         "wrong_recommendation": false,
-        "confidence_score": 0.6659,
+        "confidence_score": 0.6629,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -176,16 +176,16 @@
         "ground_truth_technique": "T1110",
         "predicted_technique": "T1110",
         "wrong_recommendation": false,
-        "confidence_score": 0.7212,
+        "confidence_score": 0.7226,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S3",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1078",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6833,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.6629,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -194,7 +194,7 @@
         "ground_truth_technique": "T1212",
         "predicted_technique": "T1212",
         "wrong_recommendation": false,
-        "confidence_score": 0.6761,
+        "confidence_score": 0.6696,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -203,7 +203,7 @@
         "ground_truth_technique": "T1021",
         "predicted_technique": "T1021",
         "wrong_recommendation": false,
-        "confidence_score": 0.6426,
+        "confidence_score": 0.6335,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -219,18 +219,18 @@
       {
         "scenario_id": "S7",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1110",
+        "predicted_technique": "T1190",
         "wrong_recommendation": true,
-        "confidence_score": 0.4662,
+        "confidence_score": 0.6629,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S8",
         "ground_truth_technique": "T1041",
-        "predicted_technique": "T1041",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6391,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.4129,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -239,7 +239,7 @@
         "ground_truth_technique": "T1003.008",
         "predicted_technique": "T1003.008",
         "wrong_recommendation": false,
-        "confidence_score": 0.6172,
+        "confidence_score": 0.6135,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       }
@@ -279,33 +279,33 @@
         "finding": "Descriptions for T1078 and T1110 are 100% word-overlap similar despite being different technique IDs -- likely a copied/near-duplicate description (one of them may carry a wrong label)."
       }
     ],
-    "wrong_recommendations": 2,
-    "wrong_recommendations_flagged_as_suspect": 0,
+    "wrong_recommendations": 4,
+    "wrong_recommendations_flagged_as_suspect": 1,
     "query_results": [
       {
         "scenario_id": "S1",
         "ground_truth_technique": "T1190",
         "predicted_technique": "T1190",
         "wrong_recommendation": false,
-        "confidence_score": 0.6643,
+        "confidence_score": 0.6607,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S2",
         "ground_truth_technique": "T1110",
-        "predicted_technique": "T1110",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6842,
-        "retrieval_flagged_suspect": false,
-        "suspicion_reason": "No suspicion flags triggered."
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.484,
+        "retrieval_flagged_suspect": true,
+        "suspicion_reason": "Low absolute similarity score (0.06 < 0.25) -- alert failed to match any legitimate KB technique cleanly (possible unknown or poisoned query)."
       },
       {
         "scenario_id": "S3",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1110",
+        "predicted_technique": "T1190",
         "wrong_recommendation": true,
-        "confidence_score": 0.6692,
+        "confidence_score": 0.6607,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -314,7 +314,7 @@
         "ground_truth_technique": "T1212",
         "predicted_technique": "T1212",
         "wrong_recommendation": false,
-        "confidence_score": 0.6757,
+        "confidence_score": 0.669,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -323,7 +323,7 @@
         "ground_truth_technique": "T1021",
         "predicted_technique": "T1021",
         "wrong_recommendation": false,
-        "confidence_score": 0.6357,
+        "confidence_score": 0.6255,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -332,25 +332,25 @@
         "ground_truth_technique": "T1070",
         "predicted_technique": "T1070",
         "wrong_recommendation": false,
-        "confidence_score": 0.7496,
+        "confidence_score": 0.7491,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S7",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1110",
+        "predicted_technique": "T1190",
         "wrong_recommendation": true,
-        "confidence_score": 0.4784,
+        "confidence_score": 0.6607,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S8",
         "ground_truth_technique": "T1041",
-        "predicted_technique": "T1041",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6397,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.4107,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -359,7 +359,7 @@
         "ground_truth_technique": "T1003.008",
         "predicted_technique": "T1003.008",
         "wrong_recommendation": false,
-        "confidence_score": 0.6151,
+        "confidence_score": 0.6121,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       }
@@ -393,7 +393,7 @@
         "finding": "References technique 'T1210' which does not exist in the technique record set."
       }
     ],
-    "wrong_recommendations": 0,
+    "wrong_recommendations": 3,
     "wrong_recommendations_flagged_as_suspect": 0,
     "query_results": [
       {
@@ -401,7 +401,7 @@
         "ground_truth_technique": "T1190",
         "predicted_technique": "T1190",
         "wrong_recommendation": false,
-        "confidence_score": 0.6519,
+        "confidence_score": 0.6398,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -410,16 +410,16 @@
         "ground_truth_technique": "T1110",
         "predicted_technique": "T1110",
         "wrong_recommendation": false,
-        "confidence_score": 0.7212,
+        "confidence_score": 0.7226,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S3",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1078",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6835,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.6398,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -428,7 +428,7 @@
         "ground_truth_technique": "T1212",
         "predicted_technique": "T1212",
         "wrong_recommendation": false,
-        "confidence_score": 0.675,
+        "confidence_score": 0.6683,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -437,7 +437,7 @@
         "ground_truth_technique": "T1021",
         "predicted_technique": "T1021",
         "wrong_recommendation": false,
-        "confidence_score": 0.6446,
+        "confidence_score": 0.6356,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -446,25 +446,25 @@
         "ground_truth_technique": "T1070",
         "predicted_technique": "T1070",
         "wrong_recommendation": false,
-        "confidence_score": 0.7495,
+        "confidence_score": 0.749,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S7",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1078",
-        "wrong_recommendation": false,
-        "confidence_score": 0.7126,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.6398,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S8",
         "ground_truth_technique": "T1041",
-        "predicted_technique": "T1041",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6416,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.3898,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -473,7 +473,7 @@
         "ground_truth_technique": "T1003.008",
         "predicted_technique": "T1003.008",
         "wrong_recommendation": false,
-        "confidence_score": 0.6167,
+        "confidence_score": 0.6127,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       }
@@ -513,7 +513,7 @@
         "finding": "Mitigation text contains suspicious phrase 'does not require patching' -- possible stale/contradictory guidance."
       }
     ],
-    "wrong_recommendations": 1,
+    "wrong_recommendations": 3,
     "wrong_recommendations_flagged_as_suspect": 0,
     "query_results": [
       {
@@ -521,7 +521,7 @@
         "ground_truth_technique": "T1190",
         "predicted_technique": "T1190",
         "wrong_recommendation": false,
-        "confidence_score": 0.6675,
+        "confidence_score": 0.664,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -530,16 +530,16 @@
         "ground_truth_technique": "T1110",
         "predicted_technique": "T1110",
         "wrong_recommendation": false,
-        "confidence_score": 0.7213,
+        "confidence_score": 0.7227,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S3",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1078",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6833,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.664,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -548,7 +548,7 @@
         "ground_truth_technique": "T1212",
         "predicted_technique": "T1212",
         "wrong_recommendation": false,
-        "confidence_score": 0.6801,
+        "confidence_score": 0.6735,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -557,7 +557,7 @@
         "ground_truth_technique": "T1021",
         "predicted_technique": "T1021",
         "wrong_recommendation": false,
-        "confidence_score": 0.6444,
+        "confidence_score": 0.6354,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -566,25 +566,25 @@
         "ground_truth_technique": "T1070",
         "predicted_technique": "T1070",
         "wrong_recommendation": false,
-        "confidence_score": 0.7494,
+        "confidence_score": 0.749,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S7",
         "ground_truth_technique": "T1078",
-        "predicted_technique": "T1110",
+        "predicted_technique": "T1190",
         "wrong_recommendation": true,
-        "confidence_score": 0.4659,
+        "confidence_score": 0.664,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
       {
         "scenario_id": "S8",
         "ground_truth_technique": "T1041",
-        "predicted_technique": "T1041",
-        "wrong_recommendation": false,
-        "confidence_score": 0.6415,
+        "predicted_technique": "T1190",
+        "wrong_recommendation": true,
+        "confidence_score": 0.414,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       },
@@ -593,7 +593,7 @@
         "ground_truth_technique": "T1003.008",
         "predicted_technique": "T1003.008",
         "wrong_recommendation": false,
-        "confidence_score": 0.6182,
+        "confidence_score": 0.6144,
         "retrieval_flagged_suspect": false,
         "suspicion_reason": "No suspicion flags triggered."
       }

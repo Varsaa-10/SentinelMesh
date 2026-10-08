@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-05T14:33:50Z",
+  "timestamp": "2026-10-05T23:41:11Z",
   "overall_status": "REPRODUCIBLE_PASSED",
   "total_checks": 6,
   "passed_checks": 6,
@@ -8,35 +8,35 @@
     {
       "name": "Attack Graph Unit Tests (69 tests)",
       "passed": true,
-      "duration_seconds": 1.076,
+      "duration_seconds": 0.532,
       "exit_code": 0,
-      "snippet": ".................................D:\\Project\\SentinelMesh\\graph\\tests\\test_graph_only.py:93: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\\\Project\\\\SentinelMesh\\\\graph\\\\graph_only_baseline.py' mode='r' encoding='utf-8'>\n  source = open(mod.__file__, \"r\", encoding=\"utf-8\").read()\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n..................................\n----------------------------------------------------------------------\nRan 69 tests in 0.060s\n\nOK"
+      "snippet": ".................................D:\\Project\\SentinelMesh\\graph\\tests\\test_graph_only.py:93: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\\\Project\\\\SentinelMesh\\\\graph\\\\graph_only_baseline.py' mode='r' encoding='utf-8'>\n  source = open(mod.__file__, \"r\", encoding=\"utf-8\").read()\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n..................................\n----------------------------------------------------------------------\nRan 69 tests in 0.022s\n\nOK"
     },
     {
       "name": "Log-Tail Scenario Detector Checks (12 checks)",
       "passed": true,
-      "duration_seconds": 0.299,
+      "duration_seconds": 0.074,
       "exit_code": 0,
       "snippet": " on hs256/rs256/alg keywords, not just 'algorithm'\n[PASS] S4 does NOT fire on an unrelated verification failure\n[PASS] alert from S1 has the standard 7-key shape\n[PASS] alert from S2 has the standard 7-key shape\n[PASS] alert from S3 has the standard 7-key shape\n[PASS] alert from S4 has the standard 7-key shape\n[PASS] S7 fires on Grafana POST /login status=200\n[PASS] S7 fires on anonymous Grafana dashboard GET status=200\n[PASS] S7 does NOT fire on unrelated Grafana log lines\n\n12/12 checks passed."
     },
     {
       "name": "FastAPI Backend Unit Tests (5 tests)",
       "passed": true,
-      "duration_seconds": 5.998,
+      "duration_seconds": 2.554,
       "exit_code": 0,
-      "snippet": "ed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/\n  data = alert.dict()\n.D:\\Project\\SentinelMesh\\backend\\app.py:228: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/\n  data = decision.dict()\n....\n----------------------------------------------------------------------\nRan 5 tests in 0.082s\n\nOK"
+      "snippet": "d in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/\n  data = alert.dict()\n.D:\\Project\\SentinelMesh\\backend\\app.py:440: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/\n  data = decision.dict()\n.....\n----------------------------------------------------------------------\nRan 6 tests in 0.051s\n\nOK"
     },
     {
       "name": "RAG Engine Evaluation Benchmark",
       "passed": true,
-      "duration_seconds": 6.695,
+      "duration_seconds": 2.848,
       "exit_code": 0,
-      "snippet": "7     3.054                3.426\nflat         tfidf-char   raw          0.8571     6.089                7.608\ntwo-layer    tfidf-word   normalized   1.0        2.807                3.738\nflat         tfidf-word   normalized   1.0        2.063                2.776\ntwo-layer    tfidf-char   normalized   0.9286     3.813                5.075\nflat         tfidf-char   normalized   1.0        5.304                6.102\n\nFull results written to D:\\Project\\SentinelMesh\\rag_engine\\data\\eval_results.json"
+      "snippet": "57     2.365                2.545\nflat         tfidf-char   raw          0.8571     3.79                 3.994\ntwo-layer    tfidf-word   normalized   0.7857     1.269                1.38\nflat         tfidf-word   normalized   0.7857     1.539                1.654\ntwo-layer    tfidf-char   normalized   0.7143     2.667                3.012\nflat         tfidf-char   normalized   0.7857     4.527                5.789\n\nFull results written to D:\\Project\\SentinelMesh\\rag_engine\\data\\eval_results.json"
     },
     {
       "name": "Knowledge Base Poisoning Scan",
       "passed": true,
-      "duration_seconds": 4.328,
+      "duration_seconds": 2.156,
       "exit_code": 0,
       "snippet": ""
     },

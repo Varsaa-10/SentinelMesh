@@ -37,6 +37,7 @@
     (fd.typechar = '4' or fd.typechar = '6') and
     container.name in ("sentinelmesh-webapp", "sentinelmesh-authservice") and
     not self_directed_traffic and
+    not (fd.rip netmask 172.19.0.0/16 or fd.rip netmask 172.18.0.0/16) and
     not fd.rip in (sentinelmesh_expected_egress)
   output: >
     Unexpected outbound connection (dest=%fd.rip:%fd.rport process=%proc.name

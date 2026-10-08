@@ -12,7 +12,10 @@ import numpy as np
 from kb_loader import KBRecord, CVERecord
 from embeddings import BaseEmbedder
 from confidence import compute_confidence, ConfidenceBreakdown
-from rag_engine import RAGResult
+try:
+    from rag_engine.src.rag_engine import RAGResult
+except ImportError:
+    from rag_engine import RAGResult
 
 
 class FlatRAG:

@@ -117,8 +117,15 @@ def compute_risk_score(confidence: float, severity: int, asset_criticality: int)
     return {"raw": raw, "normalized": normalized}
 
 
-def route(risk_score_normalized: float, thresholds: Optional[Dict[str, float]] = None) -> str:
-    """Tiered routing decision: auto / analyst / admin."""
+def route(risk_score_normalized: float, thresholds: Optional[Dict[str, float]] = None, action: Optional[str] = None) -> str:
+    """Tiered routing decision: auto / analyst / admin.
+    
+    Container termination (kill_container) ALWAYS requires human approval (analyst/admin),
+    never auto-executed.
+    """
+    if action == "kill_container":
+        return "analyst" if risk_score_normalized < 0.85 else "admin"
+
     t = thresholds or ROUTING_THRESHOLDS
     if risk_score_normalized < t["auto"]:
         return "auto"
@@ -231,11 +238,19 @@ class ActionExecutor:
 def assess(
     scenario_id: str,
     rag_result: Dict[str, Any],
-    ground_truth_entry: Dict[str, Any],
+    ground_truth_entry: Optional[Dict[str, Any]] = None,
     graph_path_length: int = 1,
     thresholds: Optional[Dict[str, float]] = None,
 ) -> RiskAssessment:
-    confidence = rag_result.get("confidence", {}).get("confidence_score", 0.0)
+    if ground_truth_entry is None:
+        ground_truth_entry = {}
+
+    conf_val = rag_result.get("confidence", 0.0)
+    if isinstance(conf_val, dict):
+        confidence = float(conf_val.get("confidence_score", 0.0))
+    else:
+        confidence = float(conf_val)
+
     technique_id = rag_result.get("predicted_technique", "UNKNOWN")
     tactic = rag_result.get("predicted_tactic", ground_truth_entry.get("tactic", "Unknown"))
     severity = ground_truth_entry.get("severity", 3)
@@ -243,8 +258,8 @@ def assess(
     target = ground_truth_entry.get("target_container", "unknown")
 
     scores = compute_risk_score(confidence, severity, asset_criticality)
-    routing = route(scores["normalized"], thresholds)
     action_choice = select_action(tactic, graph_path_length, scores["normalized"])
+    routing = route(scores["normalized"], thresholds, action=action_choice["selected_action"])
 
     return RiskAssessment(
         scenario_id=scenario_id,
