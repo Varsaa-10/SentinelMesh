@@ -198,8 +198,8 @@ class GraphOnlyBaseline:
                     ))
 
         # Network node
-        rip = _flat_get(event, "fd.rip") or _flat_get(event, "fd_rip")
-        rport = _flat_get(event, "fd.rport") or _flat_get(event, "fd_rport")
+        rip = _flat_get(event, "fd.sip") or _flat_get(event, "fd.rip") or _flat_get(event, "fd_rip")
+        rport = _flat_get(event, "fd.sport") or _flat_get(event, "fd.rport") or _flat_get(event, "fd_rport")
         if rip:
             net_label = f"{rip}:{rport}" if rport else rip
             net_id = f"network_{net_label}"
@@ -231,6 +231,7 @@ class GraphOnlyBaseline:
                         "timestamp": timestamp,
                     },
                 ))
+            _note_scenario(graph.get_node(tech_node_id), scenario)
 
             # CVE node
             cve = mapping.get("cve")
@@ -248,6 +249,15 @@ class GraphOnlyBaseline:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _note_scenario(node, scenario):
+    """Record every scenario that maps to this technique node (nodes stay unique per technique)."""
+    if node is None or not scenario:
+        return
+    seen = node.properties.setdefault("scenarios", [node.properties.get("scenario")] if node.properties.get("scenario") else [])
+    if scenario not in seen:
+        seen.append(scenario)
+
 
 def _flat_get(d: dict, key: str, default=None):
     """Get a value trying the full key first, then dotted nested access."""

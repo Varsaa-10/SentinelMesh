@@ -1,0 +1,39 @@
+date_utc: 2026-10-12T03:03:44Z
+host: Linux 6.14.0-27-generic x86_64
+Mon Oct 12 08:33:44 2026: Falco version: 0.44.1 (x86_64)
+Mon Oct 12 08:33:44 2026: Falco initialized with configuration files:
+Mon Oct 12 08:33:44 2026:    /etc/falco/config.d/engine-kind-falcoctl.yaml | schema validation: ok
+Mon Oct 12 08:33:44 2026:    /etc/falco/config.d/falco.container_plugin.yaml | schema validation: ok
+Mon Oct 12 08:33:44 2026:    /etc/falco/falco.yaml | schema validation: ok
+Mon Oct 12 08:33:44 2026: System info: Linux version 6.14.0-27-generic (buildd@lcy02-amd64-120) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #27~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jul 22 17:38:49 UTC 2
+falco: Falco version: 0.44.1
+docker: Docker version 29.7.1, build e9452d6
+git_commit: a902d8e3b011d70c07d08dbc0145ac6aabd05351
+d1cf78d9351dbb150ec4326995487558f86d98ae12cb20391ac7ecf0ad25ca3b  detection/falco-rules/s05_db_access.yaml
+b2ec8833a86ff17fa935076bbef1312bb0673102c6b04a52153c4415583eea54  detection/falco-rules/s06_log_tamper.yaml
+603731719ad0132c47be3860eb9a16d36110d4ca3a1a462f56f4511b0a7bf09d  detection/falco-rules/s08_exfiltration.yaml
+ebfdbb65dae93fb0f29cfe2fcc142059e35195589c20c26ba4a684ba5b8a9ad4  detection/falco-rules/s09_credential_access.yaml
+412d948170b266d3a6c140092961d0a938f32a99172124b4ca5242e62eed740b  eval/ground_truth.json
+97c5e58f450fc8ebd3d78898c09ea70bc8e7681b5b15541314975ef793fcffee  attack_scripts/scenario10_chain.sh
+a960e04a8a3c1b8782b9e64ce3f8e4ae443dc7748ae35d9a03defe68566d1c22  attack_scripts/scenario1_sqli.sh
+b68aa043a89efa78767689a7b7ad7d1b0f7a662de4c9dc7bbbad01be6b03db4d  attack_scripts/scenario2_bruteforce.sh
+fd6f43e3650cfc70d365c8c191ac414fdb07d15e17248672c2ed0afc1d58ca35  attack_scripts/scenario3_default_credentials.sh
+4010981cfba333ef1f43f76b418d80b978b2d754437cf88ec335f7ea7696a346  attack_scripts/scenario4_jwt_confusion.py
+8d98d3b13ddf734a5e03c9dcc1e67ddf9b7ad4adeca88c73a3f0807101cf8c20  attack_scripts/scenario5_db_connection.sh
+096c471b0af79fee2913410d9b26a930dfd725f70cbc936aa9b8d3084431e75e  attack_scripts/scenario6_log_tampering.sh
+706789781377b265dd09ebc7283a6ed5e51bddba28336c50768764ec14b65a8a  attack_scripts/scenario7_grafana_default_creds.sh
+1f85fabf975157a0477ce768741c714698152ff5dc54f2061da9f23d735b1810  attack_scripts/scenario8_exfiltration.sh
+c85e4c392799b24982b62ebeb7957d20528cf8f48c316c78d42dbefc1e1fbf3b  attack_scripts/scenario9_credential_access.sh
+31778942c38efc06b824ece5371d0478d87166026d82b556b9cc114027efafe7  docker-compose.yml
+sentinelmesh-webapp sentinelmesh-webapp sha256:658c7771aa46468011685e86db17b182973683fba70f4ecadb50e84db407a999
+sentinelmesh-authservice sentinelmesh-authservice sha256:b75fd2825489b973ab670fcfe5c1613a96f4b7a43a77e1fbe13e043f2db7589d
+sentinelmesh-dashboard grafana/grafana:latest sha256:1c1bd67c54c5fcf6e759897852b5a584191bd6796e8d328a5ace457799801261
+sentinelmesh-database postgres:15-alpine sha256:3d0f7584ed7d04e27fa050d6683a74746608faf21f202be78460d679cc56461f
+sentinelmesh-logcollector sentinelmesh-logcollector sha256:d40ffc8ac998a4bca5b1a4344f13073f44482e4690e8644afcbf92d6c7ec2222
+time="2026-10-12T08:33:45+05:30" level=warning msg="The \"NGROK_AUTHTOKEN\" variable is not set. Defaulting to a blank string."
+NAME                        IMAGE                       COMMAND                  SERVICE        CREATED         STATUS                   PORTS
+sentinelmesh-authservice    sentinelmesh-authservice    "python app.py"          authservice    6 minutes ago   Up 5 minutes (healthy)   127.0.0.1:5001->5001/tcp
+sentinelmesh-dashboard      grafana/grafana:latest      "/run.sh"                dashboard      6 minutes ago   Up 5 minutes             127.0.0.1:3000->3000/tcp
+sentinelmesh-database       postgres:15-alpine          "docker-entrypoint.s…"   database       6 minutes ago   Up 6 minutes (healthy)   127.0.0.1:5432->5432/tcp
+sentinelmesh-logcollector   sentinelmesh-logcollector   "tini -- /bin/entryp…"   logcollector   6 minutes ago   Up 6 minutes             5140/tcp, 127.0.0.1:24224->24224/tcp
+sentinelmesh-webapp         sentinelmesh-webapp         "python app.py"          webapp         6 minutes ago   Up 5 minutes (healthy)   127.0.0.1:5000->5000/tcp

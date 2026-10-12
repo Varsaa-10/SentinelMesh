@@ -1,0 +1,44 @@
+RUN 20261012T030225Z: 21 alerts, harness score 9/9, S10 stages all fired: True
+
+Per scenario
+  S1   fired=True  alerts=2   (expect ~2)
+  S2   fired=True  alerts=2   (expect ~n/a)
+  S3   fired=True  alerts=2   (expect ~2)
+  S4   fired=True  alerts=2   (expect ~2)
+  S5   fired=True  alerts=1   (expect ~1)
+  S6   fired=True  alerts=1   (expect ~1)
+  S7   fired=True  alerts=2   (expect ~2)
+  S8   fired=True  alerts=7   (expect ~2)  <-- 7 alerts vs ~2 expected: noise
+  S9   fired=True  alerts=2   (expect ~2)
+
+S8 alerts by (container, process, dest):
+    4x  sentinelmesh-webapp / curl -> None   [no destination recorded -> cannot confirm this is the example.com connect]
+    3x  sentinelmesh-webapp / curl -> 0.0.0.0   [0.0.0.0 -> connect noise]
+  => 0 S8 alert(s) with a real external destination (expect 2: attack + chain)
+
+S5 alerts by source IP:
+    1x  172.30.0.7  [ephemeral client (attacker)]
+
+S6 writes:
+    1x  sh -> /var/log/sentinelmesh/test.log
+
+S9 reads:
+    2x  ('/etc/shadow', 'cat', 'sentinelmesh-webapp')
+
+S7 titles:
+    1x  Grafana Login Succeeded (unconfirmed — username not visible 
+    1x  Grafana Anonymous Dashboard Access
+
+S10 chain: latest alert per stage (should increase S1<S3<S4<S9<S8):
+  S1: 2026-10-12T03:03:25Z
+  S3: 2026-10-12T03:03:27Z
+  S4: 2026-10-12T03:03:30Z
+  S9: 2026-10-12T03:03:32Z
+  S8: 2026-10-12T03:03:34Z
+
+============================================================
+REVIEW BEFORE FREEZING:
+  - S8 noisy (7 vs ~2)
+  - S8 noise: sentinelmesh-webapp/curl->None x4
+  - S8 noise: sentinelmesh-webapp/curl->0.0.0.0 x3
+  - S8 'fired' but NO alert records an external destination — check raw output_fields in falco_alerts_raw.jsonl

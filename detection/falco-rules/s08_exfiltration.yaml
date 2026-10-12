@@ -1,46 +1,29 @@
 # Scenario 8 — Exfiltration (post-exploitation)
-# Outbound connection to a destination outside the expected peer list.
-# MUST exclude the Docker health check: curl -sf http://localhost:5000/health
-
-- list: sentinelmesh_expected_egress
-  items: []  # confirmed empty is correct: no legitimate external egress expected from webapp/authservice
-
-# Self-directed traffic (health checks, Werkzeug's dev-server reloader
-# talking to its own subprocess, etc.) never lands on one fixed port — it
-# hits loopback or the container's own IP on varying ephemeral ports. So
-# instead of excluding one specific port pair, exclude any connection whose
-# destination is loopback or one of the app containers' own IPs.
+# Outbound connection from an app container to a destination outside the lab.
 #
-# NOTE: Falco doesn't support comparing two ipaddr-typed fields against
-# each other (fd.rip = fd.sip fails to compile — it tries to parse fd.sip
-# as a literal address), so the containers' own IPs have to be listed
-# explicitly here rather than derived dynamically. These are the same
-# webapp/authservice IPs already confirmed in s05_db_access.yaml's
-# sentinelmesh_db_allowed_clients list — see that file's IP fragility
-# warning if you re-create the containers and these change.
-- list: sentinelmesh_self_ips
-  items: ["127.0.0.1", "::1", "172.18.0.4", "172.18.0.5"]
+# NOTE (Falco 0.44.1, observed live): on connect events fd.rip is the LOCAL
+# address and the destination is in the server-side fields (fd.sip / fd.sport).
+# Matching on fd.rip made the old rule exclude the real exfil connection as
+# "self-directed". Also: curl's UDP/IPv6 socket setup emits connect events with
+# no resolved connection name (fd.name empty or <unknown>); requiring "->"
+# keeps only the real connection.
 
-- macro: self_directed_traffic
-  condition: >
-    (fd.rip in (sentinelmesh_self_ips))
+- list: sentinelmesh_internal_ips
+  items: ["0.0.0.0", "127.0.0.1", "127.0.0.11", "::1", "172.30.0.2", "172.30.0.3", "172.30.0.4", "172.30.0.5", "172.30.0.6"]
 
 - rule: SentinelMesh Unexpected Outbound Connection
   desc: >
     Outbound connection from a SentinelMesh app container to a destination
-    not in the expected peer/egress list. Excludes self-directed traffic
-    (health checks, loopback, the container talking to its own IP) rather
-    than one specific port, since that traffic isn't confined to a single
-    port. Maps to Scenario 8, or Stage 5 of the Scenario 9 chain.
+    outside the lab network (loopback, Docker DNS and the five static lab IPs
+    are excluded). Maps to Scenario 8, or Stage 5 of the Scenario 10 chain.
   condition: >
     evt.type = connect and
     (fd.typechar = '4' or fd.typechar = '6') and
     container.name in ("sentinelmesh-webapp", "sentinelmesh-authservice") and
-    not self_directed_traffic and
-    not (fd.rip netmask 172.19.0.0/16 or fd.rip netmask 172.18.0.0/16) and
-    not fd.rip in (sentinelmesh_expected_egress)
+    fd.name contains "->" and
+    not fd.sip in (sentinelmesh_internal_ips)
   output: >
-    Unexpected outbound connection (dest=%fd.rip:%fd.rport process=%proc.name
-    container=%container.name)
+    Unexpected outbound connection (dest=%fd.sip:%fd.sport src=%fd.cip
+    process=%proc.name container=%container.name)
   priority: CRITICAL
   tags: [sentinelmesh, s8-postexploit, exfiltration, network]

@@ -257,8 +257,8 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
                 ))
 
     # Network node (from event.fd.rip / fd.rport if present)
-    rip = _deep_get(event, "fd.rip") or _deep_get(event, "fd_rip")
-    rport = _deep_get(event, "fd.rport") or _deep_get(event, "fd_rport")
+    rip = _deep_get(event, "fd.sip") or _deep_get(event, "fd.rip") or _deep_get(event, "fd_rip")
+    rport = _deep_get(event, "fd.sport") or _deep_get(event, "fd.rport") or _deep_get(event, "fd_rport")
     if rip:
         net_label = f"{rip}:{rport}" if rport else rip
         net_id = f"network_{net_label}"
@@ -300,6 +300,7 @@ def _add_nodes_from_alert(graph: AttackGraph, alert: Dict[str, Any],
                         "timestamp": timestamp,
                     },
                 ))
+            _note_scenario(graph.get_node(tech_node_id), scenario)
 
         # CVE nodes
         matched_cves = _get_attr_or_key(rag_result, "matched_cves", []) or []
@@ -353,19 +354,31 @@ def _auto_register_paths(graph: AttackGraph, alerts: List[Dict[str, Any]]) -> No
     # one path PER scenario instead of collapsing them into a single
     # "multi_stage" blob.
     if scenarios:
+        def _node_scenarios(n):
+            return n.properties.get("scenarios") or ([n.properties["scenario"]] if n.properties.get("scenario") else [])
         seen_ids: List[str] = []
-        for sid in scenarios:
-            if sid not in seen_ids:
-                seen_ids.append(sid)
+        for n in tech_nodes:
+            for sid in _node_scenarios(n):
+                if sid not in seen_ids:
+                    seen_ids.append(sid)
         for sid in seen_ids:
-            sid_nodes = [n for n in tech_nodes if n.properties.get("scenario") == sid]
-            sid_stages = [n.properties.get("scenario", "") for n in sid_nodes]
+            sid_nodes = [n for n in tech_nodes if sid in _node_scenarios(n)]
+            sid_stages = [sid for _ in sid_nodes]
             graph.add_path(sid, sid_stages, _technique_sequence(sid_nodes))
         return
 
     # No scenario info on any technique node: fall back to a single
     # best-effort path so something is still recorded.
     graph.add_path("multi_stage", scenarios, _technique_sequence(tech_nodes))
+
+
+def _note_scenario(node, scenario):
+    """Record every scenario that maps to this technique node (nodes stay unique per technique)."""
+    if node is None or not scenario:
+        return
+    seen = node.properties.setdefault("scenarios", [node.properties.get("scenario")] if node.properties.get("scenario") else [])
+    if scenario not in seen:
+        seen.append(scenario)
 
 
 def _get_attr_or_key(obj, key, default=None):

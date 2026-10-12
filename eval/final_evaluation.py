@@ -47,7 +47,7 @@ def load_common(repo_root: Path):
 
 
 def baseline1(repo_root: Path) -> Dict[str, Any]:
-    path = repo_root / "eval" / "BASELINE_1_FROZEN.json"
+    path = repo_root / "eval" / "BASELINE_1_FROZEN_linux.json"
     if not path.exists():
         return {"status": "missing", "note": "Baseline 1 frozen file not found"}
     data = json.loads(path.read_text())
@@ -55,7 +55,7 @@ def baseline1(repo_root: Path) -> Dict[str, Any]:
         "status": "loaded",
         "single_scenario_pass_count": data.get("single_scenario_pass_count"),
         "single_scenario_total": data.get("single_scenario_total"),
-        "s9_chain_all_stages_fired": data.get("s9_chain_all_stages_fired"),
+        "s9_chain_all_stages_fired": data.get("s10_chain_all_stages_fired", data.get("s9_chain_all_stages_fired")),
     }
 
 
