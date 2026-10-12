@@ -277,6 +277,12 @@ def run_final_evaluation(repo_root: Path = REPO_ROOT, alerts_file: Path | None =
     graph_paths = {sid: (5 if sid == "S10" else 1) for sid in ground_truth}
     repeated = run_repeated_evaluation(alerts_with_rag, ground_truth, graph_paths, iterations=5)
 
+    repeated["simulated_reviewer"] = True
+    repeated["note"] = ("Human decisions in this experiment come from a simulated reviewer. "
+                        "'unsafe_auto_actions' counts auto-routed alerts the simulated reviewer rejected; "
+                        "the reduction shows the feedback loop reacting to those rejections, not a "
+                        "measured safety gain.")
+
     repro = reproducibility_check(repo_root)
 
     return {
@@ -325,6 +331,7 @@ if __name__ == "__main__":
     print(f"Baseline 5 (autonomous):   unsafe_rate={output['baseline_5_autonomous_agent']['unsafe_action_rate']} [SIMULATED agent, not a measurement]")
     print(f"Poisoning runs:            {output['poisoning_runs']['status']}, "
           f"{len(output['poisoning_runs'].get('variants', []))} variants")
+    print("Adaptation reviewer:       SIMULATED (loop mechanism demo, not a safety measurement)")
     print(f"Adaptation metrics:        {json.dumps(output['repeated_run_feedback_experiment']['adaptation_metrics'], indent=2)}")
     print(f"Reproducibility:           all_ok={output['reproducibility_check']['all_ok']}")
     print(f"\nFull results written to {out_dir / 'final_evaluation_results.json'}")
