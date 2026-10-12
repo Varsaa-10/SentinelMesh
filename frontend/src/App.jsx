@@ -185,7 +185,7 @@ export default function App() {
                     {apiError}
                 </div>
             )}
-            <div style={{ padding: '0 2rem' }}>
+            <div className="trigger-bar-container">
                 <AttackTriggerBar onTrigger={triggerAttack} onReset={resetLab} />
             </div>
             <main>
@@ -207,12 +207,14 @@ export default function App() {
                         resolvingIds={resolvingIds}
                         onSubmitDecision={submitDecision}
                     />
-                    {metrics && (
-                        <div className="panel-title" style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                            📊 Feedback Loop Metrics
-                        </div>
-                    )}
-                    <MetricsGrid metrics={metrics} />
+                    <div className="metrics-section">
+                        {metrics && (
+                            <div className="panel-title" style={{ fontSize: '0.85rem' }}>
+                                📊 Feedback Loop Metrics
+                            </div>
+                        )}
+                        <MetricsGrid metrics={metrics} />
+                    </div>
                 </section>
             </main>
         </React.Fragment>

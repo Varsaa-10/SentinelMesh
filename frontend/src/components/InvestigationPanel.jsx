@@ -16,7 +16,7 @@ export default function InvestigationPanel({ data, investigating, onRun }) {
                     {investigating ? "Running..." : "Run Investigation"}
                 </button>
             </div>
-            <div className="investigation-box" style={{ fontFamily: 'inherit', whiteSpace: 'normal', overflowY: 'auto', maxHeight: '420px' }}>
+            <div className="investigation-box" style={{ fontFamily: 'inherit', whiteSpace: 'normal' }}>
                 {!data ? (
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                         Click "Run Investigation" to query TwoLayerRAG and reconstruct live Attack Graph.
