@@ -3,7 +3,7 @@ eval/final_evaluation.py — SentinelMesh Module C3, the complete final
 evaluation run (execution plan, Week 3, Day 5).
 
 Ties together:
-  - Baseline 1 (Falco-only)              -> eval/BASELINE_1_FROZEN.json (already frozen, Week 1)
+  - Baseline 1 (Falco-only)              -> eval/BASELINE_1_FROZEN_linux.json (frozen Linux run)
   - Baseline 2 (flat RAG)                  -> rag_engine/data/eval_results.json (Week 2)
   - Baseline 3 (graph-only)                -> graph/graph_only_baseline.py (Week 3, Person 1)
   - Baseline 4 (full system)               -> RAG + graph + risk_scoring (this file wires it)
@@ -28,6 +28,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
+import argparse
+import hashlib
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
@@ -37,13 +40,27 @@ from eval.autonomous_baseline import run_autonomous_baseline, summarize as summa
 from eval.repeated_run_harness import run_repeated_evaluation, _load_alerts_with_rag  # noqa: E402
 
 
-def load_common(repo_root: Path):
+# Retrieval variant used by every baseline. "normalized" feeds the RAG engine
+# the alert_normalizer text (hand-written keyword rules, see
+# rag_engine/src/alert_normalizer.py); "raw" feeds it the raw alert output.
+# Both are reported in baseline_2 so the gap is visible.
+RAG_KEY = "two-layer__tfidf-word__normalized"
+FLAT_KEY = "flat__tfidf-word__normalized"
+RAG_KEY_RAW = "two-layer__tfidf-word__raw"
+FLAT_KEY_RAW = "flat__tfidf-word__raw"
+
+
+def load_common(repo_root: Path, alerts_file: Path | None = None):
     ground_truth = json.loads((repo_root / "eval" / "ground_truth.json").read_text())["scenarios"]
-    alerts_path = sorted((repo_root / "eval" / "runs").glob("*/alerts.jsonl"))
-    alerts_path = [p for p in alerts_path if "repeated_feedback" not in str(p.parent)]
-    alerts = [json.loads(l) for l in alerts_path[-1].read_text().splitlines() if l.strip()]
+    if alerts_file is None:
+        found = sorted((repo_root / "eval" / "runs").glob("*/alerts.jsonl"))
+        found = [p for p in found if "repeated_feedback" not in str(p.parent)]
+        alerts_file = found[-1]
+        print(f"WARNING: no --alerts given; defaulting to {alerts_file}", file=sys.stderr)
+    alerts_file = Path(alerts_file)
+    alerts = [json.loads(l) for l in alerts_file.read_text().splitlines() if l.strip()]
     rag_eval = json.loads((repo_root / "rag_engine" / "data" / "eval_results.json").read_text())
-    return ground_truth, alerts, rag_eval
+    return ground_truth, alerts, rag_eval, alerts_file
 
 
 def baseline1(repo_root: Path) -> Dict[str, Any]:
@@ -55,17 +72,22 @@ def baseline1(repo_root: Path) -> Dict[str, Any]:
         "status": "loaded",
         "single_scenario_pass_count": data.get("single_scenario_pass_count"),
         "single_scenario_total": data.get("single_scenario_total"),
-        "s9_chain_all_stages_fired": data.get("s10_chain_all_stages_fired", data.get("s9_chain_all_stages_fired")),
+        "s10_chain_all_stages_fired": data.get("s10_chain_all_stages_fired"),
+        "source_file": path.name,
     }
 
 
 def baseline2(rag_eval: Dict[str, Any]) -> Dict[str, Any]:
-    key = "two-layer__tfidf-word__raw"  # flat comparison lives alongside it
-    flat_key = "flat__tfidf-word__raw"
+    cols = ("accuracy", "correct", "total", "latency_ms_mean")
     return {
         "status": "loaded",
-        "two_layer": {k: rag_eval[key][k] for k in ("accuracy", "correct", "total", "latency_ms_mean")},
-        "flat": {k: rag_eval[flat_key][k] for k in ("accuracy", "correct", "total", "latency_ms_mean")},
+        "query_text": "normalized (alert_normalizer rules)",
+        "two_layer": {k: rag_eval[RAG_KEY][k] for k in cols},
+        "flat": {k: rag_eval[FLAT_KEY][k] for k in cols},
+        "raw_text_for_comparison": {
+            "two_layer": {k: rag_eval[RAG_KEY_RAW][k] for k in cols},
+            "flat": {k: rag_eval[FLAT_KEY_RAW][k] for k in cols},
+        },
     }
 
 
@@ -83,8 +105,7 @@ def baseline3(alerts: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
     """Full system: RAG-grounded graph + risk-scored tiered response."""
-    key = "two-layer__tfidf-word__raw"
-    per_alert = {item["scenario_id"]: item for item in rag_eval[key]["per_alert"]}
+    per_alert = {item["scenario_id"]: item for item in rag_eval[RAG_KEY]["per_alert"] if item["scenario_id"] != "S10"}
 
     rag_results_ordered = []
     for alert in alerts:
@@ -120,7 +141,9 @@ def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
             "predicted_tactic": gt.get("tactic"),
             "confidence": item["confidence"],
         }
-        result = assess(sid, rag_result, gt, graph_path_length=path_lengths.get(sid, 1))
+        # Chain-tagged alerts belong to the S10 path, so use its length (5) for escalation.
+        plen = path_lengths.get("S10", 1) if alert.get("chain_id") == "S10" else path_lengths.get(sid, 1)
+        result = assess(sid, rag_result, gt, graph_path_length=plen)
         executor.execute(result.selected_action, f"container_{gt.get('target_container','unknown')}", reason=sid)
         assessments.append(result.to_dict())
 
@@ -139,7 +162,11 @@ def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
 
 def baseline5(alerts, ground_truth) -> Dict[str, Any]:
     decisions = run_autonomous_baseline(alerts, ground_truth, mode="simulated")
-    return summarize_autonomous(decisions)
+    out = summarize_autonomous(decisions)
+    out["simulated"] = True
+    out["note"] = ("Stand-in agent, not a live LLM. unsafe_action_rate is a property of the "
+                   "simulation and the alert set, not a measurement; do not quote as a result.")
+    return out
 
 
 def ablation(alerts, ground_truth, rag_eval, full_system_result: Dict[str, Any]) -> Dict[str, Any]:
@@ -151,8 +178,7 @@ def ablation(alerts, ground_truth, rag_eval, full_system_result: Dict[str, Any])
 
     # No graph -> RAG grounding still applied, risk-scored with a fixed
     # path length of 1 (no multi-stage escalation possible).
-    key = "two-layer__tfidf-word__raw"
-    per_alert = {item["scenario_id"]: item for item in rag_eval[key]["per_alert"]}
+    per_alert = {item["scenario_id"]: item for item in rag_eval[RAG_KEY]["per_alert"] if item["scenario_id"] != "S10"}
     no_graph_assessments = []
     for alert in alerts:
         sid = alert.get("scenario")
@@ -236,8 +262,8 @@ def reproducibility_check(repo_root: Path) -> Dict[str, Any]:
     }
 
 
-def run_final_evaluation(repo_root: Path = REPO_ROOT) -> Dict[str, Any]:
-    ground_truth, alerts, rag_eval = load_common(repo_root)
+def run_final_evaluation(repo_root: Path = REPO_ROOT, alerts_file: Path | None = None) -> Dict[str, Any]:
+    ground_truth, alerts, rag_eval, alerts_file = load_common(repo_root, alerts_file)
 
     b1 = baseline1(repo_root)
     b2 = baseline2(rag_eval)
@@ -255,6 +281,12 @@ def run_final_evaluation(repo_root: Path = REPO_ROOT) -> Dict[str, Any]:
 
     return {
         "run_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "alerts_source": {
+            "path": str(alerts_file),
+            "sha256": hashlib.sha256(Path(alerts_file).read_bytes()).hexdigest(),
+            "alert_count": len(alerts),
+            "chain_tagged_alerts": sum(1 for a in alerts if a.get("chain_id") == "S10"),
+        },
         "baseline_1_falco_only": b1,
         "baseline_2_flat_rag": b2,
         "baseline_3_graph_only": b3,
@@ -268,7 +300,11 @@ def run_final_evaluation(repo_root: Path = REPO_ROOT) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    output = run_final_evaluation()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--alerts", type=Path, required=False,
+                    help="alerts.jsonl to evaluate (use a chain-tagged one, see eval/tag_chain_alerts.py)")
+    args = ap.parse_args()
+    output = run_final_evaluation(alerts_file=args.alerts)
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out_dir = REPO_ROOT / "eval" / "runs" / f"{run_id}_FINAL"
@@ -276,6 +312,8 @@ if __name__ == "__main__":
     (out_dir / "final_evaluation_results.json").write_text(json.dumps(output, indent=2, default=str))
 
     print("=== SentinelMesh Final Evaluation ===")
+    print(f"Alerts:                    {output['alerts_source']['path']} "
+          f"({output['alerts_source']['alert_count']} alerts, {output['alerts_source']['chain_tagged_alerts']} chain-tagged)")
     print(f"Baseline 1 (Falco-only):   {output['baseline_1_falco_only'].get('single_scenario_pass_count')}/"
           f"{output['baseline_1_falco_only'].get('single_scenario_total')} scenarios passed")
     print(f"Baseline 2 (flat RAG):     acc={output['baseline_2_flat_rag']['flat']['accuracy']}")
@@ -284,7 +322,7 @@ if __name__ == "__main__":
           f"{output['baseline_3_graph_only']['path_count']} paths")
     print(f"Baseline 4 (full system):  routing={output['baseline_4_full_system']['routing_distribution']}, "
           f"out-of-scope blocked={output['baseline_4_full_system']['out_of_scope_action_blocked']}")
-    print(f"Baseline 5 (autonomous):   unsafe_rate={output['baseline_5_autonomous_agent']['unsafe_action_rate']}")
+    print(f"Baseline 5 (autonomous):   unsafe_rate={output['baseline_5_autonomous_agent']['unsafe_action_rate']} [SIMULATED agent, not a measurement]")
     print(f"Poisoning runs:            {output['poisoning_runs']['status']}, "
           f"{len(output['poisoning_runs'].get('variants', []))} variants")
     print(f"Adaptation metrics:        {json.dumps(output['repeated_run_feedback_experiment']['adaptation_metrics'], indent=2)}")

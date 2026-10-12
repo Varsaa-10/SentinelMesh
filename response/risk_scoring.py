@@ -32,9 +32,15 @@ from typing import Any, Dict, List, Optional
 
 # risk_score is normalized to [0, 1]:
 #   normalized = confidence * (severity / 5) * (asset_criticality / 5)
+# Policy values, not learned values. Scores for this lab's scenarios run
+# ~0.34-0.67 (severity and asset_criticality are per-scenario constants, so the
+# score is mostly confidence x a fixed factor). The old 0.30/0.65 pair sat
+# outside that range, which made "auto" and "admin" unreachable. These bands
+# put auto below the lowest-risk third and admin on the top band; re-derive
+# them if the scenario set or the confidence model changes.
 ROUTING_THRESHOLDS = {
-    "auto": 0.30,     # risk_score below this -> automatic execution
-    "analyst": 0.65,  # below this -> analyst confirmation, else admin
+    "auto": 0.40,     # risk_score below this -> automatic execution (never for kill_container)
+    "analyst": 0.60,  # below this -> analyst confirmation, else admin
 }
 
 # ---------------------------------------------------------------------------
@@ -123,10 +129,12 @@ def route(risk_score_normalized: float, thresholds: Optional[Dict[str, float]] =
     Container termination (kill_container) ALWAYS requires human approval (analyst/admin),
     never auto-executed.
     """
-    if action == "kill_container":
-        return "analyst" if risk_score_normalized < 0.85 else "admin"
-
     t = thresholds or ROUTING_THRESHOLDS
+
+    if action == "kill_container":
+        # Never auto; analyst below the admin threshold, admin at or above it.
+        return "analyst" if risk_score_normalized < t["analyst"] else "admin"
+
     if risk_score_normalized < t["auto"]:
         return "auto"
     if risk_score_normalized < t["analyst"]:

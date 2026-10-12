@@ -252,3 +252,30 @@ class TestReproducibility(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestS10PathFromChainTag(unittest.TestCase):
+    """S10 gets its own path only from alerts tagged chain_id='S10'."""
+
+    def _paths(self, alerts, use_baseline=True):
+        from graph.pipeline import run_pipeline
+        return {p["scenario_id"]: p for p in run_pipeline(alerts, use_baseline=use_baseline, graph_id="t")["paths"]}
+
+    def test_tagged_chain_yields_s10_path_with_five_stages(self):
+        paths = self._paths(S10_ALERTS)
+        self.assertIn("S10", paths)
+        self.assertEqual(paths["S10"]["ordered_stages"], EXPECTED_STAGES)
+        self.assertEqual(paths["S10"]["technique_sequence"], EXPECTED_TECHNIQUES)
+
+    def test_untagged_alerts_do_not_get_s10_path(self):
+        untagged = [{k: v for k, v in a.items() if k not in ("chain_id", "component_scenario")} for a in S10_ALERTS]
+        self.assertNotIn("S10", self._paths(untagged))
+
+    def test_full_run_has_one_path_per_scenario_plus_s10(self):
+        extra = []
+        for sid in ("S2", "S5", "S6", "S7"):
+            extra.append({"source": "log-tail", "scenario": sid, "severity": "WARNING", "title": f"{sid} alert",
+                          "timestamp": "2026-01-01T00:00:00Z", "service": "webapp", "event": {}})
+        paths = self._paths(extra + S10_ALERTS)
+        self.assertEqual(len(paths), 10)
+        self.assertIn("S10", paths)

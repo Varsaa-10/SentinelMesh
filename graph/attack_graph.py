@@ -340,22 +340,56 @@ def _auto_register_paths(graph: AttackGraph, alerts: List[Dict[str, Any]]) -> No
     def _technique_sequence(nodes: List[GraphNode]) -> List[str]:
         return [n.properties.get("technique_id", n.label) for n in nodes if n.properties.get("technique_id")]
 
-    # S10 chain: always one combined path, exactly as before.
-    if "S10" in alert_scenarios or "S10" in scenarios or scenarios == ["S1", "S3", "S4", "S9", "S8"]:
+    def _node_scenarios(n):
+        return n.properties.get("scenarios") or ([n.properties["scenario"]] if n.properties.get("scenario") else [])
+
+    # S10 chain. Chain alerts keep their component scenario in `scenario`
+    # (S1, S3, ...) and are additionally tagged chain_id="S10" (with
+    # component_scenario) by eval/harness.py. The chain path is built ONLY
+    # from alerts carrying that tag -- there is no guessing from a hard-coded
+    # stage list. It is registered IN ADDITION to the per-scenario paths, so a
+    # full run yields one path per scenario plus S10.
+    chain_alerts = sorted(
+        (a for a in alerts if a.get("chain_id") == "S10"),
+        key=lambda a: a.get("timestamp", ""),
+    )
+    legacy_s10 = "S10" in alert_scenarios or "S10" in scenarios  # alerts tagged S10 directly
+    if legacy_s10:
         graph.add_path("S10", scenarios, _technique_sequence(tech_nodes))
         return
+
+    chain_path = None
+    if chain_alerts:
+        stages: List[str] = []
+        for a in chain_alerts:
+            sid = a.get("component_scenario") or a.get("scenario")
+            if sid and sid not in stages:
+                stages.append(sid)
+        techs: List[str] = []
+        for sid in stages:
+            node = next((n for n in tech_nodes if sid in _node_scenarios(n)), None)
+            if node is not None and node.properties.get("technique_id"):
+                techs.append(node.properties["technique_id"])
+        chain_path = ("S10", stages, techs)
+
+        # A batch made up ONLY of chain alerts is the S10 scenario on its own:
+        # one combined path, as before. A mixed batch (a full run) also gets
+        # one path per scenario, with S10 added alongside them.
+        if all(a.get("chain_id") == "S10" for a in alerts if a.get("scenario")):
+            graph.add_path(*chain_path)
+            return
 
     # Single scenario in this batch: one path, exactly as before.
     if scenarios and len(set(scenarios)) == 1:
         graph.add_path(scenarios[0], scenarios, _technique_sequence(tech_nodes))
+        if chain_path:
+            graph.add_path(*chain_path)
         return
 
     # Multiple independent (non-chain) scenarios in one batch: register
     # one path PER scenario instead of collapsing them into a single
     # "multi_stage" blob.
     if scenarios:
-        def _node_scenarios(n):
-            return n.properties.get("scenarios") or ([n.properties["scenario"]] if n.properties.get("scenario") else [])
         seen_ids: List[str] = []
         for n in tech_nodes:
             for sid in _node_scenarios(n):
@@ -365,6 +399,8 @@ def _auto_register_paths(graph: AttackGraph, alerts: List[Dict[str, Any]]) -> No
             sid_nodes = [n for n in tech_nodes if sid in _node_scenarios(n)]
             sid_stages = [sid for _ in sid_nodes]
             graph.add_path(sid, sid_stages, _technique_sequence(sid_nodes))
+        if chain_path:
+            graph.add_path(*chain_path)
         return
 
     # No scenario info on any technique node: fall back to a single

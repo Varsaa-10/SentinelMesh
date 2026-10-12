@@ -239,8 +239,16 @@ def run_attack_scripts(
             ("S10", chain_script, "bash")
         )
 
+    chain_window = None
+
     for scenario, filename, interpreter in order:
         script_path = (attack_scripts_dir / filename).resolve()
+
+        if scenario == "S10" and script_path.exists():
+            chain_window = {
+                "start": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "end": None,
+            }
 
         if not script_path.exists():
             log(
@@ -287,6 +295,41 @@ def run_attack_scripts(
 
         time.sleep(SECONDS_BETWEEN_ATTACKS)
 
+        if scenario == "S10" and chain_window is not None:
+            chain_window["end"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    return chain_window
+
+
+# ---------------------------------------------------------------------------
+# Chain tagging
+# ---------------------------------------------------------------------------
+
+CHAIN_STAGES = ["S1", "S3", "S4", "S9", "S8"]  # eval/ground_truth.json S10.expected_alerts_in_order
+
+
+def tag_chain_alerts(alerts, chain_window, stages=CHAIN_STAGES, chain_id="S10"):
+    """Mark alerts produced by the chain script.
+
+    Alerts keep their component `scenario` (S1, S3, ...) so per-scenario
+    scoring is unchanged. Alerts whose timestamp falls inside the window in
+    which the chain script ran, and whose scenario is a chain stage, also get
+    chain_id="S10" and component_scenario=<scenario>. That is what lets the
+    graph reconstruct a path for S10 itself.
+    """
+    if not chain_window or not chain_window.get("start"):
+        return 0
+    start = chain_window["start"]
+    end = chain_window.get("end") or "9999-12-31T23:59:59Z"
+    n = 0
+    for a in alerts:
+        ts = a.get("timestamp", "")
+        if start <= ts <= end and a.get("scenario") in stages:
+            a["chain_id"] = chain_id
+            a["component_scenario"] = a["scenario"]
+            n += 1
+    return n
+
 
 # ---------------------------------------------------------------------------
 # Merge alerts
@@ -297,6 +340,7 @@ def merge_alerts(
     tailer_out_path,
     merged_path,
     grafana_out_path=None,
+    chain_window=None,
 ):
     """
     Merge all detector JSONL output into one timestamp-sorted file.
@@ -345,6 +389,10 @@ def merge_alerts(
             "",
         )
     )
+
+    tagged = tag_chain_alerts(alerts, chain_window)
+    if chain_window:
+        log(f"tagged {tagged} alerts as S10 chain stages (window {chain_window})")
 
     with open(merged_path, "w") as f:
         for alert in alerts:
@@ -809,6 +857,8 @@ def main():
 
     try:
 
+        chain_window = None
+
         if args.auto_run_attacks:
 
             if not args.attack_scripts_dir:
@@ -820,7 +870,7 @@ def main():
 
                 sys.exit(1)
 
-            run_attack_scripts(
+            chain_window = run_attack_scripts(
                 args.attack_scripts_dir,
                 chain_script=args.chain_script,
             )
@@ -953,6 +1003,7 @@ def main():
             if args.grafana_detector
             else None
         ),
+        chain_window=chain_window,
     )
 
     log(
