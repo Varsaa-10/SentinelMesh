@@ -1,0 +1,40 @@
+RUN 20261014T140601Z: 18 alerts, harness score 9/9, S10 stages all fired: True
+
+Per scenario
+  S1   fired=True  alerts=2   (expect ~2)
+  S2   fired=True  alerts=2   (expect ~n/a)
+  S3   fired=True  alerts=2   (expect ~2)
+  S4   fired=True  alerts=2   (expect ~2)
+  S5   fired=True  alerts=1   (expect ~1)
+  S6   fired=True  alerts=1   (expect ~1)
+  S7   fired=True  alerts=2   (expect ~2)
+  S8   fired=True  alerts=4   (expect ~6)
+  S9   fired=True  alerts=2   (expect ~2)
+
+S8 alerts by (container, process, dest):
+    3x  sentinelmesh-webapp / curl -> 104.20.23.154   [EXTERNAL (real S8)]
+    1x  sentinelmesh-webapp / curl -> 172.66.147.243   [EXTERNAL (real S8)]
+  => 4 S8 alert(s) with a real external destination (expect 2: attack + chain)
+
+S5 alerts by source IP:
+    1x  172.25.0.7  [ephemeral client (attacker)]
+
+S6 writes:
+    1x  sh -> /var/log/sentinelmesh/test.log
+
+S9 reads:
+    2x  ('/etc/shadow', 'cat', 'sentinelmesh-webapp')
+
+S7 titles:
+    1x  Grafana Login Succeeded (unconfirmed — username not visible 
+    1x  Grafana Anonymous Dashboard Access
+
+S10 chain: latest alert per stage (should increase S1<S3<S4<S9<S8):
+  S1: 2026-10-14T14:07:00Z
+  S3: 2026-10-14T14:07:02Z
+  S4: 2026-10-14T14:07:05Z
+  S9: 2026-10-14T14:07:07Z
+  S8: 2026-10-14T14:07:09Z
+
+============================================================
+CLEAN: every scenario fired, no noise flagged. Safe to freeze.
