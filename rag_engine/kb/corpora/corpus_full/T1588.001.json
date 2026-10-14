@@ -1,0 +1,27 @@
+{
+  "id": "T1588.001",
+  "tactic": "Resource Development",
+  "tactics": [
+    "Resource Development"
+  ],
+  "technique_name": "Malware",
+  "description": "Adversaries may buy, steal, or download malware that can be used during targeting. Malicious software can include payloads, droppers, post-compromise tools, backdoors, packers, and C2 protocols. Adversaries may acquire malware to support their operations, obtaining a means for maintaining control of remote machines, evading defenses, and executing post-compromise behaviors.\n\nIn addition to downloading free malware from the internet, adversaries may purchase these capabilities from third-party entities. Third-party entities can include technology companies that specialize in malware development, criminal marketplaces (including Malware-as-a-Service, or MaaS), or from individuals.(Citation: BITSIGHT Malware Analysis) In addition to purchasing malware, adversaries may steal and repurpose malware from third-party entities (including other adversaries).",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1588.001 Detection",
+      "trigger_condition": "Monitor for contextual data about a malicious payload, such as compilation times, file hashes, as well as watermarks or other identifiable configuration information. Much of this activity will take place outside the visibility of the target organization, making detection of this behavior difficult. Detection efforts may be focused on post-compromise phases of the adversary lifecycle.\nConsider analyzing malware for features that may be associated with malware providers, such as compiler used, debugging artifacts, code similarities, or even group identifiers associated with specific MaaS offerings. Malware repositories can also be used to identify additional samples associated with the developers and the adversary utilizing their services. Identifying overlaps in malware use by different adversaries may indicate malware was obtained by the adversary rather than developed by them. In some cases, identifying overlapping characteristics in malware used by different adversaries may point to a shared quartermaster.(Citation: FireEyeSupplyChain)"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Pre-compromise mitigations involve proactive measures and defenses implemented to prevent adversaries from successfully identifying and exploiting weaknesses during the Reconnaissance and Resource Development phases of an attack. These activities focus on reducing an organization's attack surface, identify adversarial preparation efforts, and increase the difficulty for attackers to conduct successful operations. This mitigation can be implemented through the following measures:\n\nLimit Information Exposure:\n\n- Regularly audit and sanitize publicly available data, including job posts, websites, and social media.\n- Use tools like OSINT monitoring platforms (e.g., SpiderFoot, Recon-ng) to identify leaked information.\n\nProtect Domain and DNS Infrastructure:\n\n- Enable DNSSEC and use WHOIS privacy protection.\n- Monitor for domain hijacking or lookalike domains using services like RiskIQ or DomainTools.\n\nExternal Monitoring:\n\n- Use tools like Shodan, Censys to monitor your external attack surface.\n- Deploy external vulnerability scanners to proactively address weaknesses.\n\nThreat Intelligence:\n\n- Leverage platforms like MISP, Recorded Future, or Anomali to track adversarial infrastructure, tools, and activity.\n\nContent and Email Protections:\n\n- Use email security solutions like Proofpoint, Microsoft Defender for Office 365, or Mimecast.\n- Enforce SPF/DKIM/DMARC policies to protect against email spoofing.\n\nTraining and Awareness:\n\n- Educate employees on identifying phishing attempts, securing their social media, and avoiding information leaks.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1588",
+  "platforms": [
+    "PRE"
+  ],
+  "data_sources": [
+    "ATT&CK:T1588.001"
+  ]
+}

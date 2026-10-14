@@ -1,0 +1,29 @@
+{
+  "id": "T1560.003",
+  "tactic": "Collection",
+  "tactics": [
+    "Collection"
+  ],
+  "technique_name": "Archive via Custom Method",
+  "description": "An adversary may compress or encrypt data that is collected prior to exfiltration using a custom method. Adversaries may choose to use custom archival methods, such as encryption with XOR or stream ciphers implemented with no external library or utility references. Custom implementations of well-known compression algorithms have also been used.(Citation: ESET Sednit Part 2)",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1560.003 Detection",
+      "trigger_condition": "Detects suspicious custom compression/encryption routines through anomalous script or binary execution that produces high-entropy files without standard archiving utilities. Correlates script execution, memory API usage (bitwise ops, CryptoAPI calls), and creation of archive-like files with uncommon headers. Detects custom archive routines by correlating script execution (Python, Perl, Bash) with creation of high-entropy files in temporary or user directories. Flags processes performing unusual bitwise operations or writing files without standard compression headers. Detects custom archiving by monitoring execution of Swift/Objective-C apps or scripts producing high-entropy files with non-standard headers. Correlates unified logs of abnormal NSFileHandle/NSData operations, memory use of XOR/bitwise operations, and file creation events."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply security monitoring, least privilege access, and patch management.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1560",
+  "platforms": [
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1560.003"
+  ]
+}

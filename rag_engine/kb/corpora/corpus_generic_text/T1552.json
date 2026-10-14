@@ -1,0 +1,30 @@
+{
+  "id": "T1552",
+  "tactic": "Credential Access",
+  "technique_name": "Unsecured Credentials",
+  "description": "Adversaries may search compromised systems to find and obtain insecurely stored credentials. These credentials can be stored and/or misplaced in many locations on a system, including plaintext files, configuration files, source code, container images, environment variables, or process memory. Credentials may also be left in Git repositories, CI/CD pipelines, or backup archives. In container environments, secrets in environment variables are a common misconfiguration.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Process execution reading environment variables (e.g. printenv, env commands), unexpected access to .env files, or reads of common configuration file paths that may contain embedded credentials. Falco command execution monitoring would be the detection surface."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Never store credentials in environment variables, source code, or configuration files committed to version control. Use a secrets manager (Vault, AWS Secrets Manager). Scan repositories with tools like truffleHog or git-secrets. Rotate any exposed credentials immediately upon discovery.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Containers"
+  ],
+  "data_sources": [
+    "Command: Command Execution",
+    "File: File Access",
+    "Process: Process Creation"
+  ]
+}

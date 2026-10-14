@@ -1,0 +1,31 @@
+{
+  "status": "validated_against_official_mitre_stix_v20",
+  "official_mitre_corpora": {
+    "corpus_36": {
+      "records_count": 36,
+      "text_source": "100% official MITRE ATT&CK STIX v20 (names, descriptions, mitigations, detection analytics)",
+      "revoked_count": 0,
+      "replacement_note": "T1562 was revoked in ATT&CK v20 by T1685; corpus_36 cleanly incorporates live successor T1685."
+    },
+    "corpus_200": {
+      "records_count": 227,
+      "text_source": "100% official MITRE ATT&CK STIX v20 parent techniques only",
+      "revoked_count": 0,
+      "parent_scoring_note": "Parent-only corpus excludes subtechniques like T1003.008 (S9); evaluated at parent level (T1003) and exact level."
+    },
+    "corpus_full": {
+      "records_count": 706,
+      "text_source": "100% official MITRE ATT&CK STIX v20 full matrix (techniques + sub-techniques)",
+      "revoked_count": 0
+    }
+  },
+  "ablation_corpora": {
+    "corpus_lab_tuned_36": {
+      "records_count": 36,
+      "text_source": "kb_master lab-specific wording ('In the SentinelMesh lab...') and bespoke Falco rules"
+    }
+  },
+  "all_records_exist_in_mitre_attack": true,
+  "all_records_live_unrevoked": true,
+  "revoked_records_count": 0
+}

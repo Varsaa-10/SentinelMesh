@@ -1,0 +1,29 @@
+{
+  "id": "T1029",
+  "tactic": "Exfiltration",
+  "tactics": [
+    "Exfiltration"
+  ],
+  "technique_name": "Scheduled Transfer",
+  "description": "Adversaries may schedule data exfiltration to be performed only at certain times of day or at certain intervals. This could be done to blend traffic patterns with normal activity or availability.(Citation: Delay Code Execution in Java)\n\nWhen scheduled exfiltration is used, other exfiltration techniques likely apply as well to transfer the information out of the network, such as [Exfiltration Over C2 Channel](https://attack.mitre.org/techniques/T1041) or [Exfiltration Over Alternative Protocol](https://attack.mitre.org/techniques/T1048).",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1029 Detection",
+      "trigger_condition": "Recurring network exfiltration initiated by scheduled or script-based processes exhibiting time-based regularity and consistent external destinations. Detection of cron-based or script-based recurring transfers where the same script, user, or destination reappears at predictable intervals. LaunchAgent or launchd recurring jobs initiating data transfer to consistent external IPs or domains with repeat timing signatures."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Use intrusion detection signatures to block traffic at network boundaries.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1029"
+  ]
+}

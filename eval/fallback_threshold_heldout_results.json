@@ -1,0 +1,226 @@
+{
+  "grid": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.05,
+    0.06,
+    0.07,
+    0.08,
+    0.09,
+    0.1,
+    0.11,
+    0.12,
+    0.13,
+    0.14,
+    0.15,
+    0.16,
+    0.17,
+    0.18,
+    0.19,
+    0.2,
+    0.21,
+    0.22,
+    0.23,
+    0.24,
+    0.25,
+    0.26,
+    0.27,
+    0.28,
+    0.29,
+    0.3
+  ],
+  "forms": {
+    "raw": {
+      "folds": [
+        {
+          "held_out_run": "20260818T052007Z",
+          "threshold": 0.1,
+          "correct": 8,
+          "n": 8,
+          "fallbacks": 3
+        },
+        {
+          "held_out_run": "20260818T052217Z_chaintagged",
+          "threshold": 0.1,
+          "correct": 12,
+          "n": 12,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261012T030225Z_chaintagged",
+          "threshold": 0.1,
+          "correct": 12,
+          "n": 12,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261012T031032Z_chaintagged",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261012T140201Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        }
+      ],
+      "heldout_correct": 60,
+      "n": 60,
+      "heldout_wilson_95": [
+        0.94,
+        1.0
+      ],
+      "heldout_fallback_rate": 0.317,
+      "two_layer_no_fallback_correct": 52,
+      "flat_correct": 60,
+      "layer1_similarity_range_lab": [
+        0.0674,
+        0.2495
+      ],
+      "fallback_rate_of_chosen_thresholds_on_mitre_corpora": {
+        "corpus_36": {
+          "0.1": 0.85
+        },
+        "corpus_200": {
+          "0.1": 0.617
+        },
+        "corpus_full": {
+          "0.1": 1.0
+        }
+      }
+    },
+    "title_raw": {
+      "folds": [
+        {
+          "held_out_run": "20260818T052007Z",
+          "threshold": 0.0,
+          "correct": 8,
+          "n": 8,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20260818T052217Z_chaintagged",
+          "threshold": 0.0,
+          "correct": 12,
+          "n": 12,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261012T030225Z_chaintagged",
+          "threshold": 0.0,
+          "correct": 12,
+          "n": 12,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261012T031032Z_chaintagged",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261012T140201Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        }
+      ],
+      "heldout_correct": 60,
+      "n": 60,
+      "heldout_wilson_95": [
+        0.94,
+        1.0
+      ],
+      "heldout_fallback_rate": 0.0,
+      "two_layer_no_fallback_correct": 60,
+      "flat_correct": 60,
+      "layer1_similarity_range_lab": [
+        0.0706,
+        0.2341
+      ],
+      "fallback_rate_of_chosen_thresholds_on_mitre_corpora": {
+        "corpus_36": {
+          "0.0": 0.0
+        },
+        "corpus_200": {
+          "0.0": 0.0
+        },
+        "corpus_full": {
+          "0.0": 0.0
+        }
+      }
+    },
+    "rewrite": {
+      "folds": [
+        {
+          "held_out_run": "20260818T052007Z",
+          "threshold": 0.0,
+          "correct": 8,
+          "n": 8,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20260818T052217Z_chaintagged",
+          "threshold": 0.0,
+          "correct": 12,
+          "n": 12,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261012T030225Z_chaintagged",
+          "threshold": 0.0,
+          "correct": 12,
+          "n": 12,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261012T031032Z_chaintagged",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261012T140201Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        }
+      ],
+      "heldout_correct": 60,
+      "n": 60,
+      "heldout_wilson_95": [
+        0.94,
+        1.0
+      ],
+      "heldout_fallback_rate": 0.0,
+      "two_layer_no_fallback_correct": 60,
+      "flat_correct": 60,
+      "layer1_similarity_range_lab": [
+        0.0742,
+        0.4258
+      ],
+      "fallback_rate_of_chosen_thresholds_on_mitre_corpora": {
+        "corpus_36": {
+          "0.0": 0.0
+        },
+        "corpus_200": {
+          "0.0": 0.0
+        },
+        "corpus_full": {
+          "0.0": 0.0
+        }
+      }
+    }
+  }
+}

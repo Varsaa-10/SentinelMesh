@@ -1,0 +1,29 @@
+{
+  "id": "T1029",
+  "tactic": "Exfiltration",
+  "technique_name": "Scheduled Transfer",
+  "description": "Adversaries may schedule data exfiltration to be performed only at certain times of day or at certain intervals. This could be done to blend traffic patterns with normal activity or avoid detection. When scheduled exfiltration is used, other techniques such as Transfer Data to Cloud Account may also be used. Adversaries may use utilities such as cron on Linux to schedule when data is exfiltrated.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Creation or modification of cron entries in a container (writes to /etc/cron*, /var/spool/cron/), or execution of crontab commands. Falco file modification rules on cron directories can flag scheduled task creation."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Audit cron job configurations for unexpected entries. Monitor for crontab modification events. Apply egress filtering to prevent unauthorized data transfers regardless of schedule. Review outbound traffic patterns for periodic data staging and transmit behavior.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS"
+  ],
+  "data_sources": [
+    "Network Traffic: Network Traffic Flow",
+    "Scheduled Job: Scheduled Job Creation",
+    "Command: Command Execution"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "T1555",
+  "tactic": "Credential Access",
+  "technique_name": "Credentials from Password Stores",
+  "description": "Adversaries may search for common password storage locations to obtain user credentials. Passwords are stored in several places on a system, depending on the operating system or application holding the credentials. There are also specific applications that store passwords to make it easier for users to manage credentials. Once credentials are obtained, they can be used to perform lateral movement and access restricted information.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "File open/read syscalls targeting common password store paths: /root/.gnupg/, browser credential databases (Login Data), /home/*/.config/*, or application-specific credential files. Falco file access rules on sensitive directories would be the detection surface."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Use a dedicated secrets manager rather than plaintext credential files. Encrypt password stores at rest. Monitor file access events on known credential storage paths. Apply strict filesystem permissions to prevent unauthorized reads.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS"
+  ],
+  "data_sources": [
+    "File: File Access",
+    "Command: Command Execution",
+    "Process: OS API Execution"
+  ]
+}

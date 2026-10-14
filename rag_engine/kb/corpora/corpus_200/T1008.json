@@ -1,0 +1,30 @@
+{
+  "id": "T1008",
+  "tactic": "Command and Control",
+  "tactics": [
+    "Command and Control"
+  ],
+  "technique_name": "Fallback Channels",
+  "description": "Adversaries may use fallback or alternate communication channels if the primary channel is compromised or inaccessible in order to maintain reliable command and control and to avoid data transfer thresholds.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1008 Detection",
+      "trigger_condition": "Establishing network connections on uncommon ports or protocols following C2 disruption or blocking. Often executed by processes that typically exhibit no network activity. Creation of outbound connections on alternate ports or using covert transport (e.g., ICMP, DNS) from non-network-intensive processes, following known disruption or blocked traffic. Outbound fallback traffic from low-profile or background launch agents using unusual protocols or destinations after primary channel inactivity."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Use intrusion detection signatures to block traffic at network boundaries.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "ESXi",
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1008"
+  ]
+}

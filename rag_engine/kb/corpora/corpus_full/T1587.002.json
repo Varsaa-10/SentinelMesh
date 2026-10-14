@@ -1,0 +1,27 @@
+{
+  "id": "T1587.002",
+  "tactic": "Resource Development",
+  "tactics": [
+    "Resource Development"
+  ],
+  "technique_name": "Code Signing Certificates",
+  "description": "Adversaries may create self-signed code signing certificates that can be used during targeting. Code signing is the process of digitally signing executables and scripts to confirm the software author and guarantee that the code has not been altered or corrupted. Code signing provides a level of authenticity for a program from the developer and a guarantee that the program has not been tampered with.(Citation: Wikipedia Code Signing) Users and/or security tools may trust a signed piece of code more than an unsigned piece of code even if they don't know who issued the certificate or who the author is.\n\nPrior to [Code Signing](https://attack.mitre.org/techniques/T1553/002), adversaries may develop self-signed code signing certificates for use in operations.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1587.002 Detection",
+      "trigger_condition": "Consider analyzing self-signed code signing certificates for features that may be associated with the adversary and/or their developers, such as the thumbprint, algorithm used, validity period, and common name. Malware repositories can also be used to identify additional samples associated with the adversary and identify patterns an adversary has used in crafting self-signed code signing certificates.\nMuch of this activity will take place outside the visibility of the target organization, making detection of this behavior difficult. Detection efforts may be focused on related follow-on behavior, such as [Code Signing](https://attack.mitre.org/techniques/T1553/002) or [Install Root Certificate](https://attack.mitre.org/techniques/T1553/004)."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Pre-compromise mitigations involve proactive measures and defenses implemented to prevent adversaries from successfully identifying and exploiting weaknesses during the Reconnaissance and Resource Development phases of an attack. These activities focus on reducing an organization's attack surface, identify adversarial preparation efforts, and increase the difficulty for attackers to conduct successful operations. This mitigation can be implemented through the following measures:\n\nLimit Information Exposure:\n\n- Regularly audit and sanitize publicly available data, including job posts, websites, and social media.\n- Use tools like OSINT monitoring platforms (e.g., SpiderFoot, Recon-ng) to identify leaked information.\n\nProtect Domain and DNS Infrastructure:\n\n- Enable DNSSEC and use WHOIS privacy protection.\n- Monitor for domain hijacking or lookalike domains using services like RiskIQ or DomainTools.\n\nExternal Monitoring:\n\n- Use tools like Shodan, Censys to monitor your external attack surface.\n- Deploy external vulnerability scanners to proactively address weaknesses.\n\nThreat Intelligence:\n\n- Leverage platforms like MISP, Recorded Future, or Anomali to track adversarial infrastructure, tools, and activity.\n\nContent and Email Protections:\n\n- Use email security solutions like Proofpoint, Microsoft Defender for Office 365, or Mimecast.\n- Enforce SPF/DKIM/DMARC policies to protect against email spoofing.\n\nTraining and Awareness:\n\n- Educate employees on identifying phishing attempts, securing their social media, and avoiding information leaks.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1587",
+  "platforms": [
+    "PRE"
+  ],
+  "data_sources": [
+    "ATT&CK:T1587.002"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "T1485",
+  "tactic": "Impact",
+  "technique_name": "Data Destruction",
+  "description": "Adversaries may destroy data and files on specific systems or in large numbers on a network to interrupt availability to systems, services, and network resources. Data destruction is likely to render stored data irrecoverable by forensic techniques through overwriting files or data on local and remote drives. Common techniques include rm -rf commands, shredding files, or wiping block devices. Ransomware frequently uses this technique as a fallback or combined with encryption.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Mass file deletion events (high-frequency unlink syscalls), execution of rm -rf targeting non-temporary directories, or use of shred/wipe utilities within a container. Falco file deletion rules monitoring for bulk removals or deletions from critical paths would be the detection surface."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Implement immutable backups stored off-site and separate from the production environment. Use file integrity monitoring to alert on bulk deletion events. Apply the principle of least privilege to prevent application processes from deleting critical system or data files.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Containers"
+  ],
+  "data_sources": [
+    "File: File Deletion",
+    "Command: Command Execution",
+    "Process: Process Creation"
+  ]
+}

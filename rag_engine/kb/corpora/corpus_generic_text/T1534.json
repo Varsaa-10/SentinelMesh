@@ -1,0 +1,30 @@
+{
+  "id": "T1534",
+  "tactic": "Lateral Movement",
+  "technique_name": "Internal Spearphishing",
+  "description": "Adversaries may use internal spearphishing to gain access to additional information or exploit another user, system, or service within the compromised environment. Internal spearphishing is multi-staged campaign where an email account is owned either by controlling the user's device or by compromising the account credentials of the user. Adversaries attempt to take advantage of a trusted internal account to increase the likelihood of tricking the target into falling for the attack.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Emails sent from a compromised internal account to other internal users with suspicious attachments or links. Detection primarily at the email gateway layer; Falco can only detect post-exploitation process behaviors inside containers after the user takes the bait."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply behavioral email filtering on internal mail flows. Implement DMARC to prevent internal impersonation. Educate users about internal phishing threats. Monitor mailbox access from unusual locations or at unusual hours.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Office 365",
+    "SaaS"
+  ],
+  "data_sources": [
+    "Application Log: Application Log Content",
+    "Network Traffic: Network Traffic Content"
+  ]
+}

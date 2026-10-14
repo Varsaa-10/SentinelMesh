@@ -1,0 +1,29 @@
+{
+  "id": "T1003",
+  "tactic": "Credential Access",
+  "technique_name": "OS Credential Dumping",
+  "description": "Adversaries may attempt to dump credentials to obtain account login and credential material, normally in the form of a hash or a clear text password, from the operating system and software. Credentials can then be used to perform Lateral Movement and access restricted information. Several of the tools mentioned in this technique may be used by both adversaries and professional security researchers in a forensic context. This is the parent technique for T1003.008 (/etc/shadow) and other sub-techniques targeting LSASS, NTDS.dit, and similar credential stores.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Reads of LSASS process memory (Windows), access to /proc/*/mem for sensitive processes (Linux), or execution of credential-dumping tools (mimikatz, secretsdump, pypykatz). Falco process execution monitoring and sensitive file access rules cover the Linux container case."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Enable Protected Process Light (PPL) for LSASS on Windows. Use Credential Guard. Apply strict filesystem permissions and mandatory access controls to prevent unauthorized reads of credential store files. Audit for use of credential-dumping tools via process name and hash allowlists.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS"
+  ],
+  "data_sources": [
+    "Process: OS API Execution",
+    "File: File Access",
+    "Command: Command Execution"
+  ]
+}

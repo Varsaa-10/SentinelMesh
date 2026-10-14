@@ -1,0 +1,30 @@
+{
+  "id": "T1132.001",
+  "tactic": "Command and Control",
+  "tactics": [
+    "Command and Control"
+  ],
+  "technique_name": "Standard Encoding",
+  "description": "Adversaries may encode data with a standard data encoding system to make the content of command and control traffic more difficult to detect. Command and control (C2) information can be encoded using a standard data encoding system that adheres to existing protocol specifications. Common data encoding schemes include ASCII, Unicode, hexadecimal, Base64, and MIME.(Citation: Wikipedia Binary-to-text Encoding)(Citation: Wikipedia Character Encoding) Some data encoding systems may also result in data compression, such as gzip.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1132.001 Detection",
+      "trigger_condition": "Process invokes a standard encoder (e.g., PowerShell -enc, certutil -encode, base64 via .NET/Invoke-Expression) or emits long Base64/hex literals \u2192 shortly followed by outbound network egress with high bytes_out:bytes_in ratio or HTTP headers/payloads containing Base64/MIME blocks. Shell/utility (base64, xxd -p, od, openssl enc -base64, python/perl base64 libraries) encodes data \u2192 subsequent outbound connections (curl/wget/bash TCP, socat, python requests) with high asymmetry or Base64/MIME blobs in HTTP/DNS payloads. Processes use base64/xxd/openssl/python Objective\u2011C APIs to encode data (seen in EndpointSecurity exec events or Unified Logs) \u2192 quick outbound connections with large bytes_out or HTTP POSTs carrying Base64/MIME bodies."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Use intrusion detection signatures to block traffic at network boundaries.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1132",
+  "platforms": [
+    "ESXi",
+    "Linux",
+    "macOS",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1132.001"
+  ]
+}

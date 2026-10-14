@@ -1,0 +1,30 @@
+{
+  "id": "T1027.008",
+  "tactic": "Stealth",
+  "tactics": [
+    "Stealth"
+  ],
+  "technique_name": "Stripped Payloads",
+  "description": "Adversaries may attempt to make a payload difficult to analyze by removing symbols, strings, and other human readable information. Scripts and executables may contain variables names and other strings that help developers document code functionality. Symbols are often created by an operating system\u2019s `linker` when executable payloads are compiled. Reverse engineers use these symbols and strings to analyze code and to identify functionality in payloads.(Citation: Mandiant golang stripped binaries explanation)(Citation: intezer stripped binaries elf files 2018)\n\nAdversaries may use stripped payloads in order to make malware analysis more difficult. For example, compilers and other tools may provide features to remove or obfuscate strings and symbols. Adversaries have also used stripped payload formats, such as run-only AppleScripts, a compiled and stripped version of [AppleScript](https://attack.mitre.org/techniques/T1059/002), to evade detection and analysis. The lack of human-readable information may directly hinder detection and analysis of payloads.(Citation: SentinelLabs reversing run-only applescripts 2021)",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1027.008 Detection",
+      "trigger_condition": "Executable or script payloads lacking symbol information and readable strings that are created or dropped by unusual or short-lived processes. Executable or binary files created without symbol tables or with stripped sections, especially by non-user shell processes or compilers invoked outside standard dev paths. Creation of run-only AppleScripts or Mach-O binaries lacking symbol table and string references, especially when dropped by user space scripting engines or staging apps."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply security monitoring, least privilege access, and patch management.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1027",
+  "platforms": [
+    "Linux",
+    "macOS",
+    "Network Devices",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1027.008"
+  ]
+}

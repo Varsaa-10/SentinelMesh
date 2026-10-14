@@ -1,0 +1,28 @@
+{
+  "id": "T1112",
+  "tactic": "Defense Evasion",
+  "tactics": [
+    "Defense Evasion",
+    "Persistence"
+  ],
+  "technique_name": "Modify Registry",
+  "description": "Adversaries may interact with the Windows Registry as part of a variety of other techniques to aid in defense evasion, persistence, and execution.\n\nAccess to specific areas of the Registry depends on account permissions, with some keys requiring administrator-level access. The built-in Windows command-line utility [Reg](https://attack.mitre.org/software/S0075) may be used for local or remote Registry modification.(Citation: Microsoft Reg) Other tools, such as remote access tools, may also contain functionality to interact with the Registry through the Windows API.\n\nThe Registry may be modified in order to hide configuration information or malicious payloads via [Obfuscated Files or Information](https://attack.mitre.org/techniques/T1027).(Citation: Unit42 BabyShark Feb 2019)(Citation: Avaddon Ransomware 2021)(Citation: Microsoft BlackCat Jun 2022)(Citation: CISA Russian Gov Critical Infra 2018) The Registry may also be modified to impair defenses, such as by enabling macros for all Microsoft Office products, allowing privilege escalation without alerting the user, increasing the maximum number of allowed outbound requests, and/or modifying systems to store plaintext credentials in memory.(Citation: CISA LockBit 2023)(Citation: Unit42 BabyShark Feb 2019)\n\nThe Registry of a remote system may be modified to aid in execution of files as part of lateral movement. It requires the remote Registry service to be running on the target system.(Citation: Microsoft Remote) Often [Valid Accounts](https://attack.mitre.org/techniques/T1078) are required, along with access to the remote system's [SMB/Windows Admin Shares](https://attack.mitre.org/techniques/T1021/002) for RPC communication.\n\nFinally, Registry modifications may also include actions to hide keys, such as prepending key names with a null character, which will cause an error and/or be ignored when read via [Reg](https://attack.mitre.org/software/S0075) or other utilities using the Win32 API.(Citation: Microsoft Reghide NOV 2006) Adversaries may abuse these pseudo-hidden keys to conceal payloads/commands used to maintain persistence.(Citation: TrendMicro POWELIKS AUG 2014)(Citation: SpectorOps Hiding Reg Jul 2017)",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1112 Detection",
+      "trigger_condition": "Behavior chain involving abnormal registry modifications via CLI, PowerShell, WMI, or direct API calls, especially targeting persistence, privilege escalation, or defense evasion keys, potentially followed by service restart or process execution. Such as editing Notify/Userinit/Startup keys, or disabling SafeDllSearchMode."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Restricting registry permissions involves configuring access control settings for sensitive registry keys and hives to ensure that only authorized users or processes can make modifications. By limiting access, organizations can prevent unauthorized changes that adversaries might use for persistence, privilege escalation, or defense evasion. This mitigation can be implemented through the following measures:\n\nReview and Adjust Permissions on Critical Keys\n\n- Regularly review permissions on keys such as `Run`, `RunOnce`, and `Services` to ensure only authorized users have write access.\n- Use tools like `icacls` or `PowerShell` to automate permission adjustments.\n\nEnable Registry Auditing\n\n- Enable auditing on sensitive keys to log access attempts.\n- Use Event Viewer or SIEM solutions to analyze logs and detect suspicious activity.\n- Example Audit Policy: `auditpol /set /subcategory:\"Registry\" /success:enable /failure:enable`\n\nProtect Credential-Related Hives\n\n- Limit access to hives like `SAM`,`SECURITY`, and `SYSTEM` to prevent credential dumping or other unauthorized access.\n- Use LSA Protection to add an additional security layer for credential storage.\n\nRestrict Registry Editor Usage\n\n- Use Group Policy to restrict access to regedit.exe for non-administrative users.\n- Block execution of registry editing tools on endpoints where they are unnecessary.\n\nDeploy Baseline Configuration Tools\n\n- Use tools like Microsoft Security Compliance Toolkit or CIS Benchmarks to apply and maintain secure registry configurations.\n\n*Tools for Implementation* \n\nRegistry Permission Tools:\n\n- Registry Editor (regedit): Built-in tool to manage registry permissions.\n- PowerShell: Automate permissions and manage keys. `Set-ItemProperty -Path \"HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\" -Name \"KeyName\" -Value \"Value\"`\n- icacls: Command-line tool to modify ACLs.\n\nMonitoring Tools:\n\n- Sysmon: Monitor and log registry events.\n- Event Viewer: View registry access logs.\n\nPolicy Management Tools:\n\n- Group Policy Management Console (GPMC): Enforce registry permissions via GPOs.\n- Microsoft Endpoint Manager: Deploy configuration baselines for registry permissions.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1112"
+  ]
+}

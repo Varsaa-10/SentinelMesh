@@ -1,0 +1,30 @@
+{
+    "id": "T1027",
+    "tactic": "Defense Evasion",
+    "technique_name": "Obfuscated Files or Information",
+    "description": "Adversaries may attempt to make an executable or file difficult to discover or analyze by encrypting, encoding, or otherwise obfuscating its contents on the system or in transit. This is common behavior that can be used across different platforms and the network to evade defenses. Payloads may be compressed, archived, or encrypted in order to avoid detection. These payloads may be used during Initial Access or later to mitigate detection.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Execution of base64, openssl enc, gzip, or similar encoding/decoding tools from within a container (especially from /tmp/ or non-standard paths). Falco command execution filters on common obfuscation utilities would be the detection surface."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Use script block logging and module logging to capture deobfuscated payloads at execution time. Monitor for use of common encoding tools (base64, python -c, perl -e) in contexts where they are not expected. Deploy Endpoint Detection and Response (EDR) solutions with behavioral analysis.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "File: File Metadata",
+        "Command: Command Execution",
+        "Process: Process Creation"
+    ]
+}

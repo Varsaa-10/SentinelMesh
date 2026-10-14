@@ -1,0 +1,28 @@
+{
+  "id": "T1195",
+  "tactic": "Initial Access",
+  "technique_name": "Supply Chain Compromise",
+  "description": "Adversaries may manipulate products or product delivery mechanisms prior to receipt by a final consumer for the purpose of data or system compromise. Supply chain manipulation may take place at any stage from development through to distribution and can involve hardware, software, or firmware. Targeting may be specific to a particular victim set or may be distributed widely to a large number of companies. Techniques for doing this include manipulation of development tools, source code repositories, software update/distribution mechanisms, or compromising the vendor directly.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Not directly detected at initial supply chain stage. Anomalous container behavior post-compromise (unexpected network connections, unusual process spawns) would be the Falco detection surface."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Use code signing and integrity verification for software packages. Pin dependency versions and verify checksums. Vet third-party libraries and monitor for unexpected dependency updates in CI/CD pipelines.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS"
+  ],
+  "data_sources": [
+    "Sensor Health: Host Status",
+    "File: File Metadata"
+  ]
+}

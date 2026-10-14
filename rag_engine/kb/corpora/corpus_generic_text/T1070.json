@@ -1,0 +1,33 @@
+{
+  "id": "T1070",
+  "tactic": "Defense Evasion",
+  "technique_name": "Indicator Removal",
+  "description": "Adversaries may delete or modify artifacts generated within systems to remove evidence of their presence or hinder defenses. Various artifacts may be created by an adversary or exist as part of their activities on a system, such as process output, generated log files, and captured data used to perform actions on a target.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "SentinelMesh Log Directory Tampering",
+      "rule_file": "detection/falco-rules/s06_log_tamper.yaml",
+      "trigger_condition": "Any write, truncate, or create syscall targeting a file under /var/log/sentinelmesh/ within the sentinelmesh-logcollector container namespace, detected via Falco's open_write event filter"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Set the log volume to read-only (ro) or at most append-only for all containers except the dedicated log writer. Remove world-writable permissions (chmod 777) from shared log directories. Use immutable log storage or forward logs to an out-of-band aggregator (SIEM/syslog) that attackers cannot access. Alert on any write to the log directory by unexpected processes.",
+  "scenario_refs": [
+    "S6"
+  ],
+  "is_scenario_critical": true,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers",
+    "macOS",
+    "Windows"
+  ],
+  "data_sources": [
+    "File: File Deletion",
+    "File: File Modification",
+    "Command: Command Execution",
+    "Process: OS API Execution"
+  ]
+}

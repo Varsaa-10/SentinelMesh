@@ -1,0 +1,7 @@
+{
+  "source": "eval\\runs\\20260818T052217Z\\alerts.jsonl",
+  "source_sha256": "b647cfe960d74d4184f76e2b1962fba98439f352ff27389d8fa20a86fa56dcd8",
+  "method": "heuristic: last S1 onward, chain-stage scenarios, ordered-subsequence check",
+  "tagged_alerts": 9,
+  "total_alerts": 25
+}

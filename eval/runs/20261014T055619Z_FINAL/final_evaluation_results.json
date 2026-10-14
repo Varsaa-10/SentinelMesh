@@ -1,0 +1,2366 @@
+{
+  "run_timestamp_utc": "2026-10-14T05:56:19.930418+00:00",
+  "alerts_source": {
+    "path": "eval\\runs\\20261012T140201Z\\alerts.jsonl",
+    "sha256": "92b4112eed85db39daaac1dcf3f16f3098e33868066544e6280623c7aa597ddc",
+    "alert_count": 18,
+    "chain_tagged_alerts": 5
+  },
+  "baseline_1_falco_only": {
+    "status": "loaded",
+    "single_scenario_pass_count": 9,
+    "single_scenario_total": 9,
+    "s10_chain_all_stages_fired": true,
+    "source_file": "BASELINE_1_FROZEN_linux.json"
+  },
+  "baseline_2_flat_rag": {
+    "status": "loaded",
+    "query_text": "normalized (alert_normalizer rules)",
+    "two_layer": {
+      "accuracy": 1.0,
+      "correct": 14,
+      "total": 14,
+      "latency_ms_mean": 1.414
+    },
+    "flat": {
+      "accuracy": 1.0,
+      "correct": 14,
+      "total": 14,
+      "latency_ms_mean": 1.482
+    },
+    "raw_text_for_comparison": {
+      "two_layer": {
+        "accuracy": 0.7143,
+        "correct": 10,
+        "total": 14,
+        "latency_ms_mean": 2.336
+      },
+      "flat": {
+        "accuracy": 0.8571,
+        "correct": 12,
+        "total": 14,
+        "latency_ms_mean": 1.999
+      }
+    }
+  },
+  "baseline_3_graph_only": {
+    "status": "computed",
+    "node_count": 22,
+    "edge_count": 12,
+    "path_count": 10,
+    "paths": [
+      {
+        "scenario_id": "S1",
+        "ordered_stages": [
+          "S1"
+        ],
+        "technique_sequence": [
+          "T1190"
+        ]
+      },
+      {
+        "scenario_id": "S2",
+        "ordered_stages": [
+          "S2"
+        ],
+        "technique_sequence": [
+          "T1110"
+        ]
+      },
+      {
+        "scenario_id": "S3",
+        "ordered_stages": [
+          "S3"
+        ],
+        "technique_sequence": [
+          "T1078"
+        ]
+      },
+      {
+        "scenario_id": "S7",
+        "ordered_stages": [
+          "S7"
+        ],
+        "technique_sequence": [
+          "T1078"
+        ]
+      },
+      {
+        "scenario_id": "S4",
+        "ordered_stages": [
+          "S4"
+        ],
+        "technique_sequence": [
+          "T1212"
+        ]
+      },
+      {
+        "scenario_id": "S5",
+        "ordered_stages": [
+          "S5"
+        ],
+        "technique_sequence": [
+          "T1021"
+        ]
+      },
+      {
+        "scenario_id": "S6",
+        "ordered_stages": [
+          "S6"
+        ],
+        "technique_sequence": [
+          "T1070"
+        ]
+      },
+      {
+        "scenario_id": "S9",
+        "ordered_stages": [
+          "S9"
+        ],
+        "technique_sequence": [
+          "T1003.008"
+        ]
+      },
+      {
+        "scenario_id": "S8",
+        "ordered_stages": [
+          "S8"
+        ],
+        "technique_sequence": [
+          "T1041"
+        ]
+      },
+      {
+        "scenario_id": "S10",
+        "ordered_stages": [
+          "S1",
+          "S3",
+          "S4",
+          "S9",
+          "S8"
+        ],
+        "technique_sequence": [
+          "T1190",
+          "T1078",
+          "T1212",
+          "T1003.008",
+          "T1041"
+        ]
+      }
+    ]
+  },
+  "baseline_4_full_system": {
+    "status": "computed",
+    "rag_key": "two-layer__tfidf-word__normalized",
+    "uses_retrieved_tactic": true,
+    "graph": {
+      "node_count": 22,
+      "edge_count": 12
+    },
+    "routing_distribution": {
+      "auto": 3,
+      "analyst": 11,
+      "admin": 4
+    },
+    "out_of_scope_action_blocked": true,
+    "tactic_drift_count": 0,
+    "action_drift_count": 0,
+    "destructive_auto_actions": 0,
+    "destructive_actions_safe": true,
+    "assessments": [
+      {
+        "scenario_id": "S1",
+        "technique_id": "T1190",
+        "confidence": 0.5203,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4162,
+        "raw_risk_score": 10.406,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.42) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S2",
+        "technique_id": "T1110",
+        "confidence": 0.7276,
+        "severity": 3,
+        "asset_criticality": 4,
+        "risk_score": 0.3492,
+        "raw_risk_score": 8.7312,
+        "routing": "analyst",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.35) for tactic 'Credential Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Credential Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S2",
+        "technique_id": "T1110",
+        "confidence": 0.7276,
+        "severity": 3,
+        "asset_criticality": 4,
+        "risk_score": 0.3492,
+        "raw_risk_score": 8.7312,
+        "routing": "analyst",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.35) for tactic 'Credential Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Credential Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S3",
+        "technique_id": "T1078",
+        "confidence": 0.6762,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.541,
+        "raw_risk_score": 13.524,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.54) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S4",
+        "technique_id": "T1212",
+        "confidence": 0.6689,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6689,
+        "raw_risk_score": 16.7225,
+        "routing": "admin",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "revoke_token",
+        "target": "sentinelmesh-authservice",
+        "rationale": "High risk_score (0.67) for tactic 'Credential Access' \u2014 using primary candidate.",
+        "retrieved_tactic": "Credential Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S5",
+        "technique_id": "T1021",
+        "confidence": 0.6684,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.5347,
+        "raw_risk_score": 13.368,
+        "routing": "analyst",
+        "candidate_actions": [
+          "log_only",
+          "isolate_network"
+        ],
+        "selected_action": "isolate_network",
+        "target": "sentinelmesh-database",
+        "rationale": "Lower risk_score (0.53) for tactic 'Lateral Movement' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Lateral Movement",
+        "ground_truth_tactic": "Lateral Movement"
+      },
+      {
+        "scenario_id": "S6",
+        "technique_id": "T1070",
+        "confidence": 0.6994,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3357,
+        "raw_risk_score": 8.3928,
+        "routing": "auto",
+        "candidate_actions": [
+          "kill_container",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-logcollector",
+        "rationale": "Lower risk_score (0.34) for tactic 'Defense Evasion' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Defense Evasion",
+        "ground_truth_tactic": "Defense Evasion"
+      },
+      {
+        "scenario_id": "S7",
+        "technique_id": "T1078",
+        "confidence": 0.739,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3547,
+        "raw_risk_score": 8.868,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-dashboard",
+        "rationale": "Lower risk_score (0.35) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S7",
+        "technique_id": "T1078",
+        "confidence": 0.739,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3547,
+        "raw_risk_score": 8.868,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-dashboard",
+        "rationale": "Lower risk_score (0.35) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S9",
+        "technique_id": "T1003.008",
+        "confidence": 0.6159,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6159,
+        "raw_risk_score": 15.3975,
+        "routing": "admin",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "revoke_token",
+        "target": "sentinelmesh-webapp",
+        "rationale": "High risk_score (0.62) for tactic 'Credential Access' \u2014 using primary candidate.",
+        "retrieved_tactic": "Credential Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.5966,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4773,
+        "raw_risk_score": 11.932,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.48) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.5966,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4773,
+        "raw_risk_score": 11.932,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.48) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.5966,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4773,
+        "raw_risk_score": 11.932,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.48) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S1",
+        "technique_id": "T1190",
+        "confidence": 0.5203,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4162,
+        "raw_risk_score": 10.406,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.42) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S3",
+        "technique_id": "T1078",
+        "confidence": 0.6762,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.541,
+        "raw_risk_score": 13.524,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.54) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S4",
+        "technique_id": "T1212",
+        "confidence": 0.6689,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6689,
+        "raw_risk_score": 16.7225,
+        "routing": "admin",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Credential Access' \u2014 escalating to containment.",
+        "retrieved_tactic": "Credential Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S9",
+        "technique_id": "T1003.008",
+        "confidence": 0.6159,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6159,
+        "raw_risk_score": 15.3975,
+        "routing": "admin",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Credential Access' \u2014 escalating to containment.",
+        "retrieved_tactic": "Credential Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.5966,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4773,
+        "raw_risk_score": 11.932,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Exfiltration' \u2014 escalating to containment.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      }
+    ]
+  },
+  "baseline_4_raw_retrieved_tactic": {
+    "status": "computed",
+    "rag_key": "two-layer__tfidf-word__raw",
+    "uses_retrieved_tactic": true,
+    "graph": {
+      "node_count": 19,
+      "edge_count": 7
+    },
+    "routing_distribution": {
+      "auto": 5,
+      "analyst": 11,
+      "admin": 2
+    },
+    "out_of_scope_action_blocked": true,
+    "tactic_drift_count": 6,
+    "action_drift_count": 6,
+    "destructive_auto_actions": 0,
+    "destructive_actions_safe": true,
+    "assessments": [
+      {
+        "scenario_id": "S1",
+        "technique_id": "T1190",
+        "confidence": 0.5203,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4162,
+        "raw_risk_score": 10.406,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.42) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S2",
+        "technique_id": "T1078",
+        "confidence": 0.5777,
+        "severity": 3,
+        "asset_criticality": 4,
+        "risk_score": 0.2773,
+        "raw_risk_score": 6.9324,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.28) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S2",
+        "technique_id": "T1078",
+        "confidence": 0.5777,
+        "severity": 3,
+        "asset_criticality": 4,
+        "risk_score": 0.2773,
+        "raw_risk_score": 6.9324,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.28) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S3",
+        "technique_id": "T1078",
+        "confidence": 0.5922,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.4738,
+        "raw_risk_score": 11.844,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.47) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S4",
+        "technique_id": "T1078",
+        "confidence": 0.598,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.598,
+        "raw_risk_score": 14.95,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.60) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S5",
+        "technique_id": "T1021",
+        "confidence": 0.6737,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.539,
+        "raw_risk_score": 13.474,
+        "routing": "analyst",
+        "candidate_actions": [
+          "log_only",
+          "isolate_network"
+        ],
+        "selected_action": "isolate_network",
+        "target": "sentinelmesh-database",
+        "rationale": "Lower risk_score (0.54) for tactic 'Lateral Movement' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Lateral Movement",
+        "ground_truth_tactic": "Lateral Movement"
+      },
+      {
+        "scenario_id": "S6",
+        "technique_id": "T1070",
+        "confidence": 0.7159,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3436,
+        "raw_risk_score": 8.5908,
+        "routing": "auto",
+        "candidate_actions": [
+          "kill_container",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-logcollector",
+        "rationale": "Lower risk_score (0.34) for tactic 'Defense Evasion' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Defense Evasion",
+        "ground_truth_tactic": "Defense Evasion"
+      },
+      {
+        "scenario_id": "S7",
+        "technique_id": "T1078",
+        "confidence": 0.714,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3427,
+        "raw_risk_score": 8.568,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-dashboard",
+        "rationale": "Lower risk_score (0.34) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S7",
+        "technique_id": "T1078",
+        "confidence": 0.714,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3427,
+        "raw_risk_score": 8.568,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-dashboard",
+        "rationale": "Lower risk_score (0.34) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S9",
+        "technique_id": "T1082",
+        "confidence": 0.6257,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6257,
+        "raw_risk_score": 15.6425,
+        "routing": "admin",
+        "candidate_actions": [
+          "log_only",
+          "isolate_network"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "High risk_score (0.63) for tactic 'Discovery' \u2014 using primary candidate.",
+        "retrieved_tactic": "Discovery",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.50) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.50) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.50) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S1",
+        "technique_id": "T1190",
+        "confidence": 0.5203,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4162,
+        "raw_risk_score": 10.406,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.42) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S3",
+        "technique_id": "T1078",
+        "confidence": 0.5922,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.4738,
+        "raw_risk_score": 11.844,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.47) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S4",
+        "technique_id": "T1078",
+        "confidence": 0.598,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.598,
+        "raw_risk_score": 14.95,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.60) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S9",
+        "technique_id": "T1082",
+        "confidence": 0.6257,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6257,
+        "raw_risk_score": 15.6425,
+        "routing": "admin",
+        "candidate_actions": [
+          "log_only",
+          "isolate_network"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "High risk_score (0.63) for tactic 'Discovery' \u2014 using primary candidate.",
+        "retrieved_tactic": "Discovery",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Exfiltration' \u2014 escalating to containment.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      }
+    ]
+  },
+  "baseline_4_raw_legacy_groundtruth_tactic": {
+    "status": "computed",
+    "rag_key": "two-layer__tfidf-word__raw",
+    "uses_retrieved_tactic": false,
+    "graph": {
+      "node_count": 19,
+      "edge_count": 7
+    },
+    "routing_distribution": {
+      "auto": 3,
+      "analyst": 13,
+      "admin": 2
+    },
+    "out_of_scope_action_blocked": true,
+    "tactic_drift_count": 6,
+    "action_drift_count": 0,
+    "destructive_auto_actions": 0,
+    "destructive_actions_safe": true,
+    "assessments": [
+      {
+        "scenario_id": "S1",
+        "technique_id": "T1190",
+        "confidence": 0.5203,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4162,
+        "raw_risk_score": 10.406,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.42) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S2",
+        "technique_id": "T1078",
+        "confidence": 0.5777,
+        "severity": 3,
+        "asset_criticality": 4,
+        "risk_score": 0.2773,
+        "raw_risk_score": 6.9324,
+        "routing": "analyst",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.28) for tactic 'Credential Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S2",
+        "technique_id": "T1078",
+        "confidence": 0.5777,
+        "severity": 3,
+        "asset_criticality": 4,
+        "risk_score": 0.2773,
+        "raw_risk_score": 6.9324,
+        "routing": "analyst",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.28) for tactic 'Credential Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S3",
+        "technique_id": "T1078",
+        "confidence": 0.5922,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.4738,
+        "raw_risk_score": 11.844,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.47) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S4",
+        "technique_id": "T1078",
+        "confidence": 0.598,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.598,
+        "raw_risk_score": 14.95,
+        "routing": "analyst",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.60) for tactic 'Credential Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S5",
+        "technique_id": "T1021",
+        "confidence": 0.6737,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.539,
+        "raw_risk_score": 13.474,
+        "routing": "analyst",
+        "candidate_actions": [
+          "log_only",
+          "isolate_network"
+        ],
+        "selected_action": "isolate_network",
+        "target": "sentinelmesh-database",
+        "rationale": "Lower risk_score (0.54) for tactic 'Lateral Movement' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Lateral Movement",
+        "ground_truth_tactic": "Lateral Movement"
+      },
+      {
+        "scenario_id": "S6",
+        "technique_id": "T1070",
+        "confidence": 0.7159,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3436,
+        "raw_risk_score": 8.5908,
+        "routing": "auto",
+        "candidate_actions": [
+          "kill_container",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-logcollector",
+        "rationale": "Lower risk_score (0.34) for tactic 'Defense Evasion' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Defense Evasion",
+        "ground_truth_tactic": "Defense Evasion"
+      },
+      {
+        "scenario_id": "S7",
+        "technique_id": "T1078",
+        "confidence": 0.714,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3427,
+        "raw_risk_score": 8.568,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-dashboard",
+        "rationale": "Lower risk_score (0.34) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S7",
+        "technique_id": "T1078",
+        "confidence": 0.714,
+        "severity": 4,
+        "asset_criticality": 3,
+        "risk_score": 0.3427,
+        "raw_risk_score": 8.568,
+        "routing": "auto",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-dashboard",
+        "rationale": "Lower risk_score (0.34) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S9",
+        "technique_id": "T1082",
+        "confidence": 0.6257,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6257,
+        "raw_risk_score": 15.6425,
+        "routing": "admin",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "revoke_token",
+        "target": "sentinelmesh-webapp",
+        "rationale": "High risk_score (0.63) for tactic 'Credential Access' \u2014 using primary candidate.",
+        "retrieved_tactic": "Discovery",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.50) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.50) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.50) for tactic 'Exfiltration' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      },
+      {
+        "scenario_id": "S1",
+        "technique_id": "T1190",
+        "confidence": 0.5203,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4162,
+        "raw_risk_score": 10.406,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Lower risk_score (0.42) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S3",
+        "technique_id": "T1078",
+        "confidence": 0.5922,
+        "severity": 4,
+        "asset_criticality": 5,
+        "risk_score": 0.4738,
+        "raw_risk_score": 11.844,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "log_only"
+        ],
+        "selected_action": "log_only",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Lower risk_score (0.47) for tactic 'Initial Access' \u2014 using conservative candidate.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Initial Access"
+      },
+      {
+        "scenario_id": "S4",
+        "technique_id": "T1078",
+        "confidence": 0.598,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.598,
+        "raw_risk_score": 14.95,
+        "routing": "analyst",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-authservice",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Credential Access' \u2014 escalating to containment.",
+        "retrieved_tactic": "Initial Access",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S9",
+        "technique_id": "T1082",
+        "confidence": 0.6257,
+        "severity": 5,
+        "asset_criticality": 5,
+        "risk_score": 0.6257,
+        "raw_risk_score": 15.6425,
+        "routing": "admin",
+        "candidate_actions": [
+          "revoke_token",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Credential Access' \u2014 escalating to containment.",
+        "retrieved_tactic": "Discovery",
+        "ground_truth_tactic": "Credential Access"
+      },
+      {
+        "scenario_id": "S8",
+        "technique_id": "T1041",
+        "confidence": 0.6189,
+        "severity": 5,
+        "asset_criticality": 4,
+        "risk_score": 0.4951,
+        "raw_risk_score": 12.378,
+        "routing": "analyst",
+        "candidate_actions": [
+          "isolate_network",
+          "kill_container"
+        ],
+        "selected_action": "kill_container",
+        "target": "sentinelmesh-webapp",
+        "rationale": "Multi-stage path (len=5) detected for tactic 'Exfiltration' \u2014 escalating to containment.",
+        "retrieved_tactic": "Exfiltration",
+        "ground_truth_tactic": "Exfiltration"
+      }
+    ]
+  },
+  "retrieved_tactic_action_drift": {
+    "normalized_action_drift": 0,
+    "raw_action_drift": 6,
+    "raw_tactic_drift": 6,
+    "destructive_auto_actions_normalized": 0,
+    "destructive_auto_actions_raw": 0,
+    "safety_invariant_held": true
+  },
+  "baseline_5_autonomous_agent": {
+    "baseline": "Baseline 5 (Fully-Autonomous LLM Agent \u2014 no RAG, no approval gate)",
+    "total_decisions": 18,
+    "all_auto_executed": true,
+    "unsafe_action_count": 8,
+    "unsafe_action_rate": 0.4444,
+    "unscored_count": 0,
+    "decisions": [
+      {
+        "scenario_id": "S1",
+        "alert_title": "SQL Injection Authentication Bypass",
+        "action_taken": "kill_container",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S2",
+        "alert_title": "Brute-Force Login Attempt",
+        "action_taken": "revoke_token",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S2",
+        "alert_title": "Brute-Force Login Attempt",
+        "action_taken": "isolate_network",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S3",
+        "alert_title": "Default Credential Login (unconfirmed \u2014 username=admin only, no explicit default_credentials flag from app)",
+        "action_taken": "kill_container",
+        "target": "authservice",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S4",
+        "alert_title": "JWT Algorithm Confusion",
+        "action_taken": "revoke_token",
+        "target": "authservice",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S5",
+        "alert_title": "SentinelMesh Unauthorized Database Connection",
+        "action_taken": "isolate_network",
+        "target": "database",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S6",
+        "alert_title": "SentinelMesh Log Directory Tampering",
+        "action_taken": "log_only",
+        "target": "logcollector",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S7",
+        "alert_title": "Grafana Login Succeeded (unconfirmed \u2014 username not visible in this log line; default admin/admin credentials used by the attack script)",
+        "action_taken": "kill_container",
+        "target": "dashboard",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S7",
+        "alert_title": "Grafana Anonymous Dashboard Access",
+        "action_taken": "kill_container",
+        "target": "dashboard",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S9",
+        "alert_title": "SentinelMesh Sensitive Credential File Read",
+        "action_taken": "revoke_token",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S8",
+        "alert_title": "SentinelMesh Unexpected Outbound Connection",
+        "action_taken": "isolate_network",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S8",
+        "alert_title": "SentinelMesh Unexpected Outbound Connection",
+        "action_taken": "isolate_network",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S8",
+        "alert_title": "SentinelMesh Unexpected Outbound Connection",
+        "action_taken": "isolate_network",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S1",
+        "alert_title": "SQL Injection Authentication Bypass",
+        "action_taken": "kill_container",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S3",
+        "alert_title": "Default Credential Login (unconfirmed \u2014 username=admin only, no explicit default_credentials flag from app)",
+        "action_taken": "kill_container",
+        "target": "authservice",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      },
+      {
+        "scenario_id": "S4",
+        "alert_title": "JWT Algorithm Confusion",
+        "action_taken": "revoke_token",
+        "target": "authservice",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S9",
+        "alert_title": "SentinelMesh Sensitive Credential File Read",
+        "action_taken": "revoke_token",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": false
+      },
+      {
+        "scenario_id": "S8",
+        "alert_title": "SentinelMesh Unexpected Outbound Connection",
+        "action_taken": "log_only",
+        "target": "webapp",
+        "auto_executed": true,
+        "rag_grounded": false,
+        "confidence_checked": false,
+        "unsafe": true
+      }
+    ],
+    "simulated": true,
+    "note": "Stand-in agent, not a live LLM. unsafe_action_rate is a property of the simulation and the alert set, not a measurement; do not quote as a result."
+  },
+  "ablation_study": {
+    "no_rag_grounding": {
+      "summary": "Falls back to graph-only baseline (Baseline 3).",
+      "result": {
+        "status": "computed",
+        "node_count": 22,
+        "edge_count": 12,
+        "path_count": 10,
+        "paths": [
+          {
+            "scenario_id": "S1",
+            "ordered_stages": [
+              "S1"
+            ],
+            "technique_sequence": [
+              "T1190"
+            ]
+          },
+          {
+            "scenario_id": "S2",
+            "ordered_stages": [
+              "S2"
+            ],
+            "technique_sequence": [
+              "T1110"
+            ]
+          },
+          {
+            "scenario_id": "S3",
+            "ordered_stages": [
+              "S3"
+            ],
+            "technique_sequence": [
+              "T1078"
+            ]
+          },
+          {
+            "scenario_id": "S7",
+            "ordered_stages": [
+              "S7"
+            ],
+            "technique_sequence": [
+              "T1078"
+            ]
+          },
+          {
+            "scenario_id": "S4",
+            "ordered_stages": [
+              "S4"
+            ],
+            "technique_sequence": [
+              "T1212"
+            ]
+          },
+          {
+            "scenario_id": "S5",
+            "ordered_stages": [
+              "S5"
+            ],
+            "technique_sequence": [
+              "T1021"
+            ]
+          },
+          {
+            "scenario_id": "S6",
+            "ordered_stages": [
+              "S6"
+            ],
+            "technique_sequence": [
+              "T1070"
+            ]
+          },
+          {
+            "scenario_id": "S9",
+            "ordered_stages": [
+              "S9"
+            ],
+            "technique_sequence": [
+              "T1003.008"
+            ]
+          },
+          {
+            "scenario_id": "S8",
+            "ordered_stages": [
+              "S8"
+            ],
+            "technique_sequence": [
+              "T1041"
+            ]
+          },
+          {
+            "scenario_id": "S10",
+            "ordered_stages": [
+              "S1",
+              "S3",
+              "S4",
+              "S9",
+              "S8"
+            ],
+            "technique_sequence": [
+              "T1190",
+              "T1078",
+              "T1212",
+              "T1003.008",
+              "T1041"
+            ]
+          }
+        ]
+      }
+    },
+    "no_graph_reconstruction": {
+      "summary": "RAG-grounded risk scoring with path length forced to 1 (no multi-stage escalation).",
+      "routing_distribution": {
+        "auto": 3,
+        "analyst": 11,
+        "admin": 4
+      }
+    },
+    "no_tiered_approval": {
+      "summary": "Everything auto-executes regardless of risk_score.",
+      "would_be_unsafe_auto_executions": 16,
+      "vs_full_system_unsafe_auto_executions": 3
+    }
+  },
+  "poisoning_runs": {
+    "status": "loaded",
+    "variants": [
+      "variant_1_mislabeled_cve",
+      "variant_2_fake_entry",
+      "variant_3_near_duplicate",
+      "variant_4_adversarial_embedding",
+      "variant_5_stale_contradictory"
+    ],
+    "raw": {
+      "variant_1_mislabeled_cve": {
+        "static_findings_count": 6,
+        "static_findings": [
+          {
+            "severity": "high",
+            "record_type": "technique",
+            "record_id": "T1212",
+            "finding": "Lists related_cves=['CVE-2022-29217'] but that CVE's related_technique_ids does not list 'T1212' back -- asymmetric/broken bidirectional link."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2019-14271",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2020-15257",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-22555",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-44228",
+            "finding": "References technique 'T1210' which does not exist in the technique record set."
+          },
+          {
+            "severity": "high",
+            "record_type": "cve",
+            "record_id": "CVE-2022-29217",
+            "finding": "Lists related_technique_ids=['T1499'] but that technique's related_cves does not list 'CVE-2022-29217' back -- asymmetric/broken bidirectional link."
+          }
+        ],
+        "wrong_recommendations": 3,
+        "wrong_recommendations_flagged_as_suspect": 0,
+        "query_results": [
+          {
+            "scenario_id": "S1",
+            "ground_truth_technique": "T1190",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6642,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S2",
+            "ground_truth_technique": "T1110",
+            "predicted_technique": "T1110",
+            "wrong_recommendation": false,
+            "confidence_score": 0.7227,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S3",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6642,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S4",
+            "ground_truth_technique": "T1212",
+            "predicted_technique": "T1212",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6692,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S5",
+            "ground_truth_technique": "T1021",
+            "predicted_technique": "T1021",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6354,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S6",
+            "ground_truth_technique": "T1070",
+            "predicted_technique": "T1070",
+            "wrong_recommendation": false,
+            "confidence_score": 0.749,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S7",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6642,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S8",
+            "ground_truth_technique": "T1041",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.4142,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S9",
+            "ground_truth_technique": "T1003.008",
+            "predicted_technique": "T1003.008",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6128,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          }
+        ]
+      },
+      "variant_2_fake_entry": {
+        "static_findings_count": 5,
+        "static_findings": [
+          {
+            "severity": "high",
+            "record_type": "technique",
+            "record_id": "T1337.007",
+            "finding": "ID 'T1337.007' matches ATT&CK ID formatting but is not in the known-real technique allowlist for this KB -- possible fabricated entry."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2019-14271",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2020-15257",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-22555",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-44228",
+            "finding": "References technique 'T1210' which does not exist in the technique record set."
+          }
+        ],
+        "wrong_recommendations": 3,
+        "wrong_recommendations_flagged_as_suspect": 0,
+        "query_results": [
+          {
+            "scenario_id": "S1",
+            "ground_truth_technique": "T1190",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6629,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S2",
+            "ground_truth_technique": "T1110",
+            "predicted_technique": "T1110",
+            "wrong_recommendation": false,
+            "confidence_score": 0.7226,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S3",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6629,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S4",
+            "ground_truth_technique": "T1212",
+            "predicted_technique": "T1212",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6696,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S5",
+            "ground_truth_technique": "T1021",
+            "predicted_technique": "T1021",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6335,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S6",
+            "ground_truth_technique": "T1070",
+            "predicted_technique": "T1070",
+            "wrong_recommendation": false,
+            "confidence_score": 0.7506,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S7",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6629,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S8",
+            "ground_truth_technique": "T1041",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.4129,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S9",
+            "ground_truth_technique": "T1003.008",
+            "predicted_technique": "T1003.008",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6135,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          }
+        ]
+      },
+      "variant_3_near_duplicate": {
+        "static_findings_count": 5,
+        "static_findings": [
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2019-14271",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2020-15257",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-22555",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-44228",
+            "finding": "References technique 'T1210' which does not exist in the technique record set."
+          },
+          {
+            "severity": "high",
+            "record_type": "technique",
+            "record_id": "T1078 / T1110",
+            "finding": "Descriptions for T1078 and T1110 are 100% word-overlap similar despite being different technique IDs -- likely a copied/near-duplicate description (one of them may carry a wrong label)."
+          }
+        ],
+        "wrong_recommendations": 4,
+        "wrong_recommendations_flagged_as_suspect": 1,
+        "query_results": [
+          {
+            "scenario_id": "S1",
+            "ground_truth_technique": "T1190",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6607,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S2",
+            "ground_truth_technique": "T1110",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.484,
+            "retrieval_flagged_suspect": true,
+            "suspicion_reason": "Low absolute similarity score (0.06 < 0.25) -- alert failed to match any legitimate KB technique cleanly (possible unknown or poisoned query)."
+          },
+          {
+            "scenario_id": "S3",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6607,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S4",
+            "ground_truth_technique": "T1212",
+            "predicted_technique": "T1212",
+            "wrong_recommendation": false,
+            "confidence_score": 0.669,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S5",
+            "ground_truth_technique": "T1021",
+            "predicted_technique": "T1021",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6255,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S6",
+            "ground_truth_technique": "T1070",
+            "predicted_technique": "T1070",
+            "wrong_recommendation": false,
+            "confidence_score": 0.7491,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S7",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6607,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S8",
+            "ground_truth_technique": "T1041",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.4107,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S9",
+            "ground_truth_technique": "T1003.008",
+            "predicted_technique": "T1003.008",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6121,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          }
+        ]
+      },
+      "variant_4_adversarial_embedding": {
+        "static_findings_count": 4,
+        "static_findings": [
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2019-14271",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2020-15257",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-22555",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-44228",
+            "finding": "References technique 'T1210' which does not exist in the technique record set."
+          }
+        ],
+        "wrong_recommendations": 3,
+        "wrong_recommendations_flagged_as_suspect": 0,
+        "query_results": [
+          {
+            "scenario_id": "S1",
+            "ground_truth_technique": "T1190",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6398,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S2",
+            "ground_truth_technique": "T1110",
+            "predicted_technique": "T1110",
+            "wrong_recommendation": false,
+            "confidence_score": 0.7226,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S3",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6398,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S4",
+            "ground_truth_technique": "T1212",
+            "predicted_technique": "T1212",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6683,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S5",
+            "ground_truth_technique": "T1021",
+            "predicted_technique": "T1021",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6356,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S6",
+            "ground_truth_technique": "T1070",
+            "predicted_technique": "T1070",
+            "wrong_recommendation": false,
+            "confidence_score": 0.749,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S7",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.6398,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S8",
+            "ground_truth_technique": "T1041",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.3898,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S9",
+            "ground_truth_technique": "T1003.008",
+            "predicted_technique": "T1003.008",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6127,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          }
+        ]
+      },
+      "variant_5_stale_contradictory": {
+        "static_findings_count": 5,
+        "static_findings": [
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2019-14271",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2020-15257",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-22555",
+            "finding": "References technique 'T1611' which does not exist in the technique record set."
+          },
+          {
+            "severity": "medium",
+            "record_type": "cve",
+            "record_id": "CVE-2021-44228",
+            "finding": "References technique 'T1210' which does not exist in the technique record set."
+          },
+          {
+            "severity": "high",
+            "record_type": "technique",
+            "record_id": "T1212",
+            "finding": "Mitigation text contains suspicious phrase 'does not require patching' -- possible stale/contradictory guidance."
+          }
+        ],
+        "wrong_recommendations": 3,
+        "wrong_recommendations_flagged_as_suspect": 0,
+        "query_results": [
+          {
+            "scenario_id": "S1",
+            "ground_truth_technique": "T1190",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": false,
+            "confidence_score": 0.664,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S2",
+            "ground_truth_technique": "T1110",
+            "predicted_technique": "T1110",
+            "wrong_recommendation": false,
+            "confidence_score": 0.7227,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S3",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.664,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S4",
+            "ground_truth_technique": "T1212",
+            "predicted_technique": "T1212",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6735,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S5",
+            "ground_truth_technique": "T1021",
+            "predicted_technique": "T1021",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6354,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S6",
+            "ground_truth_technique": "T1070",
+            "predicted_technique": "T1070",
+            "wrong_recommendation": false,
+            "confidence_score": 0.749,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S7",
+            "ground_truth_technique": "T1078",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.664,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S8",
+            "ground_truth_technique": "T1041",
+            "predicted_technique": "T1190",
+            "wrong_recommendation": true,
+            "confidence_score": 0.414,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          },
+          {
+            "scenario_id": "S9",
+            "ground_truth_technique": "T1003.008",
+            "predicted_technique": "T1003.008",
+            "wrong_recommendation": false,
+            "confidence_score": 0.6144,
+            "retrieval_flagged_suspect": false,
+            "suspicion_reason": "No suspicion flags triggered."
+          }
+        ]
+      }
+    }
+  },
+  "repeated_run_feedback_experiment": {
+    "iterations_run": 5,
+    "iteration_summaries": [
+      {
+        "iteration": 0,
+        "thresholds_used": {
+          "auto": 0.4,
+          "analyst": 0.6
+        },
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 2,
+        "mttr_seconds": 84.0,
+        "feedback": {
+          "iteration": 0,
+          "learning_rate": 0.05,
+          "rejects_at_auto": 2,
+          "approves_at_auto": 0,
+          "rejects_at_analyst": 0,
+          "approves_at_analyst": 4,
+          "thresholds_before": {
+            "auto": 0.4,
+            "analyst": 0.6
+          },
+          "thresholds_after": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.7
+          },
+          "threshold_delta": {
+            "auto": -0.1,
+            "analyst": 0.1
+          }
+        }
+      },
+      {
+        "iteration": 1,
+        "thresholds_used": {
+          "auto": 0.30000000000000004,
+          "analyst": 0.7
+        },
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 0,
+        "mttr_seconds": 41.93,
+        "feedback": {
+          "iteration": 1,
+          "learning_rate": 0.0425,
+          "rejects_at_auto": 0,
+          "approves_at_auto": 0,
+          "rejects_at_analyst": 0,
+          "approves_at_analyst": 6,
+          "thresholds_before": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.7
+          },
+          "thresholds_after": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.8274999999999999
+          },
+          "threshold_delta": {
+            "auto": 0.0,
+            "analyst": 0.1275
+          }
+        }
+      },
+      {
+        "iteration": 2,
+        "thresholds_used": {
+          "auto": 0.30000000000000004,
+          "analyst": 0.8274999999999999
+        },
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 0,
+        "mttr_seconds": 41.93,
+        "feedback": {
+          "iteration": 2,
+          "learning_rate": 0.03612,
+          "rejects_at_auto": 0,
+          "approves_at_auto": 0,
+          "rejects_at_analyst": 0,
+          "approves_at_analyst": 6,
+          "thresholds_before": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.8274999999999999
+          },
+          "thresholds_after": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.9
+          },
+          "threshold_delta": {
+            "auto": 0.0,
+            "analyst": 0.0725
+          }
+        }
+      },
+      {
+        "iteration": 3,
+        "thresholds_used": {
+          "auto": 0.30000000000000004,
+          "analyst": 0.9
+        },
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 0,
+        "mttr_seconds": 41.93,
+        "feedback": {
+          "iteration": 3,
+          "learning_rate": 0.03071,
+          "rejects_at_auto": 0,
+          "approves_at_auto": 0,
+          "rejects_at_analyst": 0,
+          "approves_at_analyst": 6,
+          "thresholds_before": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.9
+          },
+          "thresholds_after": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.9
+          },
+          "threshold_delta": {
+            "auto": 0.0,
+            "analyst": 0.0
+          }
+        }
+      },
+      {
+        "iteration": 4,
+        "thresholds_used": {
+          "auto": 0.30000000000000004,
+          "analyst": 0.9
+        },
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 0,
+        "mttr_seconds": 41.93,
+        "feedback": {
+          "iteration": 4,
+          "learning_rate": 0.0261,
+          "rejects_at_auto": 0,
+          "approves_at_auto": 0,
+          "rejects_at_analyst": 0,
+          "approves_at_analyst": 6,
+          "thresholds_before": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.9
+          },
+          "thresholds_after": {
+            "auto": 0.30000000000000004,
+            "analyst": 0.9
+          },
+          "threshold_delta": {
+            "auto": 0.0,
+            "analyst": 0.0
+          }
+        }
+      }
+    ],
+    "adaptation_metrics": {
+      "unnecessary_approvals_reduction_pct": 0.0,
+      "unsafe_auto_actions_reduction_pct": 100.0,
+      "mttr_improvement_pct": 50.08,
+      "threshold_convergence_score": 0.02417,
+      "first_iteration": {
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 2,
+        "mttr_seconds": 84.0
+      },
+      "last_iteration": {
+        "unnecessary_approvals": 7,
+        "unsafe_auto_actions": 0,
+        "mttr_seconds": 41.93
+      }
+    },
+    "final_thresholds": {
+      "auto": 0.30000000000000004,
+      "analyst": 0.9
+    },
+    "simulated_reviewer": true,
+    "note": "Human decisions in this experiment come from a simulated reviewer. 'unsafe_auto_actions' counts auto-routed alerts the simulated reviewer rejected; the reduction shows the feedback loop reacting to those rejections, not a measured safety gain."
+  },
+  "reproducibility_check": {
+    "modules_checked": {
+      "graph.attack_graph": "ok",
+      "graph.pipeline": "ok",
+      "response.risk_scoring": "ok",
+      "eval.autonomous_baseline": "ok",
+      "eval.feedback_loop": "ok",
+      "eval.repeated_run_harness": "ok"
+    },
+    "all_ok": true,
+    "manual_step_required": "Also run: git clone <repo-url> fresh_clone && cd fresh_clone && python3 eval/final_evaluation.py \u2014 and confirm it completes with no manual steps."
+  }
+}

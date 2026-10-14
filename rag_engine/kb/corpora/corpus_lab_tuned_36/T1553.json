@@ -1,0 +1,30 @@
+{
+    "id": "T1553",
+    "tactic": "Defense Evasion",
+    "technique_name": "Subvert Trust Controls",
+    "description": "Adversaries may undermine security controls that will warn users of untrusted activity or resources. All major operating systems have features that may notify users when software or artifacts are untrusted. Adversaries may attempt to subvert these trust mechanisms. This can take the form of disabling code-signing requirements, installing root CA certificates, or using self-signed certificates to make malicious traffic appear legitimate.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "Modifications to certificate stores (/etc/ssl/certs/, /usr/local/share/ca-certificates/), writes to trusted CA bundle files, or execution of update-ca-certificates from within a container. Falco file write rules on certificate paths would detect this."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Enforce certificate pinning in applications. Monitor for modifications to the system certificate trust store. Use certificate transparency logs to detect unauthorized CA issuance. Deploy integrity monitoring on CA bundle files.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "File: File Modification",
+        "Command: Command Execution",
+        "Windows Registry: Windows Registry Key Modification"
+    ]
+}

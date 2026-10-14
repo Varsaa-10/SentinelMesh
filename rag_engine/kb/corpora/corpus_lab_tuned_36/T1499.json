@@ -1,0 +1,29 @@
+{
+    "id": "T1499",
+    "tactic": "Impact",
+    "technique_name": "Endpoint Denial of Service",
+    "description": "Adversaries may perform Endpoint Denial of Service (DoS) attacks to degrade or block the availability of services to users. Endpoint DoS can be performed by exhausting the system resources those services are hosted on or exploiting the system to cause a persistent crash condition. Example resources include specific process CPU usage, memory, file descriptors, network connections, and so on. An adversary may also leverage traffic floods to overwhelm network interfaces and links.",
+    "detection_signatures": {
+        "log_tail": null,
+        "falco": {
+            "rule_name": null,
+            "rule_file": null,
+            "trigger_condition": "High-frequency fork/exec syscalls from a container (fork bomb indicators), exhaustion of file descriptors detected via /proc/*/fd/ monitoring, or Falco resource consumption anomalies. Application-level: repeated error responses (429, 503) from the log-tail perspective."
+        }
+    },
+    "related_cves": [],
+    "mitigation": "Set container resource limits (CPU, memory, PID limits) in docker-compose.yml or Kubernetes resource quotas. Implement rate limiting at the application and network layer. Deploy a CDN or DDoS mitigation service for public-facing endpoints.",
+    "scenario_refs": [],
+    "is_scenario_critical": false,
+    "sub_technique_of": null,
+    "platforms": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "Containers"
+    ],
+    "data_sources": [
+        "Network Traffic: Network Traffic Flow",
+        "Sensor Health: Host Status"
+    ]
+}

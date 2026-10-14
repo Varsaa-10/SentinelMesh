@@ -1,0 +1,31 @@
+{
+  "id": "T1687",
+  "tactic": "Defense Evasion",
+  "tactics": [
+    "Defense Evasion"
+  ],
+  "technique_name": "Exploitation for Defense Impairment",
+  "description": "Adversaries may exploit vulnerabilities in security software, infrastructure, or defensive components to degrade, disable, or otherwise continue to impair their ability to prevent, detect, or respond to malicious activity. \n \nAdversaries may exploit a system or application vulnerability to directly interfere with defensive mechanisms. Exploitation occurs when an adversary takes advantage of a programming error in software, services, or the operating system to execute adversary-controlled code, often with the goal of weakening or disabling protections. \n\nVulnerabilities may exist in security tools such as antivirus, endpoint detection and response (EDR), firewalls, or other monitoring solutions. Adversaries may use prior reconnaissance or perform discovery activities (e.g., [Software Discovery](https://attack.mitre.org/techniques/T1518)) to identify defensive tools present in an environment and target them for exploitation. \n\nSuccessful exploitation may allow adversaries to terminate security processes, disable protections, bypass enforcement mechanisms, or reduce the effectiveness of defensive controls. In some cases, vulnerabilities in cloud-based or SaaS infrastructure may also be leveraged to bypass built-in security boundaries or disrupt visibility and enforcement across environments.(Citation: Salesforce zero-day in facebook phishing attack)",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1687 Detection",
+      "trigger_condition": "Detects suspicious interactions with security products followed by service crashes, unexpected restarts, driver unloads, telemetry gaps, or tamper-state changes. Correlates exploit precursor behavior with immediate degradation of defensive services and follow-on process execution. Detects exploitation attempts against security daemons or kernel security modules followed by daemon termination, disabled logging, module unload, audit stoppage, or reduced endpoint telemetry. Correlates local execution or network input with control degradation. Detects exploitation or abuse of SaaS security workflows resulting in disabled alerts, reduced retention, bypassed enforcement, role escalation, or tokenized persistence that weakens monitoring. Correlates unusual admin/API activity with visibility reduction."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply security monitoring, least privilege access, and patch management.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "IaaS",
+    "Linux",
+    "macOS",
+    "SaaS",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1687"
+  ]
+}

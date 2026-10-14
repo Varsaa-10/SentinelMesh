@@ -1,0 +1,29 @@
+{
+  "id": "T1539",
+  "tactic": "Credential Access",
+  "technique_name": "Steal Web Session Cookie",
+  "description": "Adversaries may steal web application or service session cookies and use them to gain access to web applications or Internet services as an authenticated user without needing credentials. Web applications and services often use session cookies as an authentication token after a user has authenticated to a website. Cookies are often valid for an extended period of time, even after a user logs out. After the cookie is obtained through stealing or forgery, the adversary may then import the cookie into a browser they control and is then able to use the site or application as the user for as long as the session cookie is active.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "HTTP requests using a session token from a different source IP or User-Agent than the original session establishment. Application log analysis showing session reuse from unexpected clients. Not directly detectable via Falco syscall monitoring."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Set cookies with the HttpOnly, Secure, and SameSite=Strict attributes. Implement session token binding to client IP or TLS session. Enforce short session expiry windows and re-authenticate before sensitive operations. Use CSRF tokens to prevent cross-site request forgery abuse of stolen cookies.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "SaaS"
+  ],
+  "data_sources": [
+    "Application Log: Application Log Content",
+    "Network Traffic: Network Traffic Content"
+  ]
+}

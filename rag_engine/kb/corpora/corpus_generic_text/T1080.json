@@ -1,0 +1,30 @@
+{
+  "id": "T1080",
+  "tactic": "Lateral Movement",
+  "technique_name": "Taint Shared Content",
+  "description": "Adversaries may deliver payloads to remote systems by adding content to shared storage locations, such as network shares or code repositories. Content stored on network shares or in other shared locations may be tainted by adding malicious programs, scripts, or exploit code to otherwise valid files. Once a user opens the shared tainted content, the malicious portion can be executed to run the adversary's code on a remote system. In containerized environments this may involve placing malicious scripts in shared volumes that other containers will execute.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Unexpected writes by one container to a shared volume that is also mounted by sibling containers. Falco can monitor for cross-container volume access patterns if container namespaces are tracked \u2014 write to /var/log/sentinelmesh/ by non-logcollector containers is a concrete example from this lab."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Mount shared volumes as read-only for all containers that do not need write access. Implement file integrity monitoring on shared volumes. Use separate volumes per service where possible to minimize shared access surface.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Containers"
+  ],
+  "data_sources": [
+    "File: File Creation",
+    "File: File Modification",
+    "Network Share: Network Share Access"
+  ]
+}

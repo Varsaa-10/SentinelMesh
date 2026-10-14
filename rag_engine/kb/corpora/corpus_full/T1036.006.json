@@ -1,0 +1,28 @@
+{
+  "id": "T1036.006",
+  "tactic": "Stealth",
+  "tactics": [
+    "Stealth"
+  ],
+  "technique_name": "Space after Filename",
+  "description": "Adversaries can hide a program's true filetype by changing the extension of a file. With certain file types (specifically this does not work with .app extensions), appending a space to the end of a filename will change how the file is processed by the operating system.\n\nFor example, if there is a Mach-O executable file called <code>evil.bin</code>, when it is double clicked by a user, it will launch Terminal.app and execute. If this file is renamed to <code>evil.txt</code>, then when double clicked by a user, it will launch with the default text editing application (not executing the binary). However, if the file is renamed to <code>evil.txt </code> (note the space at the end), then when double clicked by a user, the true file type is determined by the OS and handled appropriately and the binary will be executed (Citation: Mac Backdoors are back).\n\nAdversaries can use this feature to trick users into double clicking benign-looking files of any format and ultimately executing something malicious.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1036.006 Detection",
+      "trigger_condition": "Detection of file execution where the file name contains a trailing space to masquerade as a known executable. Adversaries may exploit the way command line interpreters handle file names with trailing whitespace. Execution of renamed or dropped files with a trailing space to deceive users or analysts, especially in LaunchAgents or LaunchDaemons."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply security monitoring, least privilege access, and patch management.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1036",
+  "platforms": [
+    "Linux",
+    "macOS"
+  ],
+  "data_sources": [
+    "ATT&CK:T1036.006"
+  ]
+}

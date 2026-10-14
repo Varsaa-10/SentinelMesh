@@ -1,0 +1,30 @@
+{
+  "id": "T1136",
+  "tactic": "Persistence",
+  "technique_name": "Create Account",
+  "description": "Adversaries may create an account to maintain access to victim systems. With a sufficient level of access, creating such accounts may be used to establish secondary credentialed access that do not require persistent remote access tools to be deployed on the system. Accounts may be created on the local system or within a domain or cloud tenant that the adversary has compromised. In containerized environments, creating local users or modifying /etc/passwd entries can provide persistent access even after container restarts if the filesystem is mutable.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Execution of useradd, adduser, or direct writes to /etc/passwd or /etc/shadow within a container. Falco rules on writes to /etc/passwd and executions of user management commands inside containers would detect this activity."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Audit local accounts on all systems and containers regularly. Alert on new account creation events. Use immutable container images to prevent /etc/passwd modification. Apply the principle of least privilege \u2014 containers should never run with permissions to create system accounts.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Containers"
+  ],
+  "data_sources": [
+    "User Account: User Account Creation",
+    "Command: Command Execution",
+    "Process: Process Creation"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "T1547.008",
+  "tactic": "Persistence",
+  "tactics": [
+    "Persistence",
+    "Privilege Escalation"
+  ],
+  "technique_name": "LSASS Driver",
+  "description": "Adversaries may modify or add LSASS drivers to obtain persistence on compromised systems. The Windows security subsystem is a set of components that manage and enforce the security policy for a computer or domain. The Local Security Authority (LSA) is the main component responsible for local security policy and user authentication. The LSA includes multiple dynamic link libraries (DLLs) associated with various other security functions, all of which run in the context of the LSA Subsystem Service (LSASS) lsass.exe process.(Citation: Microsoft Security Subsystem)\n\nAdversaries may target LSASS drivers to obtain persistence. By either replacing or adding illegitimate drivers (e.g., [Hijack Execution Flow](https://attack.mitre.org/techniques/T1574)), an adversary can use LSA operations to continuously execute malicious payloads.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1547.008 Detection",
+      "trigger_condition": "Unauthorized creation or modification of DLLs loaded by LSASS, abnormal registry values under LSA extensions, and anomalous DLL load activity into the lsass.exe process context\u2014correlated during boot or logon events."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Privileged Process Integrity focuses on defending highly privileged processes (e.g., system services, antivirus, or authentication processes) from tampering, injection, or compromise by adversaries. These processes often interact with critical components, making them prime targets for techniques like code injection, privilege escalation, and process manipulation. This mitigation can be implemented through the following measures:\n\nProtected Process Mechanisms:\n\n- Enable RunAsPPL on Windows systems to protect LSASS and other critical processes.\n- Use registry modifications to enforce protected process settings: `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\RunAsPPL`\n\nAnti-Injection and Memory Protection:\n\n- Enable Control Flow Guard (CFG), DEP, and ASLR to protect against process memory tampering.\n- Deploy endpoint protection tools that actively block process injection attempts.\n\nCode Signing Validation:\n\n- Implement policies for Windows Defender Application Control (WDAC) or AppLocker to enforce execution of signed binaries.\n- Ensure critical processes are signed with valid certificates.\n\nAccess Controls:\n\n- Use DACLs and MIC to limit which users and processes can interact with privileged processes.\n- Disable unnecessary debugging capabilities for high-privileged processes.\n\nKernel-Level Protections:\n\n- Ensure Kernel Patch Protection (PatchGuard) is enabled on Windows systems.\n- Leverage SELinux or AppArmor on Linux to enforce kernel-level security policies.\n\n*Tools for Implementation*\n\nProtected Process Light (PPL):\n\n- RunAsPPL (Windows)\n- Windows Defender Credential Guard\n\nCode Integrity and Signing:\n\n- Windows Defender Application Control (WDAC)\n- AppLocker\n- SELinux/AppArmor (Linux)\n\nMemory Protection:\n\n- Control Flow Guard (CFG), Data Execution Prevention (DEP), ASLR\n\nProcess Isolation/Sandboxing:\n\n- Firejail (Linux Sandbox)\n- Windows Sandbox\n- QEMU/KVM-based isolation\n\nKernel Protection:\n\n- PatchGuard (Windows Kernel Patch Protection)\n- SELinux (Mandatory Access Control for Linux)\n- AppArmor Credential Access Protection focuses on implementing measures to prevent adversaries from obtaining credentials, such as passwords, hashes, tokens, or keys, that could be used for unauthorized access. This involves restricting access to credential storage mechanisms, hardening configurations to block credential dumping methods, and using monitoring tools to detect suspicious credential-related activity. This mitigation can be implemented through the following measures:\n\nRestrict Access to Credential Storage:\n\n- Use Case: Prevent adversaries from accessing the SAM (Security Account Manager) database on Windows systems.\n- Implementation: Enforce least privilege principles and restrict administrative access to credential stores such as `C:\\Windows\\System32\\config\\SAM`.\n\nUse Credential Guard:\n\n- Use Case: Isolate LSASS (Local Security Authority Subsystem Service) memory to prevent credential dumping.\n- Implementation: Enable Windows Defender Credential Guard on enterprise endpoints to isolate secrets and protect them from unauthorized access.\n\nMonitor for Credential Dumping Tools:\n\n- Use Case: Detect and block known tools like Mimikatz or Windows Credential Editor.\n- Implementation: Flag suspicious process behavior related to credential dumping.\n\nDisable Cached Credentials:\n\n- Use Case: Prevent adversaries from exploiting cached credentials on endpoints.\n- Implementation: Configure group policy to reduce or eliminate the use of cached credentials (e.g., set Interactive logon: Number of previous logons to cache to 0).\n\nEnable Secure Boot and Memory Protections:\n\n- Use Case: Prevent memory-based attacks used to extract credentials.\n- Implementation: Configure Secure Boot and enforce hardware-based security features like DEP (Data Execution Prevention) and ASLR (Address Space Layout Randomization).",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1547",
+  "platforms": [
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1547.008"
+  ]
+}

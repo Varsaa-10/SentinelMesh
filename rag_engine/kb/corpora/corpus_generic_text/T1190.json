@@ -1,0 +1,35 @@
+{
+  "id": "T1190",
+  "tactic": "Initial Access",
+  "technique_name": "Exploit Public-Facing Application",
+  "description": "Adversaries may attempt to exploit a weakness in an Internet-facing host or system to initially access a network. The weakness in the system can be a software bug, a temporary glitch, or a misconfiguration. Webservers, databases (e.g., SQL), standard services (e.g., SMB or SSH), network device administration and management protocols (e.g., SNMP and Smart Install), and any other system with Internet-accessible open sockets that can be exploited and directly related to the exploitation of public-facing applications are in scope.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "login_attempt",
+      "match_fields": {
+        "result": "success",
+        "injected": true
+      },
+      "pattern": "login_attempt event where result=success and the identifier field contains SQL injection syntax (quote characters, OR clauses, comment sequences)",
+      "detector_ref": "detection/log-tail/scenario1_detector.py"
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Use parameterized queries or prepared statements for all database interactions. Apply input validation and allowlist-based sanitization on all user-supplied fields. Deploy a Web Application Firewall (WAF) with SQLi detection rules. Apply the principle of least privilege to database accounts used by web applications.",
+  "scenario_refs": [
+    "S1",
+    "S10"
+  ],
+  "is_scenario_critical": true,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers",
+    "Network"
+  ],
+  "data_sources": [
+    "Application Log: Application Log Content",
+    "Network Traffic: Network Traffic Content"
+  ]
+}

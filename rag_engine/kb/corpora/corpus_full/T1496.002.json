@@ -1,0 +1,31 @@
+{
+  "id": "T1496.002",
+  "tactic": "Impact",
+  "tactics": [
+    "Impact"
+  ],
+  "technique_name": "Bandwidth Hijacking",
+  "description": "Adversaries may leverage the network bandwidth resources of co-opted systems to complete resource-intensive tasks, which may impact system and/or hosted service availability. \n\nAdversaries may also use malware that leverages a system's network bandwidth as part of a botnet in order to facilitate [Network Denial of Service](https://attack.mitre.org/techniques/T1498) campaigns and/or to seed malicious torrents.(Citation: GoBotKR) Alternatively, they may engage in proxyjacking by selling use of the victims' network bandwidth and IP address to proxyware services.(Citation: Sysdig Proxyjacking) Finally, they may engage in internet-wide scanning in order to identify additional targets for compromise.(Citation: Unit 42 Leaked Environment Variables 2024)\n\nIn addition to incurring potential financial costs or availability disruptions, this technique may cause reputational damage if a victim\u2019s bandwidth is used for illegal activities.(Citation: Sysdig Proxyjacking)",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1496.002 Detection",
+      "trigger_condition": "Processes invoking network-intensive child processes or uploading large data volumes, often from non-standard user or system contexts, with evidence of long-duration TCP/UDP sessions to unusual destinations. User-initiated processes generating sustained outbound traffic over common or non-standard ports, often outside business hours, potentially linked to scanning or proxyjacking. Includes curl, wget, masscan, or proxy clients. Suspicious long-lived or high-throughput connections by non-Apple signed apps or processes not commonly associated with network uploads. Detect background processes using open sockets for data egress."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply security monitoring, least privilege access, and patch management.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1496",
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "IaaS",
+    "Containers"
+  ],
+  "data_sources": [
+    "ATT&CK:T1496.002"
+  ]
+}

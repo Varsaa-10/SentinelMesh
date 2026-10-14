@@ -1,0 +1,32 @@
+{
+  "id": "T1003.008",
+  "tactic": "Credential Access",
+  "technique_name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+  "description": "Adversaries may attempt to dump the contents of /etc/passwd and /etc/shadow to enable offline password cracking or to obtain account lists. On Linux systems, /etc/shadow contains hashed passwords and is readable only by root. /etc/passwd contains user account information and is world-readable. SSH private key files (e.g. /root/.ssh/id_rsa) and cloud credential files (e.g. /root/.aws/credentials) are also high-value credential targets.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "SentinelMesh Sensitive Credential File Read",
+      "rule_file": "detection/falco-rules/s09_credential_access.yaml",
+      "trigger_condition": "Open syscall on /etc/shadow, /root/.ssh/* (any), or /root/.aws/credentials inside any container whose name matches the sentinelmesh-* pattern \u2014 detected via Falco's open_read event filter on sensitive file paths"
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply the principle of least privilege \u2014 processes should not run as root inside containers. Use read-only root filesystems and drop all unnecessary Linux capabilities. Mount sensitive host paths with noexec and ro options. Use secrets management solutions (HashiCorp Vault, AWS Secrets Manager) instead of storing credentials as files. Monitor for unexpected open() syscalls against /etc/shadow and SSH key files.",
+  "scenario_refs": [
+    "S9",
+    "S10"
+  ],
+  "is_scenario_critical": true,
+  "sub_technique_of": "T1003",
+  "platforms": [
+    "Linux",
+    "Containers",
+    "macOS"
+  ],
+  "data_sources": [
+    "File: File Access",
+    "Command: Command Execution",
+    "Process: OS API Execution"
+  ]
+}

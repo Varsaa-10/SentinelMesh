@@ -40,10 +40,21 @@ class RAGResult:
 
 
 class TwoLayerRAG:
-    def __init__(self, records: List[KBRecord], embedder: BaseEmbedder, cve_lookup: Optional[Dict[str, CVERecord]] = None):
+    def __init__(
+        self,
+        records: List[KBRecord],
+        embedder: BaseEmbedder,
+        cve_lookup: Optional[Dict[str, CVERecord]] = None,
+        top_k_tactics: int = 1,
+        fallback_threshold: Optional[float] = None,
+        reranker: Optional[Any] = None,
+    ):
         self.records = records
         self.embedder = embedder
         self.cve_lookup = cve_lookup or {}
+        self.top_k_tactics = top_k_tactics
+        self.fallback_threshold = fallback_threshold
+        self.reranker = reranker
         self._tactic_summaries = tactic_summaries(records)
         self._tactics = list(self._tactic_summaries.keys())
         self._fit()
@@ -67,19 +78,38 @@ class TwoLayerRAG:
 
         # --- Layer 1: tactic retrieval ---
         tactic_sims = self.embedder.similarity_matrix(q_vec, self._tactic_vecs)[0]
-        best_tactic_idx = int(np.argmax(tactic_sims))
+        tactic_order = np.argsort(-tactic_sims)
+        best_tactic_idx = int(tactic_order[0])
+        best_tactic_sim = float(tactic_sims[best_tactic_idx])
         best_tactic = self._tactics[best_tactic_idx]
 
-        # --- Layer 2: technique retrieval scoped to the matched tactic ---
-        scoped_idx = [i for i, r in enumerate(self.records) if r.tactic == best_tactic]
+        fallback_triggered = False
+        # Fallback condition: if best tactic similarity is below threshold, fall back to flat search
+        if self.fallback_threshold is not None and best_tactic_sim < self.fallback_threshold:
+            fallback_triggered = True
+            scoped_idx = list(range(len(self.records)))
+        else:
+            # Scoped to top_k_tactics (beam search)
+            selected_tactics = set([self._tactics[tactic_order[i]] for i in range(min(self.top_k_tactics, len(self._tactics)))])
+            scoped_idx = [i for i, r in enumerate(self.records) if r.tactic in selected_tactics]
+            if not scoped_idx:
+                scoped_idx = list(range(len(self.records)))
+
+        # --- Layer 2: technique retrieval ---
         scoped_vecs = self._record_vecs[scoped_idx]
         scoped_sims = self.embedder.similarity_matrix(q_vec, scoped_vecs)[0]
 
         order = np.argsort(-scoped_sims)
         ranked_records = [self.records[scoped_idx[i]] for i in order]
         ranked_sims = [float(scoped_sims[i]) for i in order]
-        ranked_tactics = [r.tactic for r in ranked_records]
 
+        # Optional Re-ranker stage over top candidates
+        if self.reranker is not None and len(ranked_records) > 1:
+            reranked = self.reranker.rerank(alert_output_text, ranked_records[:10], ranked_sims[:10])
+            ranked_records = [r[0] for r in reranked]
+            ranked_sims = [r[1] for r in reranked]
+
+        ranked_tactics = [r.tactic for r in ranked_records]
         top_record = ranked_records[0]
         confidence = compute_confidence(
             ranked_sims,
@@ -98,6 +128,12 @@ class TwoLayerRAG:
         if top_record.detection_signatures.falco:
             kb_falco_rule_name = top_record.detection_signatures.falco.get("rule_name")
 
+        engine_name = "two-layer"
+        if fallback_triggered:
+            engine_name = "two-layer-fallback"
+        elif self.top_k_tactics > 1:
+            engine_name = f"two-layer-top{self.top_k_tactics}"
+
         evidence = {
             "falco_rule": falco_rule,
             "container_id": container_id,
@@ -105,6 +141,9 @@ class TwoLayerRAG:
             "cve_ids": top_record.related_cves,
             "kb_detector_ref": kb_detector_ref,
             "kb_falco_rule_name": kb_falco_rule_name,
+            "layer1_best_tactic": best_tactic,
+            "layer1_similarity": round(best_tactic_sim, 4),
+            "fallback_triggered": fallback_triggered,
         }
 
         return RAGResult(
@@ -115,6 +154,7 @@ class TwoLayerRAG:
             confidence=confidence,
             evidence=evidence,
             latency_ms=latency_ms,
-            engine="two-layer",
+            engine=engine_name,
             embedder=self.embedder.name,
         )
+

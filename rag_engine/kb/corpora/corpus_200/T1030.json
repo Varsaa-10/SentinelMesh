@@ -1,0 +1,30 @@
+{
+  "id": "T1030",
+  "tactic": "Exfiltration",
+  "tactics": [
+    "Exfiltration"
+  ],
+  "technique_name": "Data Transfer Size Limits",
+  "description": "An adversary may exfiltrate data in fixed size chunks instead of whole files or limit packet sizes below certain thresholds. This approach may be used to avoid triggering network data transfer threshold alerts.(Citation: Chunked Encoding)",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1030 Detection",
+      "trigger_condition": "Adversary uses a process to establish outbound connections that transmit uniform packet sizes at a consistent interval, avoiding threshold-based network alerts. Outbound connections from non-network-facing processes repeatedly send similarly sized payloads within uniform time intervals. Processes on macOS initiate external connections that consistently transmit data in fixed sizes using LaunchAgents or unexpected users."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Use intrusion detection signatures to block traffic at network boundaries.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "macOS",
+    "Windows",
+    "ESXi"
+  ],
+  "data_sources": [
+    "ATT&CK:T1030"
+  ]
+}

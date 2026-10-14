@@ -103,9 +103,32 @@ def baseline3(alerts: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
-    """Full system: RAG-grounded graph + risk-scored tiered response."""
-    per_alert = {item["scenario_id"]: item for item in rag_eval[RAG_KEY]["per_alert"] if item["scenario_id"] != "S10"}
+def get_technique_tactic_map(repo_root: Path) -> Dict[str, str]:
+    mapping = {}
+    for p in (repo_root / "kb_master" / "techniques").glob("*.json"):
+        try:
+            data = json.loads(p.read_text())
+            mapping[data["id"]] = data.get("tactic", "Unknown")
+        except Exception:
+            pass
+    return mapping
+
+
+def baseline4(
+    alerts,
+    ground_truth,
+    rag_eval,
+    rag_key: str = RAG_KEY,
+    use_retrieved_tactic: bool = True,
+    repo_root: Path = REPO_ROOT,
+) -> Dict[str, Any]:
+    """Full system: RAG-grounded graph + risk-scored tiered response.
+    
+    W5 Upgrade: Uses the RETRIEVED tactic rather than ground truth tactic,
+    and measures downstream action drift and safety bounds.
+    """
+    tech_tactic_map = get_technique_tactic_map(repo_root)
+    per_alert = {item["scenario_id"]: item for item in rag_eval[rag_key]["per_alert"] if item["scenario_id"] != "S10"}
 
     rag_results_ordered = []
     for alert in alerts:
@@ -114,11 +137,18 @@ def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
         if item is None:
             rag_results_ordered.append(None)
             continue
+        
+        pred_tech = item["predicted_technique"]
+        if use_retrieved_tactic:
+            pred_tactic = item.get("predicted_tactic") or tech_tactic_map.get(pred_tech) or ground_truth.get(sid, {}).get("tactic", "Unknown")
+        else:
+            pred_tactic = ground_truth.get(sid, {}).get("tactic", "Unknown")
+
         rag_results_ordered.append(
             {
-                "predicted_technique": item["predicted_technique"],
+                "predicted_technique": pred_tech,
                 "predicted_technique_name": None,
-                "predicted_tactic": ground_truth.get(sid, {}).get("tactic"),
+                "predicted_tactic": pred_tactic,
                 "matched_cves": item["evidence"].get("cve_ids", []),
                 "confidence": item["confidence"],
                 "evidence": item["evidence"],
@@ -130,22 +160,54 @@ def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
 
     executor = ActionExecutor(dry_run=True)
     assessments = []
+    action_drift_count = 0
+    tactic_drift_count = 0
+    destructive_auto_actions = 0
+
     for alert in alerts:
         sid = alert.get("scenario")
         item = per_alert.get(sid)
         gt = ground_truth.get(sid)
         if item is None or gt is None:
             continue
+        
+        pred_tech = item["predicted_technique"]
+        retrieved_tactic = item.get("predicted_tactic") or tech_tactic_map.get(pred_tech) or gt.get("tactic", "Unknown")
+        gt_tactic = gt.get("tactic", "Unknown")
+        
+        chosen_tactic = retrieved_tactic if use_retrieved_tactic else gt_tactic
+        if retrieved_tactic != gt_tactic:
+            tactic_drift_count += 1
+
         rag_result = {
-            "predicted_technique": item["predicted_technique"],
-            "predicted_tactic": gt.get("tactic"),
+            "predicted_technique": pred_tech,
+            "predicted_tactic": chosen_tactic,
             "confidence": item["confidence"],
         }
         # Chain-tagged alerts belong to the S10 path, so use its length (5) for escalation.
         plen = path_lengths.get("S10", 1) if alert.get("chain_id") == "S10" else path_lengths.get(sid, 1)
         result = assess(sid, rag_result, gt, graph_path_length=plen)
         executor.execute(result.selected_action, f"container_{gt.get('target_container','unknown')}", reason=sid)
-        assessments.append(result.to_dict())
+        
+        # Check action drift vs. hypothetical ground truth tactic
+        if use_retrieved_tactic and (retrieved_tactic != gt_tactic):
+            gt_rag_result = {
+                "predicted_technique": pred_tech,
+                "predicted_tactic": gt_tactic,
+                "confidence": item["confidence"],
+            }
+            gt_result = assess(sid, gt_rag_result, gt, graph_path_length=plen)
+            if gt_result.selected_action != result.selected_action:
+                action_drift_count += 1
+                
+        # Safety check: destructive action must NEVER reach auto
+        if result.routing == "auto" and result.selected_action in ("kill_container", "isolate_network"):
+            destructive_auto_actions += 1
+
+        res_dict = result.to_dict()
+        res_dict["retrieved_tactic"] = retrieved_tactic
+        res_dict["ground_truth_tactic"] = gt_tactic
+        assessments.append(res_dict)
 
     routing_counts = {"auto": 0, "analyst": 0, "admin": 0}
     for a in assessments:
@@ -153,9 +215,15 @@ def baseline4(alerts, ground_truth, rag_eval) -> Dict[str, Any]:
 
     return {
         "status": "computed",
+        "rag_key": rag_key,
+        "uses_retrieved_tactic": use_retrieved_tactic,
         "graph": {"node_count": len(graph_out["nodes"]), "edge_count": len(graph_out["edges"])},
         "routing_distribution": routing_counts,
         "out_of_scope_action_blocked": executor.test_out_of_scope_blocked(),
+        "tactic_drift_count": tactic_drift_count,
+        "action_drift_count": action_drift_count,
+        "destructive_auto_actions": destructive_auto_actions,
+        "destructive_actions_safe": destructive_auto_actions == 0,
         "assessments": assessments,
     }
 
@@ -169,10 +237,11 @@ def baseline5(alerts, ground_truth) -> Dict[str, Any]:
     return out
 
 
-def ablation(alerts, ground_truth, rag_eval, full_system_result: Dict[str, Any]) -> Dict[str, Any]:
+def ablation(alerts, ground_truth, rag_eval, full_system_result: Dict[str, Any], repo_root: Path = REPO_ROOT) -> Dict[str, Any]:
     """Remove RAG, graph, and tiered-approval individually to isolate each
     component's marginal contribution, vs. the full-system result above.
     """
+    tech_tactic_map = get_technique_tactic_map(repo_root)
     # No RAG -> graph-only (baseline3) already isolates this contribution.
     no_rag = baseline3(alerts)
 
@@ -186,9 +255,11 @@ def ablation(alerts, ground_truth, rag_eval, full_system_result: Dict[str, Any])
         gt = ground_truth.get(sid)
         if item is None or gt is None:
             continue
+        pred_tech = item["predicted_technique"]
+        retrieved_tactic = item.get("predicted_tactic") or tech_tactic_map.get(pred_tech) or gt.get("tactic", "Unknown")
         rag_result = {
-            "predicted_technique": item["predicted_technique"],
-            "predicted_tactic": gt.get("tactic"),
+            "predicted_technique": pred_tech,
+            "predicted_tactic": retrieved_tactic,
             "confidence": item["confidence"],
         }
         result = assess(sid, rag_result, gt, graph_path_length=1)  # forced to 1: no graph escalation
@@ -216,6 +287,7 @@ def ablation(alerts, ground_truth, rag_eval, full_system_result: Dict[str, Any])
             ),
         },
     }
+
 
 
 def poisoning(repo_root: Path) -> Dict[str, Any]:
@@ -268,9 +340,11 @@ def run_final_evaluation(repo_root: Path = REPO_ROOT, alerts_file: Path | None =
     b1 = baseline1(repo_root)
     b2 = baseline2(rag_eval)
     b3 = baseline3(alerts)
-    b4 = baseline4(alerts, ground_truth, rag_eval)
+    b4 = baseline4(alerts, ground_truth, rag_eval, rag_key=RAG_KEY, use_retrieved_tactic=True, repo_root=repo_root)
+    b4_raw = baseline4(alerts, ground_truth, rag_eval, rag_key=RAG_KEY_RAW, use_retrieved_tactic=True, repo_root=repo_root)
+    b4_raw_legacy = baseline4(alerts, ground_truth, rag_eval, rag_key=RAG_KEY_RAW, use_retrieved_tactic=False, repo_root=repo_root)
     b5 = baseline5(alerts, ground_truth)
-    abl = ablation(alerts, ground_truth, rag_eval, b4)
+    abl = ablation(alerts, ground_truth, rag_eval, b4, repo_root=repo_root)
     poison = poisoning(repo_root)
 
     alerts_with_rag = _load_alerts_with_rag(repo_root)
@@ -297,12 +371,23 @@ def run_final_evaluation(repo_root: Path = REPO_ROOT, alerts_file: Path | None =
         "baseline_2_flat_rag": b2,
         "baseline_3_graph_only": b3,
         "baseline_4_full_system": b4,
+        "baseline_4_raw_retrieved_tactic": b4_raw,
+        "baseline_4_raw_legacy_groundtruth_tactic": b4_raw_legacy,
+        "retrieved_tactic_action_drift": {
+            "normalized_action_drift": b4["action_drift_count"],
+            "raw_action_drift": b4_raw["action_drift_count"],
+            "raw_tactic_drift": b4_raw["tactic_drift_count"],
+            "destructive_auto_actions_normalized": b4["destructive_auto_actions"],
+            "destructive_auto_actions_raw": b4_raw["destructive_auto_actions"],
+            "safety_invariant_held": b4["destructive_auto_actions"] == 0 and b4_raw["destructive_auto_actions"] == 0,
+        },
         "baseline_5_autonomous_agent": b5,
         "ablation_study": abl,
         "poisoning_runs": poison,
         "repeated_run_feedback_experiment": repeated,
         "reproducibility_check": repro,
     }
+
 
 
 if __name__ == "__main__":
@@ -316,6 +401,7 @@ if __name__ == "__main__":
     out_dir = REPO_ROOT / "eval" / "runs" / f"{run_id}_FINAL"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "final_evaluation_results.json").write_text(json.dumps(output, indent=2, default=str))
+    (REPO_ROOT / "eval" / "final_evaluation_results.json").write_text(json.dumps(output, indent=2, default=str))
 
     print("=== SentinelMesh Final Evaluation ===")
     print(f"Alerts:                    {output['alerts_source']['path']} "
@@ -328,6 +414,11 @@ if __name__ == "__main__":
           f"{output['baseline_3_graph_only']['path_count']} paths")
     print(f"Baseline 4 (full system):  routing={output['baseline_4_full_system']['routing_distribution']}, "
           f"out-of-scope blocked={output['baseline_4_full_system']['out_of_scope_action_blocked']}")
+    print(f"W5 Action Drift:           normalized={output['retrieved_tactic_action_drift']['normalized_action_drift']}, "
+          f"raw_queries={output['retrieved_tactic_action_drift']['raw_action_drift']} "
+          f"(tactic_drift={output['retrieved_tactic_action_drift']['raw_tactic_drift']}, "
+          f"destructive_auto={output['retrieved_tactic_action_drift']['destructive_auto_actions_raw']}, "
+          f"safety_invariant_held={output['retrieved_tactic_action_drift']['safety_invariant_held']})")
     print(f"Baseline 5 (autonomous):   unsafe_rate={output['baseline_5_autonomous_agent']['unsafe_action_rate']} [SIMULATED agent, not a measurement]")
     print(f"Poisoning runs:            {output['poisoning_runs']['status']}, "
           f"{len(output['poisoning_runs'].get('variants', []))} variants")
@@ -335,3 +426,4 @@ if __name__ == "__main__":
     print(f"Adaptation metrics:        {json.dumps(output['repeated_run_feedback_experiment']['adaptation_metrics'], indent=2)}")
     print(f"Reproducibility:           all_ok={output['reproducibility_check']['all_ok']}")
     print(f"\nFull results written to {out_dir / 'final_evaluation_results.json'}")
+

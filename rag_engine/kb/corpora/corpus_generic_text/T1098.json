@@ -1,0 +1,30 @@
+{
+  "id": "T1098",
+  "tactic": "Persistence",
+  "technique_name": "Account Manipulation",
+  "description": "Adversaries may manipulate accounts to maintain access to victim systems. Account manipulation may consist of any action that preserves adversary access to a compromised account, such as modifying credentials or permission groups. These actions could also include account activity designed so that it does not trip current account policies, thereby allowing an adversary to go undetected. Modifying permissions, assigning admin roles, or adding SSH authorized keys are common persistence mechanisms.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Writes to /root/.ssh/authorized_keys or /home/*/.ssh/authorized_keys, modifications to /etc/sudoers or /etc/sudoers.d/, and execution of passwd, chage, or usermod commands within container namespaces."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Monitor for modifications to SSH authorized_keys files and sudoers configurations. Use privileged access workstations and just-in-time access provisioning. Alert on any account permission elevation events. Audit group membership changes regularly.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Containers"
+  ],
+  "data_sources": [
+    "User Account: User Account Modification",
+    "File: File Modification",
+    "Command: Command Execution"
+  ]
+}

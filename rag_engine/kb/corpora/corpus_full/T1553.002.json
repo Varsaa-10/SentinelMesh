@@ -1,0 +1,28 @@
+{
+  "id": "T1553.002",
+  "tactic": "Defense Evasion",
+  "tactics": [
+    "Defense Evasion"
+  ],
+  "technique_name": "Code Signing",
+  "description": "Adversaries may create, acquire, or steal code signing materials to sign their malware or tools. Code signing provides a level of authenticity on a binary from the developer and a guarantee that the binary has not been tampered with. (Citation: Wikipedia Code Signing) The certificates used during an operation may be created, acquired, or stolen by the adversary. (Citation: Securelist Digital Certificates) (Citation: Symantec Digital Certificates) Unlike [Invalid Code Signature](https://attack.mitre.org/techniques/T1036/001), this activity will result in a valid signature.\n\nCode signing to verify software on first run can be used on modern Windows and macOS systems. It is not used on Linux due to the decentralized nature of the platform. (Citation: Wikipedia Code Signing)(Citation: EclecticLightChecksonEXECodeSigning)\n\nCode signing certificates may be used to bypass security policies that require signed code to execute on a system.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": "ATT&CK T1553.002 Detection",
+      "trigger_condition": "Detects execution of binaries signed with unusual or recently issued certificates, correlation of process execution with abnormal publisher metadata, and mismatched certificate chains. Monitors for revoked or unknown code signing certificates used in high-privilege contexts. Monitors Gatekeeper, spctl, and unified log entries for binaries executed with unexpected or untrusted signatures. Correlates file metadata changes with process launches where signature validation is skipped, altered, or fails but the process still executes."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Apply security monitoring, least privilege access, and patch management.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": "T1553",
+  "platforms": [
+    "macOS",
+    "Windows"
+  ],
+  "data_sources": [
+    "ATT&CK:T1553.002"
+  ]
+}

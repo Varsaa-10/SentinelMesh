@@ -1,0 +1,5119 @@
+{
+  "targets": [
+    "N/A \u2014 composite of T1190, T1078, T1212, T1003.008, T1041",
+    "T1003.008",
+    "T1021",
+    "T1041",
+    "T1070",
+    "T1078",
+    "T1110",
+    "T1190",
+    "T1212"
+  ],
+  "alert_counts": {
+    "oct12_14": 14,
+    "clean_60": 60
+  },
+  "rows": [
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 2,
+      "parent_or_exact": 2,
+      "n": 14,
+      "wilson_95": [
+        0.04,
+        0.399
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1550",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S2->T1550",
+        "S3->T1550",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1053.003",
+        "S7->T1082",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1041",
+        "S10:S1->T1041",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S2->T1078",
+        "S4->T1041",
+        "S5->T1190",
+        "S7->T1082",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1110",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S3->T1110",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1021",
+        "S7->T1110",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 14,
+      "wilson_95": [
+        0.117,
+        0.546
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1110",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S3->T1110",
+        "S4->T1041",
+        "S5->T1003",
+        "S7->T1110",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 6,
+      "parent_or_exact": 6,
+      "n": 14,
+      "wilson_95": [
+        0.214,
+        0.674
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1110",
+        "S10:S9->T1003",
+        "S3->T1110",
+        "S5->T1563",
+        "S7->T1110",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 7,
+      "parent_or_exact": 7,
+      "n": 14,
+      "wilson_95": [
+        0.268,
+        0.732
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1003",
+        "S4->T1059",
+        "S5->T1563",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 60,
+      "wilson_95": [
+        0.081,
+        0.261
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1550",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S2->T1550",
+        "S3->T1550",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1053.003",
+        "S7->T1082",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 20,
+      "parent_or_exact": 20,
+      "n": 60,
+      "wilson_95": [
+        0.227,
+        0.459
+      ],
+      "wrong_examples": [
+        "S1->T1041",
+        "S10:S1->T1041",
+        "S10:S3->T1041",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S2->T1078",
+        "S3->T1041",
+        "S4->T1041",
+        "S5->T1190",
+        "S7->T1082",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1003.008",
+        "S10:S3->T1110",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S3->T1003.008",
+        "S3->T1110",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1021",
+        "S7->T1110"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 19,
+      "parent_or_exact": 19,
+      "n": 60,
+      "wilson_95": [
+        0.213,
+        0.442
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1003.008",
+        "S10:S3->T1110",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S3->T1003.008",
+        "S3->T1110",
+        "S4->T1041",
+        "S5->T1003",
+        "S7->T1082",
+        "S7->T1110"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 23,
+      "parent_or_exact": 23,
+      "n": 60,
+      "wilson_95": [
+        0.271,
+        0.51
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1110",
+        "S10:S9->T1003",
+        "S3->T1110",
+        "S5->T1563",
+        "S7->T1110",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 28,
+      "parent_or_exact": 28,
+      "n": 60,
+      "wilson_95": [
+        0.346,
+        0.591
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1003",
+        "S4->T1059",
+        "S5->T1563",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1485",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S2->T1566",
+        "S3->T1485",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1053.003",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1041",
+        "S10:S1->T1041",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S2->T1078",
+        "S4->T1041",
+        "S5->T1190",
+        "S7->T1082",
+        "S8->T1190",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 1,
+      "parent_or_exact": 1,
+      "n": 14,
+      "wilson_95": [
+        0.013,
+        0.315
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1003.008",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S3->T1003.008",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1053.003",
+        "S7->T1110",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 2,
+      "parent_or_exact": 2,
+      "n": 14,
+      "wilson_95": [
+        0.04,
+        0.399
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1003.008",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S3->T1003.008",
+        "S4->T1041",
+        "S5->T1003",
+        "S7->T1110",
+        "S8->T1190",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 6,
+      "parent_or_exact": 6,
+      "n": 14,
+      "wilson_95": [
+        0.214,
+        0.674
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1110",
+        "S10:S9->T1003",
+        "S3->T1110",
+        "S5->T1133",
+        "S7->T1110",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 7,
+      "parent_or_exact": 7,
+      "n": 14,
+      "wilson_95": [
+        0.268,
+        0.732
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1003",
+        "S4->T1059",
+        "S5->T1563",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1485",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S2->T1566",
+        "S3->T1485",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1053.003",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 11,
+      "parent_or_exact": 11,
+      "n": 60,
+      "wilson_95": [
+        0.106,
+        0.299
+      ],
+      "wrong_examples": [
+        "S1->T1041",
+        "S10:S1->T1041",
+        "S10:S3->T1041",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S2->T1078",
+        "S3->T1041",
+        "S4->T1041",
+        "S5->T1190",
+        "S7->T1082",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 60,
+      "wilson_95": [
+        0.036,
+        0.181
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1003.008",
+        "S10:S4->T1550",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S3->T1003.008",
+        "S4->T1550",
+        "S5->T1003",
+        "S6->T1053.003",
+        "S7->T1110",
+        "S8->T1190"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 60,
+      "wilson_95": [
+        0.093,
+        0.28
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1003.008",
+        "S10:S4->T1041",
+        "S10:S8->T1190",
+        "S10:S9->T1003",
+        "S3->T1003.008",
+        "S4->T1041",
+        "S5->T1003",
+        "S7->T1110",
+        "S8->T1190",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 23,
+      "parent_or_exact": 23,
+      "n": 60,
+      "wilson_95": [
+        0.271,
+        0.51
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1110",
+        "S10:S9->T1003",
+        "S3->T1110",
+        "S5->T1133",
+        "S7->T1110",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 28,
+      "parent_or_exact": 28,
+      "n": 60,
+      "wilson_95": [
+        0.346,
+        0.591
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1003",
+        "S4->T1059",
+        "S5->T1563",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 11,
+      "parent_or_exact": 11,
+      "n": 14,
+      "wilson_95": [
+        0.524,
+        0.924
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S3->T1110"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1003",
+        "S3->T1110",
+        "S7->T1110",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 46,
+      "parent_or_exact": 46,
+      "n": 60,
+      "wilson_95": [
+        0.646,
+        0.856
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S3->T1110"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 37,
+      "parent_or_exact": 37,
+      "n": 60,
+      "wilson_95": [
+        0.49,
+        0.729
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1003",
+        "S3->T1110",
+        "S7->T1110",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 7,
+      "parent_or_exact": 7,
+      "n": 14,
+      "wilson_95": [
+        0.268,
+        0.732
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S4->T1078",
+        "S2->T1078",
+        "S4->T1078",
+        "S5->T1003",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S1->T1041",
+        "S10:S1->T1041",
+        "S10:S4->T1078",
+        "S2->T1078",
+        "S4->T1078",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1110",
+        "S10:S4->T1078",
+        "S3->T1110",
+        "S4->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S4->T1078",
+        "S4->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 7,
+      "parent_or_exact": 7,
+      "n": 14,
+      "wilson_95": [
+        0.268,
+        0.732
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1003",
+        "S4->T1059",
+        "S5->T1563",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 27,
+      "parent_or_exact": 27,
+      "n": 60,
+      "wilson_95": [
+        0.331,
+        0.575
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S4->T1078",
+        "S2->T1078",
+        "S4->T1078",
+        "S5->T1003",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S1->T1041",
+        "S10:S1->T1041",
+        "S10:S4->T1078",
+        "S2->T1078",
+        "S4->T1078",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 33,
+      "parent_or_exact": 33,
+      "n": 60,
+      "wilson_95": [
+        0.425,
+        0.669
+      ],
+      "wrong_examples": [
+        "S1->T1550",
+        "S10:S1->T1550",
+        "S10:S3->T1110",
+        "S10:S4->T1078",
+        "S3->T1110",
+        "S4->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S4->T1078",
+        "S4->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 42,
+      "parent_or_exact": 42,
+      "n": 60,
+      "wilson_95": [
+        0.575,
+        0.801
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 28,
+      "parent_or_exact": 28,
+      "n": 60,
+      "wilson_95": [
+        0.346,
+        0.591
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1003",
+        "S4->T1059",
+        "S5->T1563",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 11,
+      "parent_or_exact": 11,
+      "n": 14,
+      "wilson_95": [
+        0.524,
+        0.924
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 11,
+      "parent_or_exact": 11,
+      "n": 14,
+      "wilson_95": [
+        0.524,
+        0.924
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 46,
+      "parent_or_exact": 46,
+      "n": 60,
+      "wilson_95": [
+        0.646,
+        0.856
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 46,
+      "parent_or_exact": 46,
+      "n": 60,
+      "wilson_95": [
+        0.646,
+        0.856
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003",
+        "S9->T1003"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 11,
+      "parent_or_exact": 11,
+      "n": 14,
+      "wilson_95": [
+        0.524,
+        0.924
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 46,
+      "parent_or_exact": 46,
+      "n": 60,
+      "wilson_95": [
+        0.646,
+        0.856
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S2->T1078"
+      ]
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_36",
+      "records": 36,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1210",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1018",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 1,
+      "parent_or_exact": 1,
+      "n": 14,
+      "wilson_95": [
+        0.013,
+        0.315
+      ],
+      "wrong_examples": [
+        "S1->T1187",
+        "S10:S1->T1187",
+        "S10:S3->T1110",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S3->T1110",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 1,
+      "parent_or_exact": 1,
+      "n": 14,
+      "wilson_95": [
+        0.013,
+        0.315
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S9->T1611",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1558",
+        "S10:S1->T1558",
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S5->T1210",
+        "S6->T1021",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 14,
+      "wilson_95": [
+        0.117,
+        0.546
+      ],
+      "wrong_examples": [
+        "S1->T1556",
+        "S10:S1->T1556",
+        "S10:S4->T1134",
+        "S10:S8->T1090",
+        "S10:S9->T1558",
+        "S4->T1134",
+        "S5->T1210",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1210",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1018",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1082"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 60,
+      "wilson_95": [
+        0.036,
+        0.181
+      ],
+      "wrong_examples": [
+        "S1->T1187",
+        "S10:S1->T1187",
+        "S10:S3->T1110",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S3->T1110",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 60,
+      "wilson_95": [
+        0.036,
+        0.181
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S9->T1611",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 18,
+      "parent_or_exact": 18,
+      "n": 60,
+      "wilson_95": [
+        0.199,
+        0.425
+      ],
+      "wrong_examples": [
+        "S1->T1558",
+        "S10:S1->T1558",
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S5->T1210",
+        "S6->T1021",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 19,
+      "parent_or_exact": 19,
+      "n": 60,
+      "wilson_95": [
+        0.213,
+        0.442
+      ],
+      "wrong_examples": [
+        "S1->T1556",
+        "S10:S1->T1556",
+        "S10:S4->T1134",
+        "S10:S8->T1090",
+        "S10:S9->T1558",
+        "S4->T1134",
+        "S5->T1210",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1210",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1018",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 1,
+      "parent_or_exact": 1,
+      "n": 14,
+      "wilson_95": [
+        0.013,
+        0.315
+      ],
+      "wrong_examples": [
+        "S1->T1187",
+        "S10:S1->T1187",
+        "S10:S3->T1110",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S9->T1611",
+        "S3->T1110",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 1,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1558",
+        "S10:S1->T1558",
+        "S10:S3->T1697",
+        "S10:S9->T1558",
+        "S3->T1697",
+        "S5->T1210",
+        "S6->T1021",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 14,
+      "wilson_95": [
+        0.117,
+        0.546
+      ],
+      "wrong_examples": [
+        "S1->T1556",
+        "S10:S1->T1556",
+        "S10:S4->T1059",
+        "S10:S8->T1090",
+        "S10:S9->T1558",
+        "S4->T1059",
+        "S5->T1210",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1210",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1018",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 60,
+      "wilson_95": [
+        0.036,
+        0.181
+      ],
+      "wrong_examples": [
+        "S1->T1187",
+        "S10:S1->T1187",
+        "S10:S3->T1110",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S9->T1611",
+        "S3->T1110",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 5,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1654",
+        "S7->T1621",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 18,
+      "parent_or_exact": 18,
+      "n": 60,
+      "wilson_95": [
+        0.199,
+        0.425
+      ],
+      "wrong_examples": [
+        "S1->T1558",
+        "S10:S1->T1558",
+        "S10:S3->T1697",
+        "S10:S9->T1558",
+        "S3->T1697",
+        "S5->T1210",
+        "S6->T1021",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 19,
+      "parent_or_exact": 19,
+      "n": 60,
+      "wilson_95": [
+        0.213,
+        0.442
+      ],
+      "wrong_examples": [
+        "S1->T1556",
+        "S10:S1->T1556",
+        "S10:S4->T1059",
+        "S10:S8->T1090",
+        "S10:S9->T1558",
+        "S4->T1059",
+        "S5->T1210",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S9->T1611",
+        "S3->T1190",
+        "S5->T1611",
+        "S6->T1611",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1611",
+        "S3->T1110",
+        "S5->T1611",
+        "S7->T1621",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S5->T1210",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S10:S9->T1558",
+        "S5->T1210",
+        "S7->T1538",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S9->T1611",
+        "S3->T1190",
+        "S5->T1611",
+        "S6->T1611",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 45,
+      "parent_or_exact": 45,
+      "n": 60,
+      "wilson_95": [
+        0.628,
+        0.842
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1611",
+        "S3->T1110",
+        "S5->T1611",
+        "S7->T1621",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S5->T1210",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 41,
+      "parent_or_exact": 41,
+      "n": 60,
+      "wilson_95": [
+        0.558,
+        0.787
+      ],
+      "wrong_examples": [
+        "S10:S9->T1558",
+        "S5->T1210",
+        "S7->T1538",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 2,
+      "parent_or_exact": 2,
+      "n": 14,
+      "wilson_95": [
+        0.04,
+        0.399
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S9->T1611",
+        "S2->T1210",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S9->T1041",
+        "S2->T1018",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S7->T1621",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 6,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S1->T1187",
+        "S10:S1->T1187",
+        "S10:S3->T1110",
+        "S3->T1110",
+        "S5->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S9->T1041",
+        "S3->T1033",
+        "S4->T1033",
+        "S7->T1621",
+        "S8->T1104",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 6,
+      "parent_or_exact": 6,
+      "n": 14,
+      "wilson_95": [
+        0.214,
+        0.674
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1697",
+        "S10:S9->T1558",
+        "S3->T1697",
+        "S5->T1210",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 7,
+      "parent_or_exact": 7,
+      "n": 14,
+      "wilson_95": [
+        0.268,
+        0.732
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1558",
+        "S4->T1059",
+        "S5->T1210",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 60,
+      "wilson_95": [
+        0.026,
+        0.159
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S9->T1611",
+        "S2->T1210",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1611",
+        "S7->T1621",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 60,
+      "wilson_95": [
+        0.081,
+        0.261
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S9->T1041",
+        "S2->T1018",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S7->T1621",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 23,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S1->T1187",
+        "S10:S1->T1187",
+        "S10:S3->T1110",
+        "S3->T1110",
+        "S5->T1611",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 15,
+      "parent_or_exact": 15,
+      "n": 60,
+      "wilson_95": [
+        0.158,
+        0.372
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S10:S9->T1041",
+        "S3->T1033",
+        "S4->T1033",
+        "S7->T1621",
+        "S8->T1104",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 23,
+      "parent_or_exact": 23,
+      "n": 60,
+      "wilson_95": [
+        0.271,
+        0.51
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1697",
+        "S10:S9->T1558",
+        "S3->T1697",
+        "S5->T1210",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 28,
+      "parent_or_exact": 28,
+      "n": 60,
+      "wilson_95": [
+        0.346,
+        0.591
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S4->T1059",
+        "S10:S9->T1558",
+        "S4->T1059",
+        "S5->T1210",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S9->T1611",
+        "S3->T1190",
+        "S5->T1611",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1041",
+        "S3->T1110",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1558",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 37,
+      "parent_or_exact": 37,
+      "n": 60,
+      "wilson_95": [
+        0.49,
+        0.729
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S9->T1611",
+        "S3->T1190",
+        "S5->T1611",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 45,
+      "parent_or_exact": 45,
+      "n": 60,
+      "wilson_95": [
+        0.628,
+        0.842
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 42,
+      "parent_or_exact": 42,
+      "n": 60,
+      "wilson_95": [
+        0.575,
+        0.801
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1041",
+        "S3->T1110",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 37,
+      "parent_or_exact": 37,
+      "n": 60,
+      "wilson_95": [
+        0.49,
+        0.729
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S7->T1110",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1558",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S9->T1611",
+        "S3->T1190",
+        "S5->T1611",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1041",
+        "S3->T1110",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S7->T1606",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1558",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 37,
+      "parent_or_exact": 37,
+      "n": 60,
+      "wilson_95": [
+        0.49,
+        0.729
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S9->T1611",
+        "S3->T1190",
+        "S5->T1611",
+        "S9->T1611"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 42,
+      "parent_or_exact": 42,
+      "n": 60,
+      "wilson_95": [
+        0.575,
+        0.801
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1041",
+        "S3->T1110",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 37,
+      "parent_or_exact": 37,
+      "n": 60,
+      "wilson_95": [
+        0.49,
+        0.729
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S9->T1558",
+        "S3->T1110",
+        "S7->T1606",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_200",
+      "records": 227,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1558",
+        "S9->T1558"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 2,
+      "parent_or_exact": 2,
+      "n": 14,
+      "wilson_95": [
+        0.04,
+        0.399
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1590.005",
+        "S10:S4->T1140",
+        "S10:S8->T1700",
+        "S2->T1553.005",
+        "S3->T1590.005",
+        "S4->T1140",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1553.005",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1027.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1556",
+        "S10:S1->T1556",
+        "S10:S3->T1555.004",
+        "S10:S4->T1140",
+        "S10:S8->T1700",
+        "S3->T1555.004",
+        "S4->T1140",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1621",
+        "S8->T1700"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 1,
+      "parent_or_exact": 1,
+      "n": 14,
+      "wilson_95": [
+        0.013,
+        0.315
+      ],
+      "wrong_examples": [
+        "S1->T1003.001",
+        "S10:S1->T1003.001",
+        "S10:S3->T1110",
+        "S10:S4->T1555.004",
+        "S10:S8->T1048.001",
+        "S10:S9->T1003.001",
+        "S3->T1110",
+        "S4->T1555.004",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S8->T1048.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1505.001",
+        "S10:S1->T1505.001",
+        "S10:S4->T1036.001",
+        "S10:S8->T1090",
+        "S10:S9->T1003.001",
+        "S4->T1036.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 60,
+      "wilson_95": [
+        0.081,
+        0.261
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1590.005",
+        "S10:S4->T1140",
+        "S10:S8->T1104",
+        "S10:S8->T1700",
+        "S2->T1553.005",
+        "S3->T1590.005",
+        "S4->T1140",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1553.005",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1027.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1556",
+        "S10:S1->T1556",
+        "S10:S3->T1555.004",
+        "S10:S4->T1140",
+        "S10:S8->T1700",
+        "S3->T1555.004",
+        "S4->T1140",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1110.004",
+        "S7->T1547.015",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 60,
+      "wilson_95": [
+        0.036,
+        0.181
+      ],
+      "wrong_examples": [
+        "S1->T1003.001",
+        "S10:S1->T1003.001",
+        "S10:S3->T1110",
+        "S10:S4->T1555.004",
+        "S10:S8->T1048.001",
+        "S10:S9->T1003.001",
+        "S3->T1110",
+        "S4->T1555.004",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S8->T1048.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre_with_citations",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1505.001",
+        "S10:S1->T1505.001",
+        "S10:S4->T1036.001",
+        "S10:S8->T1090",
+        "S10:S9->T1003.001",
+        "S4->T1036.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 2,
+      "parent_or_exact": 2,
+      "n": 14,
+      "wilson_95": [
+        0.04,
+        0.399
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1590.005",
+        "S10:S4->T1140",
+        "S10:S8->T1104",
+        "S2->T1553.005",
+        "S3->T1590.005",
+        "S4->T1140",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 14,
+      "wilson_95": [
+        0.0,
+        0.215
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1553.005",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1027.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1556.001",
+        "S10:S1->T1556.001",
+        "S10:S3->T1555.004",
+        "S10:S4->T1140",
+        "S10:S8->T1700",
+        "S3->T1555.004",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1621",
+        "S8->T1700"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 1,
+      "parent_or_exact": 1,
+      "n": 14,
+      "wilson_95": [
+        0.013,
+        0.315
+      ],
+      "wrong_examples": [
+        "S1->T1003.001",
+        "S10:S1->T1003.001",
+        "S10:S3->T1697",
+        "S10:S4->T1528",
+        "S10:S8->T1048.001",
+        "S10:S9->T1003.001",
+        "S3->T1697",
+        "S4->T1528",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S8->T1048.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1505.001",
+        "S10:S1->T1505.001",
+        "S10:S4->T1036.001",
+        "S10:S8->T1090",
+        "S10:S9->T1003.001",
+        "S4->T1036.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 60,
+      "wilson_95": [
+        0.081,
+        0.261
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1590.005",
+        "S10:S4->T1140",
+        "S10:S8->T1104",
+        "S2->T1553.005",
+        "S3->T1590.005",
+        "S4->T1140",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 0,
+      "parent_or_exact": 0,
+      "n": 60,
+      "wilson_95": [
+        0.0,
+        0.06
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S8->T1611",
+        "S10:S9->T1611",
+        "S2->T1553.005",
+        "S3->T1057",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1027.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1556.001",
+        "S10:S1->T1556.001",
+        "S10:S3->T1555.004",
+        "S10:S4->T1140",
+        "S10:S8->T1700",
+        "S3->T1555.004",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1110.004",
+        "S7->T1621",
+        "S8->T1700"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S8->T1104",
+        "S3->T1033",
+        "S4->T1033",
+        "S5->T1611",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S8->T1104"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 60,
+      "wilson_95": [
+        0.036,
+        0.181
+      ],
+      "wrong_examples": [
+        "S1->T1003.001",
+        "S10:S1->T1003.001",
+        "S10:S3->T1697",
+        "S10:S4->T1528",
+        "S10:S8->T1048.001",
+        "S10:S9->T1003.001",
+        "S3->T1697",
+        "S4->T1528",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S8->T1048.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "mitre",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1505.001",
+        "S10:S1->T1505.001",
+        "S10:S4->T1036.001",
+        "S10:S8->T1090",
+        "S10:S9->T1003.001",
+        "S4->T1036.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1538",
+        "S8->T1090",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S4->T1140",
+        "S3->T1190",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 11,
+      "parent_or_exact": 11,
+      "n": 14,
+      "wilson_95": [
+        0.524,
+        0.924
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S6->T1685.006"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 7,
+      "parent_or_exact": 7,
+      "n": 14,
+      "wilson_95": [
+        0.268,
+        0.732
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S4->T1140",
+        "S3->T1110",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1110",
+        "S10:S9->T1003.001",
+        "S3->T1110",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1538",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 31,
+      "parent_or_exact": 31,
+      "n": 60,
+      "wilson_95": [
+        0.393,
+        0.638
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S4->T1140",
+        "S3->T1190",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1547.015"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 46,
+      "parent_or_exact": 46,
+      "n": 60,
+      "wilson_95": [
+        0.646,
+        0.856
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S6->T1685.006"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 27,
+      "parent_or_exact": 27,
+      "n": 60,
+      "wilson_95": [
+        0.331,
+        0.575
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S4->T1140",
+        "S3->T1110",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1110.004",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 18,
+      "parent_or_exact": 18,
+      "n": 60,
+      "wilson_95": [
+        0.199,
+        0.425
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1110",
+        "S10:S9->T1003.001",
+        "S3->T1110",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 36,
+      "parent_or_exact": 36,
+      "n": 60,
+      "wilson_95": [
+        0.474,
+        0.714
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1538",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 14,
+      "wilson_95": [
+        0.117,
+        0.546
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1590.005",
+        "S10:S4->T1140",
+        "S2->T1553.005",
+        "S3->T1590.005",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1547.015"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 3,
+      "parent_or_exact": 3,
+      "n": 14,
+      "wilson_95": [
+        0.076,
+        0.476
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S9->T1041",
+        "S2->T1553.005",
+        "S3->T1057",
+        "S4->T1033",
+        "S6->T1685.006",
+        "S7->T1027.001",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1556.001",
+        "S10:S1->T1556.001",
+        "S10:S3->T1555.004",
+        "S10:S4->T1140",
+        "S3->T1555.004",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 14,
+      "wilson_95": [
+        0.117,
+        0.546
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S9->T1041",
+        "S3->T1033",
+        "S4->T1033",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1697",
+        "S10:S9->T1003.001",
+        "S3->T1697",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 4,
+      "parent_or_exact": 4,
+      "n": 14,
+      "wilson_95": [
+        0.117,
+        0.546
+      ],
+      "wrong_examples": [
+        "S1->T1505.001",
+        "S10:S1->T1505.001",
+        "S10:S4->T1036.001",
+        "S10:S8->T1090",
+        "S10:S9->T1003.001",
+        "S4->T1036.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S8->T1090",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 13,
+      "parent_or_exact": 13,
+      "n": 60,
+      "wilson_95": [
+        0.131,
+        0.336
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1590.005",
+        "S10:S4->T1140",
+        "S2->T1553.005",
+        "S3->T1590.005",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1547.015"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 60,
+      "wilson_95": [
+        0.081,
+        0.261
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1057",
+        "S10:S4->T1033",
+        "S10:S9->T1041",
+        "S2->T1553.005",
+        "S3->T1057",
+        "S4->T1033",
+        "S6->T1685.006",
+        "S7->T1027.001",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 18,
+      "parent_or_exact": 18,
+      "n": 60,
+      "wilson_95": [
+        0.199,
+        0.425
+      ],
+      "wrong_examples": [
+        "S1->T1556.001",
+        "S10:S1->T1556.001",
+        "S10:S3->T1555.004",
+        "S10:S4->T1140",
+        "S3->T1555.004",
+        "S4->T1140",
+        "S5->T1003.007",
+        "S6->T1685.006",
+        "S7->T1110.004",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 60,
+      "wilson_95": [
+        0.144,
+        0.354
+      ],
+      "wrong_examples": [
+        "S1->T1033",
+        "S10:S1->T1033",
+        "S10:S3->T1033",
+        "S10:S4->T1033",
+        "S10:S9->T1041",
+        "S3->T1033",
+        "S4->T1033",
+        "S6->T1685.006",
+        "S7->T1547.015",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 18,
+      "parent_or_exact": 18,
+      "n": 60,
+      "wilson_95": [
+        0.199,
+        0.425
+      ],
+      "wrong_examples": [
+        "S1->T1212",
+        "S10:S1->T1212",
+        "S10:S3->T1697",
+        "S10:S9->T1003.001",
+        "S3->T1697",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 19,
+      "parent_or_exact": 19,
+      "n": 60,
+      "wilson_95": [
+        0.213,
+        0.442
+      ],
+      "wrong_examples": [
+        "S1->T1505.001",
+        "S10:S1->T1505.001",
+        "S10:S4->T1036.001",
+        "S10:S8->T1090",
+        "S10:S9->T1003.001",
+        "S4->T1036.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S8->T1090",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S4->T1078",
+        "S3->T1190",
+        "S4->T1078",
+        "S6->T1685.006",
+        "S7->T1027.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S4->T1078",
+        "S3->T1110",
+        "S4->T1078",
+        "S6->T1685.006",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 5,
+      "parent_or_exact": 5,
+      "n": 14,
+      "wilson_95": [
+        0.163,
+        0.612
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1110",
+        "S10:S9->T1003.001",
+        "S3->T1110",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 10,
+      "parent_or_exact": 10,
+      "n": 14,
+      "wilson_95": [
+        0.454,
+        0.883
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 33,
+      "parent_or_exact": 33,
+      "n": 60,
+      "wilson_95": [
+        0.425,
+        0.669
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S4->T1078",
+        "S10:S4->T1140",
+        "S3->T1190",
+        "S4->T1078",
+        "S4->T1140",
+        "S6->T1685.006",
+        "S7->T1027.001",
+        "S7->T1547.015"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 43,
+      "parent_or_exact": 43,
+      "n": 60,
+      "wilson_95": [
+        0.592,
+        0.815
+      ],
+      "wrong_examples": [
+        "S1->T1078",
+        "S10:S1->T1078",
+        "S10:S9->T1041",
+        "S7->T1027.001",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S4->T1078",
+        "S10:S4->T1140",
+        "S3->T1110",
+        "S4->T1078",
+        "S4->T1140",
+        "S6->T1685.006",
+        "S7->T1110.004",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 18,
+      "parent_or_exact": 18,
+      "n": 60,
+      "wilson_95": [
+        0.199,
+        0.425
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1110",
+        "S10:S9->T1003.001",
+        "S3->T1110",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S7->T1110",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+detection+description",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 41,
+      "parent_or_exact": 41,
+      "n": 60,
+      "wilson_95": [
+        0.558,
+        0.787
+      ],
+      "wrong_examples": [
+        "S10:S9->T1003.001",
+        "S5->T1210",
+        "S6->T1685.006",
+        "S9->T1003.001"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 9,
+      "parent_or_exact": 9,
+      "n": 14,
+      "wilson_95": [
+        0.388,
+        0.837
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S4->T1078",
+        "S3->T1190",
+        "S4->T1078",
+        "S6->T1685.006"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 12,
+      "parent_or_exact": 12,
+      "n": 14,
+      "wilson_95": [
+        0.601,
+        0.96
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S4->T1078",
+        "S3->T1110",
+        "S4->T1078",
+        "S6->T1685.006",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 14,
+      "parent_or_exact": 14,
+      "n": 14,
+      "wilson_95": [
+        0.785,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 8,
+      "parent_or_exact": 8,
+      "n": 14,
+      "wilson_95": [
+        0.326,
+        0.786
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1110",
+        "S3->T1110",
+        "S6->T1685.006",
+        "S7->T1555.003"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "oct12_14",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 13,
+      "parent_or_exact": 13,
+      "n": 14,
+      "wilson_95": [
+        0.685,
+        0.987
+      ],
+      "wrong_examples": [
+        "S5->T1210"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "two_layer",
+      "exact": 36,
+      "parent_or_exact": 36,
+      "n": 60,
+      "wilson_95": [
+        0.474,
+        0.714
+      ],
+      "wrong_examples": [
+        "S10:S3->T1190",
+        "S10:S4->T1078",
+        "S3->T1190",
+        "S4->T1078",
+        "S6->T1685.006",
+        "S7->T1547.015"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "raw",
+      "engine": "flat",
+      "exact": 51,
+      "parent_or_exact": 51,
+      "n": 60,
+      "wilson_95": [
+        0.739,
+        0.919
+      ],
+      "wrong_examples": [
+        "S10:S9->T1041",
+        "S9->T1041"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "two_layer",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S10:S3->T1110",
+        "S10:S4->T1078",
+        "S3->T1110",
+        "S4->T1078",
+        "S6->T1685.006",
+        "S7->T1110.004",
+        "S7->T1621"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "title_raw",
+      "engine": "flat",
+      "exact": 60,
+      "parent_or_exact": 60,
+      "n": 60,
+      "wilson_95": [
+        0.94,
+        1.0
+      ],
+      "wrong_examples": []
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "two_layer",
+      "exact": 32,
+      "parent_or_exact": 32,
+      "n": 60,
+      "wilson_95": [
+        0.409,
+        0.654
+      ],
+      "wrong_examples": [
+        "S1->T1110",
+        "S10:S1->T1110",
+        "S10:S3->T1110",
+        "S3->T1110",
+        "S6->T1685.006",
+        "S7->T1555.003"
+      ]
+    },
+    {
+      "corpus": "corpus_full",
+      "records": 706,
+      "variant": "+all_lab_fields",
+      "alerts": "clean_60",
+      "form": "rewrite",
+      "engine": "flat",
+      "exact": 55,
+      "parent_or_exact": 55,
+      "n": 60,
+      "wilson_95": [
+        0.819,
+        0.964
+      ],
+      "wrong_examples": [
+        "S5->T1210"
+      ]
+    }
+  ]
+}

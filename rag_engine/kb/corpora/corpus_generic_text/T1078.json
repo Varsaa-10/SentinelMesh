@@ -1,0 +1,39 @@
+{
+  "id": "T1078",
+  "tactic": "Initial Access",
+  "technique_name": "Valid Accounts",
+  "description": "Adversaries may obtain and abuse credentials of existing accounts as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Compromised credentials may be used to bypass access controls placed on various resources on systems within the network and may even be used for persistent access to remote systems and externally available services, such as VPNs, Outlook Web Access and remote desktop.",
+  "detection_signatures": {
+    "log_tail": {
+      "event_type": "login_attempt",
+      "match_fields": {
+        "result": "success",
+        "identifier": "admin"
+      },
+      "pattern": "login_attempt event where result=success and identifier=admin (S3 authservice). For S7 Grafana: HTTP POST /login returning status 200, or GET /api/dashboards/home returning status 200 with no authenticated identity.",
+      "detector_ref": "detection/log-tail/scenario3_detector.py"
+    },
+    "falco": null
+  },
+  "related_cves": [],
+  "mitigation": "Change all default credentials immediately upon deployment. Disable or remove unused default accounts. Enforce a password change policy for any service that ships with static credentials. Disable anonymous access on all internal dashboards and monitoring tools. Audit authentication logs for logins using known-default usernames.",
+  "scenario_refs": [
+    "S3",
+    "S7",
+    "S10"
+  ],
+  "is_scenario_critical": true,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Containers",
+    "Windows",
+    "macOS",
+    "SaaS"
+  ],
+  "data_sources": [
+    "Application Log: Application Log Content",
+    "User Account: User Account Authentication",
+    "Logon Session: Logon Session Creation"
+  ]
+}

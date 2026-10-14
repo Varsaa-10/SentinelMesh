@@ -1,0 +1,30 @@
+{
+  "id": "T1082",
+  "tactic": "Discovery",
+  "technique_name": "System Information Discovery",
+  "description": "An adversary may attempt to get detailed information about the operating system and hardware, including version, patches, hotfixes, service packs, and architecture. Adversaries may use the information from System Information Discovery during automated discovery to shape follow-on behaviors, including whether or not the adversary fully infects the target and/or attempts specific actions. In containerized environments, commands like uname -a, cat /etc/os-release, and cat /proc/version are commonly used to identify the host OS version.",
+  "detection_signatures": {
+    "log_tail": null,
+    "falco": {
+      "rule_name": null,
+      "rule_file": null,
+      "trigger_condition": "Execution of system enumeration commands (uname, cat /proc/version, hostnamectl, sysctl) from processes that would not normally run these commands \u2014 e.g. a web application container spawning a shell and running uname -a."
+    }
+  },
+  "related_cves": [],
+  "mitigation": "Restrict shell access within containers. Use read-only root filesystems and drop shell binary access where possible. Monitor for execution of system enumeration commands from web application containers.",
+  "scenario_refs": [],
+  "is_scenario_critical": false,
+  "sub_technique_of": null,
+  "platforms": [
+    "Linux",
+    "Windows",
+    "macOS",
+    "Containers"
+  ],
+  "data_sources": [
+    "Command: Command Execution",
+    "Process: OS API Execution",
+    "Process: Process Creation"
+  ]
+}

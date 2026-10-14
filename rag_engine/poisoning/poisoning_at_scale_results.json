@@ -1,0 +1,105 @@
+{
+  "query_count": 300,
+  "clean_baseline": {
+    "two_layer": {
+      "accuracy": 0.8766666666666667,
+      "ci_95": [
+        0.8346262759711767,
+        0.9091826857063321
+      ]
+    },
+    "flat": {
+      "accuracy": 0.9066666666666666,
+      "ci_95": [
+        0.8684146029829267,
+        0.934635780421109
+      ]
+    }
+  },
+  "variants": {
+    "copied_description_scale": {
+      "two_layer": {
+        "induced_errors": 0,
+        "eligible_queries": 263,
+        "induced_error_rate": 0.0,
+        "ci_95": [
+          0.0,
+          0.0144
+        ]
+      },
+      "flat": {
+        "induced_errors": 0,
+        "eligible_queries": 272,
+        "induced_error_rate": 0.0,
+        "ci_95": [
+          0.0,
+          0.0139
+        ]
+      },
+      "mcnemar_paired_test": {
+        "statistic": 0,
+        "b": 0,
+        "c": 0,
+        "p_value": 1.0,
+        "significant_005": false,
+        "significant_001": false
+      }
+    },
+    "vocab_stuffing_scale": {
+      "two_layer": {
+        "induced_errors": 19,
+        "eligible_queries": 263,
+        "induced_error_rate": 0.0722,
+        "ci_95": [
+          0.0467,
+          0.1101
+        ]
+      },
+      "flat": {
+        "induced_errors": 0,
+        "eligible_queries": 272,
+        "induced_error_rate": 0.0,
+        "ci_95": [
+          0.0,
+          0.0139
+        ]
+      },
+      "mcnemar_paired_test": {
+        "statistic": 17.05263157894737,
+        "b": 19,
+        "c": 0,
+        "p_value": 3.814697265625e-06,
+        "significant_005": true,
+        "significant_001": true
+      }
+    },
+    "multi_record_scale": {
+      "two_layer": {
+        "induced_errors": 34,
+        "eligible_queries": 263,
+        "induced_error_rate": 0.1293,
+        "ci_95": [
+          0.094,
+          0.1752
+        ]
+      },
+      "flat": {
+        "induced_errors": 0,
+        "eligible_queries": 272,
+        "induced_error_rate": 0.0,
+        "ci_95": [
+          0.0,
+          0.0139
+        ]
+      },
+      "mcnemar_paired_test": {
+        "statistic": 32.029411764705884,
+        "b": 34,
+        "c": 0,
+        "p_value": 1.1641532182693481e-10,
+        "significant_005": true,
+        "significant_001": true
+      }
+    }
+  }
+}
