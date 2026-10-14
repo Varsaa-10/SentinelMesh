@@ -44,7 +44,19 @@ from eval.stats_utils import wilson_score_interval  # noqa: E402
 
 CORPORA = {"corpus_36": 36, "corpus_200": 227, "corpus_full": 706}
 RUNS = ["20260818T052007Z", "20260818T052217Z_chaintagged", "20261012T030225Z_chaintagged",
-        "20261012T031032Z_chaintagged", "20261012T140201Z"]
+        "20261012T031032Z_chaintagged", "20261012T140201Z",
+    # fresh captures 2026-10-14
+    "20261014T104641Z",
+    "20261014T111618Z",
+    "20261014T113310Z",
+    "20261014T122816Z",
+    "20261014T130955Z",
+    "20261014T132438Z",
+    "20261014T134019Z",
+    "20261014T135319Z",
+    "20261014T140601Z",
+    "20261014T141640Z",
+]
 RUNS_WITH_FAULTY_S8 = {"20260818T052007Z", "20260818T052217Z_chaintagged", "20261012T030225Z_chaintagged"}
 OCT = "20261012T140201Z"
 CITATION_RE = re.compile(r"\s*\(Citation:[^)]*\)")

@@ -46,6 +46,17 @@ RUNS = [
     "20261012T030225Z_chaintagged",
     "20261012T031032Z_chaintagged",
     "20261012T140201Z",               # chain tagged at capture time
+    # fresh captures 2026-10-14
+    "20261014T104641Z",
+    "20261014T111618Z",
+    "20261014T113310Z",
+    "20261014T122816Z",
+    "20261014T130955Z",
+    "20261014T132438Z",
+    "20261014T134019Z",
+    "20261014T135319Z",
+    "20261014T140601Z",
+    "20261014T141640Z",
 ]
 EXCLUDED = {
     "20260817T025000Z": "old scenario numbering (credential-file read labelled S7; no Grafana S7)",
