@@ -1,0 +1,1 @@
+20261014T105833Z  excluded: S8 did not fire (curl to example.com made no outbound connection — transient external-network flake); S10:S8 also missing

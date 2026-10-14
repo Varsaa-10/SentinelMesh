@@ -1,0 +1,475 @@
+{
+  "run_id": "20261014T111618Z",
+  "run_timestamp_utc": "20261014T111618Z",
+  "baseline": "Baseline 1 (Falco-only + log-tail + S7 Grafana detector, no RAG/graph/response)",
+  "ground_truth_file": "/home/kali/SentinelMesh/eval/ground_truth.json",
+  "grafana_detector": "/home/kali/SentinelMesh/detection/log-tail/scenario7_detector.py",
+  "grafana_container": "sentinelmesh-dashboard",
+  "total_alerts_captured": 18,
+  "single_scenario_pass_count": 9,
+  "single_scenario_total": 9,
+  "s10_chain_all_stages_fired": true,
+  "results": {
+    "S1": {
+      "name": "SQL Injection Authentication Bypass",
+      "expected_scenario": "S1",
+      "expected_title": "SQL Injection Authentication Bypass",
+      "expected_severity": "CRITICAL",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S1",
+          "severity": "CRITICAL",
+          "title": "SQL Injection Authentication Bypass",
+          "timestamp": "2026-10-14T11:16:28Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-10-14T11:16:28.358593+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "' OR '1'='1' -- ",
+            "client_ip": "172.30.0.1",
+            "details": {
+              "authenticated_user_id": 1,
+              "role": "user"
+            }
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S1",
+          "severity": "CRITICAL",
+          "title": "SQL Injection Authentication Bypass",
+          "timestamp": "2026-10-14T11:17:13Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-10-14T11:17:12.805985+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "' OR '1'='1' -- ",
+            "client_ip": "172.30.0.1",
+            "details": {
+              "authenticated_user_id": 1,
+              "role": "user"
+            }
+          },
+          "chain_id": "S10",
+          "component_scenario": "S1"
+        }
+      ]
+    },
+    "S2": {
+      "name": "Brute-Force Login Attempt",
+      "expected_scenario": "S2",
+      "expected_title": "Brute-Force Login Attempt",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S2",
+          "severity": "WARNING",
+          "title": "Brute-Force Login Attempt",
+          "timestamp": "2026-10-14T11:16:36Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-10-14T11:16:36.516385+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "failure",
+            "identifier": "admin",
+            "client_ip": "172.30.0.1",
+            "details": {},
+            "failure_count": 5,
+            "window_seconds": 30
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S2",
+          "severity": "WARNING",
+          "title": "Brute-Force Login Attempt",
+          "timestamp": "2026-10-14T11:16:37Z",
+          "service": "webapp",
+          "event": {
+            "timestamp": "2026-10-14T11:16:37.542218+00:00",
+            "service": "webapp",
+            "event_type": "login_attempt",
+            "result": "failure",
+            "identifier": "admin",
+            "client_ip": "172.30.0.1",
+            "details": {},
+            "failure_count": 6,
+            "window_seconds": 30
+          }
+        }
+      ]
+    },
+    "S3": {
+      "name": "Default Credential Login",
+      "expected_scenario": "S3",
+      "expected_title": "Default Credential Login",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S3",
+          "severity": "WARNING",
+          "title": "Default Credential Login (unconfirmed \u2014 username=admin only, no explicit default_credentials flag from app)",
+          "timestamp": "2026-10-14T11:16:42Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-10-14T11:16:42.677171+00:00",
+            "service": "authservice",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "admin",
+            "client_ip": "172.30.0.1",
+            "details": {
+              "user_id": 2,
+              "role": "admin"
+            }
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S3",
+          "severity": "WARNING",
+          "title": "Default Credential Login (unconfirmed \u2014 username=admin only, no explicit default_credentials flag from app)",
+          "timestamp": "2026-10-14T11:17:15Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-10-14T11:17:14.832791+00:00",
+            "service": "authservice",
+            "event_type": "login_attempt",
+            "result": "success",
+            "identifier": "admin",
+            "client_ip": "172.30.0.1",
+            "details": {
+              "user_id": 2,
+              "role": "admin"
+            }
+          },
+          "chain_id": "S10",
+          "component_scenario": "S3"
+        }
+      ]
+    },
+    "S4": {
+      "name": "JWT Algorithm Confusion",
+      "expected_scenario": "S4",
+      "expected_title": "JWT Algorithm Confusion",
+      "expected_severity": "CRITICAL",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S4",
+          "severity": "CRITICAL",
+          "title": "JWT Algorithm Confusion",
+          "timestamp": "2026-10-14T11:16:47Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-10-14T11:16:47.043239+00:00",
+            "service": "authservice",
+            "event_type": "jwt_verification",
+            "result": "valid",
+            "identifier": "admin",
+            "client_ip": "172.30.0.1",
+            "details": {
+              "algorithm": "none",
+              "payload": {
+                "username": "admin",
+                "user_id": 1
+              }
+            }
+          }
+        },
+        {
+          "source": "log-tail",
+          "scenario": "S4",
+          "severity": "CRITICAL",
+          "title": "JWT Algorithm Confusion",
+          "timestamp": "2026-10-14T11:17:17Z",
+          "service": "authservice",
+          "event": {
+            "timestamp": "2026-10-14T11:17:16.945629+00:00",
+            "service": "authservice",
+            "event_type": "jwt_verification",
+            "result": "valid",
+            "identifier": "admin",
+            "client_ip": "172.30.0.1",
+            "details": {
+              "algorithm": "none",
+              "payload": {
+                "username": "admin",
+                "user_id": 1
+              }
+            }
+          },
+          "chain_id": "S10",
+          "component_scenario": "S4"
+        }
+      ]
+    },
+    "S5": {
+      "name": "Unauthorized Database Connection",
+      "expected_scenario": "S5",
+      "expected_title": "SentinelMesh Unauthorized Database Connection",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 1,
+      "matched_alerts": [
+        {
+          "source": "falco",
+          "scenario": "S5",
+          "severity": "WARNING",
+          "title": "SentinelMesh Unauthorized Database Connection",
+          "timestamp": "2026-10-14T11:16:51Z",
+          "service": "database",
+          "event": {
+            "container.id": "859665d87976",
+            "container.image.repository": "postgres",
+            "container.image.tag": "15-alpine",
+            "container.name": "sentinelmesh-database",
+            "evt.time": 1791976611756187247,
+            "fd.rip": "172.30.0.7",
+            "fd.sport": 5432,
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "postgres"
+          }
+        }
+      ]
+    },
+    "S6": {
+      "name": "Log Directory Tampering",
+      "expected_scenario": "S6",
+      "expected_title": "SentinelMesh Log Directory Tampering",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 1,
+      "matched_alerts": [
+        {
+          "source": "falco",
+          "scenario": "S6",
+          "severity": "WARNING",
+          "title": "SentinelMesh Log Directory Tampering",
+          "timestamp": "2026-10-14T11:16:56Z",
+          "service": "logcollector",
+          "event": {
+            "container.id": "4bdf7f2251b3",
+            "container.image.repository": "sentinelmesh-logcollector",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-logcollector",
+            "evt.time": 1791976616146735441,
+            "fd.name": "/var/log/sentinelmesh/test.log",
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "sh",
+            "user.name": "fluent"
+          }
+        }
+      ]
+    },
+    "S7": {
+      "name": "Grafana Default Credentials & Anonymous Access",
+      "expected_scenario": "S7",
+      "expected_title": "Grafana Login Succeeded",
+      "expected_severity": "WARNING",
+      "fired": true,
+      "match_count": 1,
+      "matched_alerts": [
+        {
+          "source": "log-tail",
+          "scenario": "S7",
+          "severity": "WARNING",
+          "title": "Grafana Login Succeeded (unconfirmed \u2014 username not visible in this log line; default admin/admin credentials used by the attack script)",
+          "timestamp": "2026-10-14T11:17:00Z",
+          "service": "dashboard",
+          "event": {
+            "raw_log_line": "logger=context userId=0 orgId=1 uname= t=2026-10-14T11:17:00.366902556Z level=info msg=\"Request Completed\" method=POST path=/login status=200 remote_addr=172.30.0.1 time_ms=192 duration=192.026069ms size=41 referer= handler=/login status_source=server"
+          }
+        }
+      ]
+    },
+    "S8": {
+      "name": "Unexpected Outbound Connection (Exfiltration)",
+      "expected_scenario": "S8",
+      "expected_title": "SentinelMesh Unexpected Outbound Connection",
+      "expected_severity": "CRITICAL",
+      "fired": true,
+      "match_count": 4,
+      "matched_alerts": [
+        {
+          "source": "falco",
+          "scenario": "S8",
+          "severity": "CRITICAL",
+          "title": "SentinelMesh Unexpected Outbound Connection",
+          "timestamp": "2026-10-14T11:17:08Z",
+          "service": "webapp",
+          "event": {
+            "container.id": "9f436297d249",
+            "container.image.repository": "sentinelmesh-webapp",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-webapp",
+            "evt.time": 1791976628744823768,
+            "fd.cip": "172.30.0.4",
+            "fd.sip": "172.66.147.243",
+            "fd.sport": 80,
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "curl"
+          }
+        },
+        {
+          "source": "falco",
+          "scenario": "S8",
+          "severity": "CRITICAL",
+          "title": "SentinelMesh Unexpected Outbound Connection",
+          "timestamp": "2026-10-14T11:17:21Z",
+          "service": "webapp",
+          "event": {
+            "container.id": "9f436297d249",
+            "container.image.repository": "sentinelmesh-webapp",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-webapp",
+            "evt.time": 1791976641213499121,
+            "fd.cip": "172.30.0.4",
+            "fd.sip": "104.20.23.154",
+            "fd.sport": 80,
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "curl"
+          },
+          "chain_id": "S10",
+          "component_scenario": "S8"
+        },
+        {
+          "source": "falco",
+          "scenario": "S8",
+          "severity": "CRITICAL",
+          "title": "SentinelMesh Unexpected Outbound Connection",
+          "timestamp": "2026-10-14T11:17:21Z",
+          "service": "webapp",
+          "event": {
+            "container.id": "9f436297d249",
+            "container.image.repository": "sentinelmesh-webapp",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-webapp",
+            "evt.time": 1791976641213503237,
+            "fd.cip": "172.30.0.4",
+            "fd.sip": "172.66.147.243",
+            "fd.sport": 80,
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "curl"
+          },
+          "chain_id": "S10",
+          "component_scenario": "S8"
+        },
+        {
+          "source": "falco",
+          "scenario": "S8",
+          "severity": "CRITICAL",
+          "title": "SentinelMesh Unexpected Outbound Connection",
+          "timestamp": "2026-10-14T11:17:21Z",
+          "service": "webapp",
+          "event": {
+            "container.id": "9f436297d249",
+            "container.image.repository": "sentinelmesh-webapp",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-webapp",
+            "evt.time": 1791976641213872147,
+            "fd.cip": "172.30.0.4",
+            "fd.sip": "104.20.23.154",
+            "fd.sport": 80,
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "curl"
+          },
+          "chain_id": "S10",
+          "component_scenario": "S8"
+        }
+      ]
+    },
+    "S9": {
+      "name": "Sensitive Credential File Read",
+      "expected_scenario": "S9",
+      "expected_title": "SentinelMesh Sensitive Credential File Read",
+      "expected_severity": "CRITICAL",
+      "fired": true,
+      "match_count": 2,
+      "matched_alerts": [
+        {
+          "source": "falco",
+          "scenario": "S9",
+          "severity": "CRITICAL",
+          "title": "SentinelMesh Sensitive Credential File Read",
+          "timestamp": "2026-10-14T11:17:04Z",
+          "service": "webapp",
+          "event": {
+            "container.id": "9f436297d249",
+            "container.image.repository": "sentinelmesh-webapp",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-webapp",
+            "evt.time": 1791976624542763882,
+            "fd.name": "/etc/shadow",
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "cat",
+            "proc.pname": "containerd-shim"
+          }
+        },
+        {
+          "source": "falco",
+          "scenario": "S9",
+          "severity": "CRITICAL",
+          "title": "SentinelMesh Sensitive Credential File Read",
+          "timestamp": "2026-10-14T11:17:19Z",
+          "service": "webapp",
+          "event": {
+            "container.id": "9f436297d249",
+            "container.image.repository": "sentinelmesh-webapp",
+            "container.image.tag": "latest",
+            "container.name": "sentinelmesh-webapp",
+            "evt.time": 1791976639091142253,
+            "fd.name": "/etc/shadow",
+            "k8s.ns.name": null,
+            "k8s.pod.name": null,
+            "proc.name": "cat",
+            "proc.pname": "containerd-shim"
+          },
+          "chain_id": "S10",
+          "component_scenario": "S9"
+        }
+      ]
+    },
+    "S10": {
+      "name": "Complete Attack Chain",
+      "expected_stages": [
+        "S1",
+        "S3",
+        "S4",
+        "S9",
+        "S8"
+      ],
+      "stage_fired": {
+        "S1": true,
+        "S3": true,
+        "S4": true,
+        "S9": true,
+        "S8": true
+      },
+      "all_stages_fired": true
+    }
+  }
+}
