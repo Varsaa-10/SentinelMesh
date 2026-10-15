@@ -134,7 +134,7 @@ def correct(pred: str, truth: str, parent_ok: bool) -> Tuple[bool, bool]:
     return exact, parent
 
 
-def main() -> Dict[str, Any]:
+def main(embedder: str = "tfidf-word") -> Dict[str, Any]:
     gt = json.loads((REPO_ROOT / "eval" / "ground_truth.json").read_text(encoding="utf-8"))["scenarios"]
     targets = {v["technique_id"] for v in gt.values()}
     lab = lab_parts(REPO_ROOT / "kb_master" / "techniques")
@@ -143,7 +143,7 @@ def main() -> Dict[str, Any]:
     sets = alert_sets(gt)
     print({k: len(v) for k, v in sets.items()})
 
-    results: Dict[str, Any] = {"targets": sorted(targets), "alert_counts": {k: len(v) for k, v in sets.items()},
+    results: Dict[str, Any] = {"targets": sorted(targets), "embedder": embedder, "alert_counts": {k: len(v) for k, v in sets.items()},
                                "rows": []}
     for corpus, n_expected in CORPORA.items():
         base = [json.loads(p.read_text(encoding="utf-8"))
@@ -151,8 +151,8 @@ def main() -> Dict[str, Any]:
         present = {r["id"] for r in base}
         for vname, vargs in VARIANTS.items():
             recs = build_variant(base, lab, targets, **vargs)
-            engines = {"two_layer": TwoLayerRAG(recs, EMBEDDERS["tfidf-word"](), cve_lookup=cve_map),
-                       "flat": FlatRAG(recs, EMBEDDERS["tfidf-word"](), cve_lookup=cve_map)}
+            engines = {"two_layer": TwoLayerRAG(recs, EMBEDDERS[embedder](), cve_lookup=cve_map),
+                       "flat": FlatRAG(recs, EMBEDDERS[embedder](), cve_lookup=cve_map)}
             for set_name, rows in sets.items():
                 for form in QUERY_FORMS:
                     for ename, eng in engines.items():
@@ -176,11 +176,16 @@ def main() -> Dict[str, Any]:
                                                 "wilson_95": [round(lo, 3), round(hi, 3)],
                                                 "wrong_examples": sorted(set(wrong))[:12]})
             print(f"{corpus:<12} {vname:<24} done", flush=True)
-    out = REPO_ROOT / "eval" / "kb_curation_ablation_results.json"
+    suffix = "" if embedder == "tfidf-word" else f"_{embedder}"
+    out = REPO_ROOT / "eval" / f"kb_curation_ablation_results{suffix}.json"
     out.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print(f"written {out}")
     return results
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--embedder", default="tfidf-word", choices=sorted(EMBEDDERS))
+    args = ap.parse_args()
+    main(embedder=args.embedder)
