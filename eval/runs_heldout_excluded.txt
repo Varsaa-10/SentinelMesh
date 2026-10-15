@@ -1,0 +1,2 @@
+20261015T050301Z  excluded: environment not clean - stray Falco process broke capture, log paths unset.
+20261015T051212Z  excluded: S9 used tar, whose open pattern did not reach the /root/.ssh/* rule; re-run with cat in 20261015T051907Z.

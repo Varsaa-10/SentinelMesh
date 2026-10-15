@@ -1,0 +1,85 @@
+{
+  "_meta": {
+    "description": "Held-out variant ground truth for SentinelMesh Step 6. One entry per variant S1-S9. Each variant keeps the same planted weakness, target container and expected MITRE technique as its base scenario, and changes only the method. 'expected_detection' is the PREDICTED behaviour of the frozen detectors, written before running (not a target to engineer): 'fires' if the frozen rule/detector still catches the variant, 'gap' if it does not.",
+    "written_before_run": true,
+    "base_mapping": "eval/ground_truth.json (same scenario -> technique mapping)",
+    "frozen_refs": [
+      "kb_master/",
+      "detection/falco-rules/",
+      "detection/log-tail/",
+      "rag_engine/src/alert_normalizer.py @ v2-rules-frozen"
+    ],
+    "lab_adaptations": [
+      "S1: UNION injection instead of a MySQL SLEEP() blind payload, because the lab DB is PostgreSQL (SLEEP() errors -> result=failure, which the S1 detector ignores).",
+      "S3: the seeded testuser/testpass account instead of W4's 'postgres_backup', because the lab only seeds admin and testuser (services/database/init.sql).",
+      "S4: HS384 token signed with the lab's known hardcoded secret; models an attacker who recovered the secret.",
+      "S8: egress from the database container (busybox wget/nc), which is the container the S8 rule does not watch.",
+      "S9: a decoy /root/.ssh/id_rsa is planted before the read, so there is a real file to steal."
+    ]
+  },
+  "variants": {
+    "S1": {
+      "technique_id": "T1190",
+      "target_container": "sentinelmesh-webapp",
+      "variant": "UNION-based SQL injection (vs original boolean OR)",
+      "expected_detection": "fires",
+      "reason": "S1 detector matches UNION / quote / -- in the logged payload; the UNION returns a row so result=success."
+    },
+    "S2": {
+      "technique_id": "T1110",
+      "target_container": "sentinelmesh-webapp",
+      "variant": "Distributed password spray, one failed attempt across six accounts",
+      "expected_detection": "gap",
+      "reason": "S2 detector thresholds on 5 failures for the SAME identifier within 30s; a spray never concentrates on one identifier."
+    },
+    "S3": {
+      "technique_id": "T1078",
+      "target_container": "sentinelmesh-authservice",
+      "variant": "Login with the seeded testuser/testpass account (vs admin/admin123)",
+      "expected_detection": "gap",
+      "reason": "S3 detector only flags username=admin; testuser is a real seeded weak account it was not written for."
+    },
+    "S4": {
+      "technique_id": "T1212",
+      "target_container": "sentinelmesh-authservice",
+      "variant": "Forged HS384 token signed with the lab secret (vs alg:none)",
+      "expected_detection": "gap",
+      "reason": "S4 detector matches only result=valid with algorithm=none; an HS384 valid verification is missed."
+    },
+    "S5": {
+      "technique_id": "T1021",
+      "target_container": "sentinelmesh-database",
+      "variant": "Postgres connection from a different ephemeral client image/query",
+      "expected_detection": "fires",
+      "reason": "S5 rule flags any inbound accept on database:5432 from a source not in the allowlist, regardless of client."
+    },
+    "S6": {
+      "technique_id": "T1070",
+      "target_container": "sentinelmesh-logcollector",
+      "variant": "In-place truncation/shred of a log file (vs echo append)",
+      "expected_detection": "fires",
+      "reason": "S6 rule flags any open-for-write under /var/log/sentinelmesh/ in logcollector, regardless of process."
+    },
+    "S7": {
+      "technique_id": "T1078",
+      "target_container": "sentinelmesh-dashboard",
+      "variant": "Anonymous scrape of a different Grafana API path (/api/search)",
+      "expected_detection": "fires",
+      "reason": "S7 detector flags any GET to /api/* or /d/* returning 200 with no authenticated identity."
+    },
+    "S8": {
+      "technique_id": "T1041",
+      "target_container": "sentinelmesh-database",
+      "variant": "Egress to an external host from the database container (vs webapp)",
+      "expected_detection": "gap",
+      "reason": "S8 rule only watches the webapp and authservice containers; egress from the database container is not covered."
+    },
+    "S9": {
+      "technique_id": "T1003.008",
+      "target_container": "sentinelmesh-webapp",
+      "variant": "Read /root/.ssh/id_rsa via tar (vs cat /etc/shadow)",
+      "expected_detection": "fires",
+      "reason": "S9 rule covers /root/.ssh/* for any process, so reading the SSH key is still flagged."
+    }
+  }
+}
