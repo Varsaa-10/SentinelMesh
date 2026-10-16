@@ -1,7 +1,7 @@
 """
 eval/fallback_threshold_heldout.py -- choose the tactic-fallback threshold without looking at the test alerts.
 
-Leave-one-run-out over the 5 cross-capture runs (60 clean alerts, faulty S8 slots excluded):
+Leave-one-run-out over the ten fresh captures (140 alerts; --set clean_60 for the five development runs):
 for each run, pick the threshold that maximises two-layer-with-fallback accuracy on the OTHER
 runs (grid 0.00-0.30, step 0.01; ties broken towards the threshold that falls back least),
 then score the held-out run with it. Pooled held-out accuracy is the honest estimate.
@@ -28,7 +28,9 @@ from embeddings import EMBEDDERS  # noqa: E402
 from rag_engine import TwoLayerRAG  # noqa: E402
 from flat_rag import FlatRAG  # noqa: E402
 from eval.alert_query import QUERY_FORMS  # noqa: E402
-from eval.kb_curation_ablation import alert_sets, RUNS  # noqa: E402
+from eval.kb_curation_ablation import alert_sets, DEV_RUNS, FRESH_RUNS  # noqa: E402
+
+SETS = {"fresh_140": FRESH_RUNS, "clean_60": DEV_RUNS}
 from eval.stats_utils import wilson_score_interval  # noqa: E402
 
 GRID = [round(float(x), 2) for x in np.arange(0.0, 0.301, 0.01)]
@@ -60,17 +62,18 @@ def acc_at(items, th):
     return ok, fb
 
 
-def main():
+def main(set_name: str = "fresh_140"):
     gt = json.loads((REPO_ROOT / "eval" / "ground_truth.json").read_text(encoding="utf-8"))["scenarios"]
-    rows = alert_sets(gt)["clean_60"]
+    rows = alert_sets(gt)[set_name]
+    runs = SETS[set_name]
     lab, _ = load_kb_dir(str(REPO_ROOT / "kb_master" / "techniques"))
     mitre = {c: load_kb_dir(str(REPO_ROOT / "rag_engine" / "kb" / "corpora" / c))[0]
              for c in ("corpus_36", "corpus_200", "corpus_full")}
-    results = {"grid": GRID, "forms": {}}
+    results = {"alert_set": set_name, "runs": runs, "grid": GRID, "forms": {}}
     for form in QUERY_FORMS:
         items = layer_scores(lab, rows, form)
         folds, ok_tot, fb_tot, n_tot, chosen = [], 0, 0, 0, []
-        for held in RUNS:
+        for held in runs:
             train = [i for i in items if i["run"] != held]
             test = [i for i in items if i["run"] == held]
             best = max(GRID, key=lambda th: (acc_at(train, th)[0], -acc_at(train, th)[1], -th))
@@ -93,10 +96,14 @@ def main():
         }
         print(f"{form:<10} held-out {ok_tot}/{n_tot}  fb={fb_tot}  thresholds={chosen}  "
               f"two-layer={tl_only}/{n_tot} flat={flat_only}/{n_tot}  mitre fb rates={mitre_rates}")
-    out = REPO_ROOT / "eval" / "fallback_threshold_heldout_results.json"
+    suffix = "" if set_name == "fresh_140" else f"_{set_name}"
+    out = REPO_ROOT / "eval" / f"fallback_threshold_heldout_results{suffix}.json"
     out.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print(f"written {out}")
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--set", default="fresh_140", choices=sorted(SETS))
+    main(ap.parse_args().set)

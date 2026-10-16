@@ -1,0 +1,115 @@
+{
+  "run": "20261012T140201Z",
+  "alerts": 14,
+  "trials": 300,
+  "results": {
+    "tfidf-word__raw": {
+      "tactic_first": {
+        "observed": 13,
+        "mean": 11.056666666666667,
+        "min": 10,
+        "max": 13,
+        "all14_share": 0.0
+      },
+      "flat": {
+        "observed": 14,
+        "mean": 13.99,
+        "min": 13,
+        "max": 14,
+        "all14_share": 0.99
+      },
+      "flat_ahead_share": 1.0,
+      "tactic_first_ahead_share": 0.0
+    },
+    "tfidf-word__title_raw": {
+      "tactic_first": {
+        "observed": 14,
+        "mean": 13.97,
+        "min": 13,
+        "max": 14,
+        "all14_share": 0.97
+      },
+      "flat": {
+        "observed": 14,
+        "mean": 14,
+        "min": 14,
+        "max": 14,
+        "all14_share": 1.0
+      },
+      "flat_ahead_share": 0.03,
+      "tactic_first_ahead_share": 0.0
+    },
+    "tfidf-word__rewrite": {
+      "tactic_first": {
+        "observed": 14,
+        "mean": 14,
+        "min": 14,
+        "max": 14,
+        "all14_share": 1.0
+      },
+      "flat": {
+        "observed": 14,
+        "mean": 14,
+        "min": 14,
+        "max": 14,
+        "all14_share": 1.0
+      },
+      "flat_ahead_share": 0.0,
+      "tactic_first_ahead_share": 0.0
+    },
+    "tfidf-char__raw": {
+      "tactic_first": {
+        "observed": 11,
+        "mean": 11,
+        "min": 11,
+        "max": 11,
+        "all14_share": 0.0
+      },
+      "flat": {
+        "observed": 12,
+        "mean": 12,
+        "min": 12,
+        "max": 12,
+        "all14_share": 0.0
+      },
+      "flat_ahead_share": 1.0,
+      "tactic_first_ahead_share": 0.0
+    },
+    "tfidf-char__title_raw": {
+      "tactic_first": {
+        "observed": 13,
+        "mean": 13,
+        "min": 13,
+        "max": 13,
+        "all14_share": 0.0
+      },
+      "flat": {
+        "observed": 12,
+        "mean": 12,
+        "min": 12,
+        "max": 12,
+        "all14_share": 0.0
+      },
+      "flat_ahead_share": 0.0,
+      "tactic_first_ahead_share": 1.0
+    },
+    "tfidf-char__rewrite": {
+      "tactic_first": {
+        "observed": 12,
+        "mean": 12,
+        "min": 12,
+        "max": 12,
+        "all14_share": 0.0
+      },
+      "flat": {
+        "observed": 14,
+        "mean": 14,
+        "min": 14,
+        "max": 14,
+        "all14_share": 1.0
+      },
+      "flat_ahead_share": 1.0,
+      "tactic_first_ahead_share": 0.0
+    }
+  }
+}

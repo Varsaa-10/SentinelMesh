@@ -1,0 +1,293 @@
+{
+  "alerts": "fresh70",
+  "n_alerts": 70,
+  "clean_correct": {
+    "tactic_first__raw": 57,
+    "tactic_first__title_raw": 70,
+    "tactic_first__rewrite": 70,
+    "flat__raw": 70,
+    "flat__title_raw": 70,
+    "flat__rewrite": 70
+  },
+  "summary": {
+    "copied_description__raw": {
+      "tactic_first": {
+        "eligible_pairs": 15960,
+        "induced": 85,
+        "rate": 0.0053,
+        "alerts_hit": 17,
+        "scenarios_hit": [
+          "S1",
+          "S4",
+          "S5"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 19600,
+        "induced": 40,
+        "rate": 0.002,
+        "alerts_hit": 10,
+        "scenarios_hit": [
+          "S1"
+        ],
+        "induced_after_defences": 0
+      }
+    },
+    "copied_description__rewrite": {
+      "tactic_first": {
+        "eligible_pairs": 19600,
+        "induced": 435,
+        "rate": 0.0222,
+        "alerts_hit": 35,
+        "scenarios_hit": [
+          "S2",
+          "S3",
+          "S5",
+          "S7",
+          "S8"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 19600,
+        "induced": 100,
+        "rate": 0.0051,
+        "alerts_hit": 15,
+        "scenarios_hit": [
+          "S5",
+          "S8"
+        ],
+        "induced_after_defences": 0
+      }
+    },
+    "copied_description__title_raw": {
+      "tactic_first": {
+        "eligible_pairs": 19600,
+        "induced": 166,
+        "rate": 0.0085,
+        "alerts_hit": 15,
+        "scenarios_hit": [
+          "S2",
+          "S4"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 19600,
+        "induced": 0,
+        "rate": 0.0,
+        "alerts_hit": 0,
+        "scenarios_hit": [],
+        "induced_after_defences": 0
+      }
+    },
+    "tactic_relabel__raw": {
+      "tactic_first": {
+        "eligible_pairs": 4104,
+        "induced": 110,
+        "rate": 0.0268,
+        "alerts_hit": 12,
+        "scenarios_hit": [
+          "S1",
+          "S4"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 5040,
+        "induced": 0,
+        "rate": 0.0,
+        "alerts_hit": 0,
+        "scenarios_hit": [],
+        "induced_after_defences": 0
+      }
+    },
+    "tactic_relabel__rewrite": {
+      "tactic_first": {
+        "eligible_pairs": 5040,
+        "induced": 130,
+        "rate": 0.0258,
+        "alerts_hit": 25,
+        "scenarios_hit": [
+          "S5",
+          "S8",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 5040,
+        "induced": 0,
+        "rate": 0.0,
+        "alerts_hit": 0,
+        "scenarios_hit": [],
+        "induced_after_defences": 0
+      }
+    },
+    "tactic_relabel__title_raw": {
+      "tactic_first": {
+        "eligible_pairs": 5040,
+        "induced": 30,
+        "rate": 0.006,
+        "alerts_hit": 10,
+        "scenarios_hit": [
+          "S4"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 5040,
+        "induced": 0,
+        "rate": 0.0,
+        "alerts_hit": 0,
+        "scenarios_hit": [],
+        "induced_after_defences": 0
+      }
+    },
+    "targeted_stuffing__raw": {
+      "tactic_first": {
+        "eligible_pairs": 1995,
+        "induced": 1945,
+        "rate": 0.9749,
+        "alerts_hit": 57,
+        "scenarios_hit": [
+          "S1",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 2450,
+        "induced": 2380,
+        "rate": 0.9714,
+        "alerts_hit": 70,
+        "scenarios_hit": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      }
+    },
+    "targeted_stuffing__rewrite": {
+      "tactic_first": {
+        "eligible_pairs": 2450,
+        "induced": 20,
+        "rate": 0.0082,
+        "alerts_hit": 15,
+        "scenarios_hit": [
+          "S2",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 2450,
+        "induced": 15,
+        "rate": 0.0061,
+        "alerts_hit": 15,
+        "scenarios_hit": [
+          "S5",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      }
+    },
+    "targeted_stuffing__title_raw": {
+      "tactic_first": {
+        "eligible_pairs": 2450,
+        "induced": 2285,
+        "rate": 0.9327,
+        "alerts_hit": 70,
+        "scenarios_hit": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      },
+      "flat": {
+        "eligible_pairs": 2450,
+        "induced": 2185,
+        "rate": 0.8918,
+        "alerts_hit": 70,
+        "scenarios_hit": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7",
+          "S8",
+          "S9"
+        ],
+        "induced_after_defences": 0
+      }
+    }
+  },
+  "detection": {
+    "copied_description": {
+      "corpora": 280,
+      "D1": 280,
+      "D2": 175,
+      "D3": 23,
+      "any": 280
+    },
+    "tactic_relabel": {
+      "corpora": 72,
+      "D1": 0,
+      "D2": 45,
+      "D3": 70,
+      "any": 72
+    },
+    "targeted_stuffing": {
+      "corpora": 2450,
+      "D1": 0,
+      "D2": 2450,
+      "D3": 205,
+      "any": 2450
+    }
+  },
+  "false_alarms_clean_lab": {
+    "D1": [],
+    "D2": [
+      "T1021",
+      "T1041",
+      "T1070",
+      "T1078",
+      "T1212"
+    ],
+    "D3": [
+      "T1027",
+      "T1036",
+      "T1070"
+    ]
+  },
+  "false_alarms_mitre_706": {
+    "D1": 6,
+    "D2": 11,
+    "D3": 0,
+    "records": 706
+  },
+  "record_versioning": "a signed per-record hash checked before indexing flags every corrupted corpus by construction"
+}

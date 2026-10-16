@@ -1,4 +1,17 @@
 {
+  "alert_set": "fresh_140",
+  "runs": [
+    "20261014T104641Z",
+    "20261014T111618Z",
+    "20261014T113310Z",
+    "20261014T122816Z",
+    "20261014T130955Z",
+    "20261014T132438Z",
+    "20261014T134019Z",
+    "20261014T135319Z",
+    "20261014T140601Z",
+    "20261014T141640Z"
+  ],
   "grid": [
     0.0,
     0.01,
@@ -36,50 +49,85 @@
     "raw": {
       "folds": [
         {
-          "held_out_run": "20260818T052007Z",
-          "threshold": 0.1,
-          "correct": 8,
-          "n": 8,
-          "fallbacks": 3
-        },
-        {
-          "held_out_run": "20260818T052217Z_chaintagged",
-          "threshold": 0.1,
-          "correct": 12,
-          "n": 12,
-          "fallbacks": 4
-        },
-        {
-          "held_out_run": "20261012T030225Z_chaintagged",
-          "threshold": 0.1,
-          "correct": 12,
-          "n": 12,
-          "fallbacks": 4
-        },
-        {
-          "held_out_run": "20261012T031032Z_chaintagged",
+          "held_out_run": "20261014T104641Z",
           "threshold": 0.1,
           "correct": 14,
           "n": 14,
           "fallbacks": 4
         },
         {
-          "held_out_run": "20261012T140201Z",
+          "held_out_run": "20261014T111618Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T113310Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T122816Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T130955Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T132438Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T134019Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T135319Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T140601Z",
+          "threshold": 0.1,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 4
+        },
+        {
+          "held_out_run": "20261014T141640Z",
           "threshold": 0.1,
           "correct": 14,
           "n": 14,
           "fallbacks": 4
         }
       ],
-      "heldout_correct": 60,
-      "n": 60,
+      "heldout_correct": 140,
+      "n": 140,
       "heldout_wilson_95": [
-        0.94,
+        0.973,
         1.0
       ],
-      "heldout_fallback_rate": 0.317,
-      "two_layer_no_fallback_correct": 52,
-      "flat_correct": 60,
+      "heldout_fallback_rate": 0.286,
+      "two_layer_no_fallback_correct": 114,
+      "flat_correct": 140,
       "layer1_similarity_range_lab": [
         0.0674,
         0.2495
@@ -89,7 +137,7 @@
           "0.1": 0.85
         },
         "corpus_200": {
-          "0.1": 0.617
+          "0.1": 0.571
         },
         "corpus_full": {
           "0.1": 1.0
@@ -99,50 +147,85 @@
     "title_raw": {
       "folds": [
         {
-          "held_out_run": "20260818T052007Z",
-          "threshold": 0.0,
-          "correct": 8,
-          "n": 8,
-          "fallbacks": 0
-        },
-        {
-          "held_out_run": "20260818T052217Z_chaintagged",
-          "threshold": 0.0,
-          "correct": 12,
-          "n": 12,
-          "fallbacks": 0
-        },
-        {
-          "held_out_run": "20261012T030225Z_chaintagged",
-          "threshold": 0.0,
-          "correct": 12,
-          "n": 12,
-          "fallbacks": 0
-        },
-        {
-          "held_out_run": "20261012T031032Z_chaintagged",
+          "held_out_run": "20261014T104641Z",
           "threshold": 0.0,
           "correct": 14,
           "n": 14,
           "fallbacks": 0
         },
         {
-          "held_out_run": "20261012T140201Z",
+          "held_out_run": "20261014T111618Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T113310Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T122816Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T130955Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T132438Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T134019Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T135319Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T140601Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T141640Z",
           "threshold": 0.0,
           "correct": 14,
           "n": 14,
           "fallbacks": 0
         }
       ],
-      "heldout_correct": 60,
-      "n": 60,
+      "heldout_correct": 140,
+      "n": 140,
       "heldout_wilson_95": [
-        0.94,
+        0.973,
         1.0
       ],
       "heldout_fallback_rate": 0.0,
-      "two_layer_no_fallback_correct": 60,
-      "flat_correct": 60,
+      "two_layer_no_fallback_correct": 140,
+      "flat_correct": 140,
       "layer1_similarity_range_lab": [
         0.0706,
         0.2341
@@ -162,50 +245,85 @@
     "rewrite": {
       "folds": [
         {
-          "held_out_run": "20260818T052007Z",
-          "threshold": 0.0,
-          "correct": 8,
-          "n": 8,
-          "fallbacks": 0
-        },
-        {
-          "held_out_run": "20260818T052217Z_chaintagged",
-          "threshold": 0.0,
-          "correct": 12,
-          "n": 12,
-          "fallbacks": 0
-        },
-        {
-          "held_out_run": "20261012T030225Z_chaintagged",
-          "threshold": 0.0,
-          "correct": 12,
-          "n": 12,
-          "fallbacks": 0
-        },
-        {
-          "held_out_run": "20261012T031032Z_chaintagged",
+          "held_out_run": "20261014T104641Z",
           "threshold": 0.0,
           "correct": 14,
           "n": 14,
           "fallbacks": 0
         },
         {
-          "held_out_run": "20261012T140201Z",
+          "held_out_run": "20261014T111618Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T113310Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T122816Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T130955Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T132438Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T134019Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T135319Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T140601Z",
+          "threshold": 0.0,
+          "correct": 14,
+          "n": 14,
+          "fallbacks": 0
+        },
+        {
+          "held_out_run": "20261014T141640Z",
           "threshold": 0.0,
           "correct": 14,
           "n": 14,
           "fallbacks": 0
         }
       ],
-      "heldout_correct": 60,
-      "n": 60,
+      "heldout_correct": 140,
+      "n": 140,
       "heldout_wilson_95": [
-        0.94,
+        0.973,
         1.0
       ],
       "heldout_fallback_rate": 0.0,
-      "two_layer_no_fallback_correct": 60,
-      "flat_correct": 60,
+      "two_layer_no_fallback_correct": 140,
+      "flat_correct": 140,
       "layer1_similarity_range_lab": [
         0.0742,
         0.4258

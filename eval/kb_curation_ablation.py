@@ -16,8 +16,11 @@ Variants: mitre, +detection, +description, +detection+description, +all.
 MITRE "(Citation: ...)" markers are stripped everywhere; the uncleaned text is also run once
 (`mitre_with_citations`) to show the markers do not matter.
 
-Alerts: the 12 Oct capture (14 alerts) and the 60 clean cross-capture alerts (5 runs, faulty
-S8 slots excluded), selected and rendered exactly as in eval/cross_capture_evaluation.py.
+Alerts: the 12 Oct capture (14 alerts), the 60 clean development alerts (5 runs, faulty S8 slots
+excluded), the 140 alerts of the ten fresh captures, and the 5 alerts of the held-out variant run,
+selected and rendered exactly as in eval/cross_capture_evaluation.py. The sets are scored separately.
+Embedders: tfidf-word (default), tfidf-char, dense-minilm (truncates at 256 tokens) and
+dense-minilm-chunked (reads the whole record in overlapping windows; use this one for the paper).
 Scoring: exact technique id; for corpus_200 (no sub-techniques) the parent id also counts,
 so T1003 is accepted for T1003.008.
 """
@@ -43,20 +46,14 @@ from eval.alert_query import QUERY_FORMS, build_query, load_alerts, select_alert
 from eval.stats_utils import wilson_score_interval  # noqa: E402
 
 CORPORA = {"corpus_36": 36, "corpus_200": 227, "corpus_full": 706}
-RUNS = ["20260818T052007Z", "20260818T052217Z_chaintagged", "20261012T030225Z_chaintagged",
-        "20261012T031032Z_chaintagged", "20261012T140201Z",
-    # fresh captures 2026-10-14
-    "20261014T104641Z",
-    "20261014T111618Z",
-    "20261014T113310Z",
-    "20261014T122816Z",
-    "20261014T130955Z",
-    "20261014T132438Z",
-    "20261014T134019Z",
-    "20261014T135319Z",
-    "20261014T140601Z",
-    "20261014T141640Z",
-]
+DEV_RUNS = ["20260818T052007Z", "20260818T052217Z_chaintagged", "20261012T030225Z_chaintagged",
+            "20261012T031032Z_chaintagged", "20261012T140201Z"]
+# fresh captures 2026-10-14, five subnets, two runs each (the main test set)
+FRESH_RUNS = ["20261014T104641Z", "20261014T111618Z", "20261014T113310Z", "20261014T122816Z",
+              "20261014T130955Z", "20261014T132438Z", "20261014T134019Z", "20261014T135319Z",
+              "20261014T140601Z", "20261014T141640Z"]
+HELDOUT_RUNS = ["20261015T051907Z"]  # eval/runs_heldout/
+RUNS = DEV_RUNS + FRESH_RUNS
 RUNS_WITH_FAULTY_S8 = {"20260818T052007Z", "20260818T052217Z_chaintagged", "20261012T030225Z_chaintagged"}
 OCT = "20261012T140201Z"
 CITATION_RE = re.compile(r"\s*\(Citation:[^)]*\)")
@@ -114,17 +111,25 @@ VARIANTS = {
 
 
 def alert_sets(gt) -> Dict[str, List[Dict[str, Any]]]:
-    sets = {"oct12_14": [], "clean_60": []}
-    for run in RUNS:
-        sel, _ = select_alerts(load_alerts(REPO_ROOT / "eval" / "runs" / run / "alerts.jsonl"), gt)
+    """oct12_14: reference run. clean_60: the five development runs (faulty S8 slots dropped).
+    fresh_140: the ten fresh captures. heldout_5: alerts from the held-out variant run.
+    Sets are kept separate so development and test alerts are never pooled."""
+    sets = {"oct12_14": [], "clean_60": [], "fresh_140": [], "heldout_5": []}
+    plan = [(r, "runs") for r in DEV_RUNS + FRESH_RUNS] + [(r, "runs_heldout") for r in HELDOUT_RUNS]
+    for run, folder in plan:
+        sel, _ = select_alerts(load_alerts(REPO_ROOT / "eval" / folder / run / "alerts.jsonl"), gt)
         for it in sel:
             faulty = run in RUNS_WITH_FAULTY_S8 and it["slot"] in ("S8", "S10:S8")
             row = {"run": run, "slot": it["slot"], "truth": it["ground_truth_technique"],
                    "alert": it["alert"], "queries": {f: build_query(it["alert"], f) for f in QUERY_FORMS}}
             if run == OCT:
                 sets["oct12_14"].append(row)
-            if not faulty:
+            if run in DEV_RUNS and not faulty:
                 sets["clean_60"].append(row)
+            elif run in FRESH_RUNS:
+                sets["fresh_140"].append(row)
+            elif run in HELDOUT_RUNS:
+                sets["heldout_5"].append(row)
     return sets
 
 
@@ -151,8 +156,10 @@ def main(embedder: str = "tfidf-word") -> Dict[str, Any]:
         present = {r["id"] for r in base}
         for vname, vargs in VARIANTS.items():
             recs = build_variant(base, lab, targets, **vargs)
-            engines = {"two_layer": TwoLayerRAG(recs, EMBEDDERS[embedder](), cve_lookup=cve_map),
-                       "flat": FlatRAG(recs, EMBEDDERS[embedder](), cve_lookup=cve_map)}
+            # a pretrained dense model is not refitted, so one loaded instance can serve both engines
+            shared = EMBEDDERS[embedder]() if embedder.startswith("dense") else None
+            engines = {"two_layer": TwoLayerRAG(recs, shared or EMBEDDERS[embedder](), cve_lookup=cve_map),
+                       "flat": FlatRAG(recs, shared or EMBEDDERS[embedder](), cve_lookup=cve_map)}
             for set_name, rows in sets.items():
                 for form in QUERY_FORMS:
                     for ename, eng in engines.items():
