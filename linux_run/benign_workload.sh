@@ -79,17 +79,53 @@ run_docker_exec_logged() {
     log_action "$container" "$action" "$start_ts" "$end_ts"
 }
 
+GRAFANA_VIEWER_USER="benign_viewer"
+GRAFANA_VIEWER_PASS=""
+
+generate_strong_password() {
+    python3 -c 'import secrets; print(secrets.token_urlsafe(24))' 2>/dev/null \
+        || od -An -N18 -tx1 /dev/urandom | tr -d ' \n'
+}
+
+setup_grafana_viewer() {
+    local lookup uid created
+    GRAFANA_VIEWER_PASS=$(generate_strong_password)
+    lookup=$(curl -sf -m 5 -u admin:admin \
+        "${GRAFANA_URL}/api/users/lookup?loginOrEmail=${GRAFANA_VIEWER_USER}" 2>/dev/null || true)
+    uid=$(echo "$lookup" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
+    if [ -z "$uid" ]; then
+        created=$(curl -sf -m 5 -u admin:admin -X POST "${GRAFANA_URL}/api/admin/users" \
+            -H "Content-Type: application/json" \
+            -d "{\"name\":\"Benign Viewer\",\"email\":\"${GRAFANA_VIEWER_USER}@sentinelmesh.local\",\"login\":\"${GRAFANA_VIEWER_USER}\",\"password\":\"${GRAFANA_VIEWER_PASS}\"}" \
+            2>/dev/null || true)
+        uid=$(echo "$created" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
+    else
+        curl -sf -m 5 -u admin:admin -X PUT "${GRAFANA_URL}/api/admin/users/${uid}/password" \
+            -H "Content-Type: application/json" \
+            -d "{\"password\":\"${GRAFANA_VIEWER_PASS}\"}" >/dev/null 2>&1 || true
+    fi
+    if [ -n "$uid" ]; then
+        curl -sf -m 5 -u admin:admin -X PATCH "${GRAFANA_URL}/api/orgs/1/users/${uid}" \
+            -H "Content-Type: application/json" \
+            -d '{"role":"Viewer"}' >/dev/null 2>&1 || true
+    fi
+}
+
 do_correct_logins() {
     local start_ts end_ts
     start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "sentinelmesh-webapp" "correct_login" "$start_ts" "$end_ts"
+
+    start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${AUTHSERVICE_URL}/auth/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    log_action "host" "correct_login" "$start_ts" "$end_ts"
+    log_action "sentinelmesh-authservice" "correct_login" "$start_ts" "$end_ts"
 }
 
 # Distinct accounts for single typos; per-account cooldown >= 65s guarantees <= 1 typo/account/min
@@ -112,16 +148,16 @@ do_single_typo() {
         -H "Content-Type: application/json" \
         -d "{\"username\":\"${acct}\",\"password\":\"wrongpass_typo\"}" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    log_action "host" "single_typo" "$start_ts" "$end_ts"
+    log_action "sentinelmesh-webapp" "single_typo" "$start_ts" "$end_ts"
 }
 
 do_grafana_view() {
     local start_ts end_ts
     start_ts=$(now_iso_utc)
-    curl -sf -m 5 -u admin:admin "${GRAFANA_URL}/api/dashboards/home" >/dev/null 2>&1 || true
-    curl -sf -m 5 -u admin:admin "${GRAFANA_URL}/api/search?limit=10" >/dev/null 2>&1 || true
+    curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/dashboards/home" >/dev/null 2>&1 || true
+    curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/search?limit=10" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    log_action "host" "grafana_view" "$start_ts" "$end_ts"
+    log_action "sentinelmesh-dashboard" "grafana_view" "$start_ts" "$end_ts"
 }
 
 do_pg_dump() {
@@ -167,6 +203,8 @@ do_outbound_https() {
     end_ts=$(now_iso_utc)
     log_action "host" "outbound_https" "$start_ts" "$end_ts"
 }
+
+setup_grafana_viewer
 
 START_EPOCH=$(now_epoch)
 END_EPOCH=$((START_EPOCH + DURATION_SECONDS))

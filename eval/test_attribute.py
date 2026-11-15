@@ -302,3 +302,33 @@ def test_summarize_attribution_reports_ambiguous_excluded_and_as_attack():
     assert as_atk["unattributed_count"] == 2
     assert as_atk["false_positive_count"] == 1
     assert as_atk["by_scenario"] == {"S11": 1, "S15": 1}
+
+
+def test_log_tail_service_webapp_within_2s_of_correct_login_is_ambiguous():
+    gt = _load_gt()
+    windows = {"S1": {"start": "2026-11-15T12:00:00Z", "end": "2026-11-15T12:00:05Z"}}
+    benign_actions = [
+        {
+            "start": "2026-11-15T12:00:04Z",
+            "end": "2026-11-15T12:00:04Z",
+            "container": "sentinelmesh-webapp",
+            "action": "correct_login",
+        }
+    ]
+    log_tail_alert = {
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "HIGH",
+        "title": "SQL Injection Attempt",
+        "timestamp": "2026-11-15T12:00:02Z",
+        "service": "webapp",
+        "event": {"path": "/login"},
+    }
+
+    att = attribute_alert(log_tail_alert, windows, gt, benign_actions=benign_actions)
+    assert att["attribution"] == "ambiguous"
+    assert att["attributed_scenario"] == "S1"
+    assert att["benign_action"] == "correct_login"
+    assert att["candidate_labels"]["attack"]["scenario"] == "S1"
+    assert att["candidate_labels"]["benign"][0]["action"] == "correct_login"
+    assert att["false_positive"] is False
