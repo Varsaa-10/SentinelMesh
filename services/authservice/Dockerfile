@@ -3,8 +3,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install curl for healthchecks
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+# Install curl for healthchecks and debugging tools for ENV2 scenarios
+RUN apt-get update && apt-get install -y --no-install-recommends curl gdb strace \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

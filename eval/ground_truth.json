@@ -277,6 +277,500 @@
         "expected_alerts_in_order": ["S1", "S3", "S4", "S9", "S8"],
         "known_limitation": "Intentionally exercises only 5 of the (now 9, previously 8) base techniques — S2, S5, S6, and the not-yet-built S7 are never invoked by this script. Requires BOTH Falco and the log-tail tailer running concurrently to score as a pass."
       }
+    },
+    "S11": {
+      "name": "Terminal Shell in Container",
+      "tactic": "Execution",
+      "technique_id": "T1059",
+      "technique_name": "Command and Scripting Interpreter",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker opens an interactive shell with a TTY inside sentinelmesh-webapp via docker exec -it ... sh"
+      ],
+      "severity": 3,
+      "asset_criticality": 4,
+      "expected_route": "analyst",
+      "expected_alert": true,
+      "expected_alert_reason": "Running an interactive shell via docker exec -it spawns a container-entrypoint shell with proc.tty != 0 in sentinelmesh-webapp.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "Terminal shell in container",
+        "attack_script": "attack_scripts/scenario11_terminal_shell.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Terminal shell in container"
+      }
+    },
+    "S12": {
+      "name": "Search Private Keys or Passwords",
+      "tactic": "Credential Access",
+      "technique_id": "T1552.001",
+      "technique_name": "Unsecured Credentials: Credentials In Files",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker searches sentinelmesh-webapp filesystem using grep -r 'BEGIN RSA PRIVATE' / and find / -name id_rsa"
+      ],
+      "severity": 4,
+      "asset_criticality": 4,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Executing grep for BEGIN RSA PRIVATE and find for id_rsa inside sentinelmesh-webapp matches the Search Private Keys or Passwords condition.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "Search Private Keys or Passwords",
+        "attack_script": "attack_scripts/scenario12_search_private_keys.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Search Private Keys or Passwords"
+      }
+    },
+    "S13": {
+      "name": "Fileless Execution via memfd_create",
+      "tactic": "Defense Evasion",
+      "technique_id": "T1620",
+      "technique_name": "Reflective Code Loading",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker creates an anonymous memory file descriptor via Python os.memfd_create and executes an ELF payload directly from memory"
+      ],
+      "severity": 4,
+      "asset_criticality": 4,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Executing an ELF binary from os.memfd_create inside sentinelmesh-webapp triggers spawned_process with proc.is_exe_from_memfd=true.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "Fileless execution via memfd_create",
+        "attack_script": "attack_scripts/scenario13_memfd_exec.sh",
+        "expected_scenario": "",
+        "expected_severity": "CRITICAL",
+        "expected_title": "Fileless execution via memfd_create"
+      }
+    },
+    "S14": {
+      "name": "PTRACE Attached to Process",
+      "tactic": "Privilege Escalation",
+      "technique_id": "T1055.008",
+      "technique_name": "Process Injection: Ptrace System Calls",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-authservice",
+      "attack_path": [
+        "Attacker attaches via ptrace (PTRACE_ATTACH) to a process inside sentinelmesh-authservice"
+      ],
+      "severity": 5,
+      "asset_criticality": 5,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Attaching with PTRACE_ATTACH to a child process inside sentinelmesh-authservice emits a matching ptrace event for a non-excluded process.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "PTRACE attached to process",
+        "attack_script": "attack_scripts/scenario14_ptrace_attach.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "PTRACE attached to process"
+      }
+    },
+    "S15": {
+      "name": "Packet Socket Created in Container",
+      "tactic": "Credential Access",
+      "technique_id": "T1557.002",
+      "technique_name": "Adversary-in-the-Middle: ARP Cache Poisoning",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-logcollector",
+      "attack_path": [
+        "Attacker opens a raw AF_PACKET socket inside sentinelmesh-logcollector via tcpdump -i eth0 -c 5"
+      ],
+      "severity": 3,
+      "asset_criticality": 3,
+      "expected_route": "auto",
+      "expected_alert": true,
+      "expected_alert_reason": "Running tcpdump inside sentinelmesh-logcollector opens an AF_PACKET socket in a container, matching Packet socket created in container.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "Packet socket created in container",
+        "attack_script": "attack_scripts/scenario15_packet_socket.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Packet socket created in container"
+      }
+    },
+    "S16": {
+      "name": "Remove Bulk Data from Disk",
+      "tactic": "Impact",
+      "technique_id": "T1485",
+      "technique_name": "Data Destruction",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-database",
+      "attack_path": [
+        "Attacker copies database data to a temporary directory in sentinelmesh-database and shreds the copied files"
+      ],
+      "severity": 5,
+      "asset_criticality": 5,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Running shred on a copy of the data directory inside sentinelmesh-database spawns a clear_data_procs binary.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "Remove Bulk Data from Disk",
+        "attack_script": "attack_scripts/scenario16_remove_bulk_data.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Remove Bulk Data from Disk"
+      }
+    },
+    "S17": {
+      "name": "Execution from /dev/shm",
+      "tactic": "Execution",
+      "technique_id": "T1059.004",
+      "technique_name": "Command and Scripting Interpreter: Unix Shell",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-dashboard",
+      "attack_path": [
+        "Attacker stages a shell script in /dev/shm inside sentinelmesh-dashboard and executes it"
+      ],
+      "severity": 3,
+      "asset_criticality": 3,
+      "expected_route": "auto",
+      "expected_alert": true,
+      "expected_alert_reason": "Executing a script staged under /dev/shm inside sentinelmesh-dashboard triggers shell execution from /dev/shm in an untrusted image.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco_rules.yaml",
+        "rule_name": "Execution from /dev/shm",
+        "attack_script": "attack_scripts/scenario17_exec_dev_shm.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Execution from /dev/shm"
+      }
+    },
+    "S18": {
+      "name": "Schedule Cron Jobs",
+      "tactic": "Execution",
+      "technique_id": "T1053.003",
+      "technique_name": "Scheduled Task/Job: Cron",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker installs a scheduled task entry via crontab inside sentinelmesh-webapp"
+      ],
+      "severity": 4,
+      "asset_criticality": 4,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Invoking crontab inside sentinelmesh-webapp triggers spawned_process with proc.name=crontab in Schedule Cron Jobs.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Schedule Cron Jobs",
+        "attack_script": "attack_scripts/scenario18_cron_persistence.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Schedule Cron Jobs"
+      }
+    },
+    "S19": {
+      "name": "Modify Shell Configuration File",
+      "tactic": "Persistence",
+      "technique_id": "T1546.004",
+      "technique_name": "Event Triggered Execution: Unix Shell Configuration Modification",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-authservice",
+      "attack_path": [
+        "Attacker appends a line to /root/.bashrc inside sentinelmesh-authservice using a non-shell binary"
+      ],
+      "severity": 4,
+      "asset_criticality": 5,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Appending to /root/.bashrc from Python inside sentinelmesh-authservice triggers open_write on .bashrc by a non-shell process.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Modify Shell Configuration File",
+        "attack_script": "attack_scripts/scenario19_shell_config.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Modify Shell Configuration File"
+      }
+    },
+    "S20": {
+      "name": "User Management Binaries (useradd)",
+      "tactic": "Persistence",
+      "technique_id": "T1098",
+      "technique_name": "Account Manipulation",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-database",
+      "attack_path": [
+        "Attacker invokes useradd inside sentinelmesh-database to create a temporary local account"
+      ],
+      "severity": 4,
+      "asset_criticality": 5,
+      "expected_route": "admin",
+      "expected_alert": false,
+      "expected_alert_reason": "The stock User mgmt binaries rule includes 'and not container', so running useradd inside sentinelmesh-database is not expected to alert.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "User mgmt binaries",
+        "attack_script": "attack_scripts/scenario20_useradd.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "User mgmt binaries"
+      }
+    },
+    "S21": {
+      "name": "Set Setuid or Setgid Bit",
+      "tactic": "Privilege Escalation",
+      "technique_id": "T1548.001",
+      "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker copies a system binary inside sentinelmesh-webapp and runs chmod u+s on the copy"
+      ],
+      "severity": 4,
+      "asset_criticality": 4,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Running chmod u+s on a copied binary inside sentinelmesh-webapp emits a chmod event with S_ISUID matching Set Setuid or Setgid bit.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Set Setuid or Setgid bit",
+        "attack_script": "attack_scripts/scenario21_setuid.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Set Setuid or Setgid bit"
+      }
+    },
+    "S22": {
+      "name": "Launch Remote File Copy Tools in Container",
+      "tactic": "Exfiltration",
+      "technique_id": "T1020",
+      "technique_name": "Automated Exfiltration",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-database",
+      "attack_path": [
+        "Attacker invokes scp inside sentinelmesh-database to copy a file toward another lab container"
+      ],
+      "severity": 5,
+      "asset_criticality": 5,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Invoking scp inside sentinelmesh-database spawns a remote_file_copy_procs binary inside the container.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Launch Remote File Copy Tools in Container",
+        "attack_script": "attack_scripts/scenario22_remote_file_copy.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Launch Remote File Copy Tools in Container"
+      }
+    },
+    "S23": {
+      "name": "Adding SSH Keys to authorized_keys",
+      "tactic": "Persistence",
+      "technique_id": "T1098.004",
+      "technique_name": "Account Manipulation: SSH Authorized Keys",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker appends a public SSH key line to /root/.ssh/authorized_keys inside sentinelmesh-webapp"
+      ],
+      "severity": 4,
+      "asset_criticality": 4,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Appending to /root/.ssh/authorized_keys from a non-SSH process inside sentinelmesh-webapp triggers open_write matching Adding ssh keys to authorized_keys.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Adding ssh keys to authorized_keys",
+        "attack_script": "attack_scripts/scenario23_authorized_keys.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Adding ssh keys to authorized_keys"
+      }
+    },
+    "S24": {
+      "name": "Read Environment Variable from /proc Files",
+      "tactic": "Discovery",
+      "technique_id": "T1083",
+      "technique_name": "File and Directory Discovery",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-logcollector",
+      "attack_path": [
+        "Attacker runs cat /proc/1/environ inside sentinelmesh-logcollector"
+      ],
+      "severity": 2,
+      "asset_criticality": 3,
+      "expected_route": "auto",
+      "expected_alert": true,
+      "expected_alert_reason": "Running cat /proc/1/environ inside sentinelmesh-logcollector opens a matching /proc/*/environ path from a non-excluded binary.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Read environment variable from /proc files",
+        "attack_script": "attack_scripts/scenario24_read_proc_environ.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Read environment variable from /proc files"
+      }
+    },
+    "S25": {
+      "name": "Launch Suspicious Network Tool in Container",
+      "tactic": "Execution",
+      "technique_id": "T1059",
+      "technique_name": "Command and Scripting Interpreter",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-dashboard",
+      "attack_path": [
+        "Attacker launches nmap inside sentinelmesh-dashboard to scan the lab subnet"
+      ],
+      "severity": 2,
+      "asset_criticality": 3,
+      "expected_route": "auto",
+      "expected_alert": true,
+      "expected_alert_reason": "Running nmap inside sentinelmesh-dashboard spawns a network_tool_procs binary inside the container.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Launch Suspicious Network Tool in Container",
+        "attack_script": "attack_scripts/scenario25_network_tool.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Launch Suspicious Network Tool in Container"
+      }
+    },
+    "S26": {
+      "name": "Create Hidden Files or Directories",
+      "tactic": "Defense Evasion",
+      "technique_id": "T1564.001",
+      "technique_name": "Hide Artifacts: Hidden Files and Directories",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-logcollector",
+      "attack_path": [
+        "Attacker creates a hidden directory and file under /tmp inside sentinelmesh-logcollector"
+      ],
+      "severity": 3,
+      "asset_criticality": 3,
+      "expected_route": "auto",
+      "expected_alert": false,
+      "expected_alert_reason": "The stock Create Hidden Files or Directories rule is disabled by default (enabled: false) in falco-sandbox_rules.yaml.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-sandbox_rules.yaml",
+        "rule_name": "Create Hidden Files or Directories",
+        "attack_script": "attack_scripts/scenario26_hidden_files.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Create Hidden Files or Directories"
+      }
+    },
+    "S27": {
+      "name": "Decoding Payload in Container",
+      "tactic": "Command and Control",
+      "technique_id": "T1132",
+      "technique_name": "Data Encoding",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-webapp",
+      "attack_path": [
+        "Attacker runs echo ... | base64 -d | sh inside sentinelmesh-webapp"
+      ],
+      "severity": 4,
+      "asset_criticality": 4,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Running base64 -d inside sentinelmesh-webapp matches spawned_process and container and base64_decoding.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-sandbox_rules.yaml",
+        "rule_name": "Decoding Payload in Container",
+        "attack_script": "attack_scripts/scenario27_decode_payload.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Decoding Payload in Container"
+      }
+    },
+    "S28": {
+      "name": "Delete or Rename Shell History",
+      "tactic": "Defense Evasion",
+      "technique_id": "T1070",
+      "technique_name": "Indicator Removal",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-authservice",
+      "attack_path": [
+        "Attacker removes /root/.bash_history inside sentinelmesh-authservice"
+      ],
+      "severity": 3,
+      "asset_criticality": 5,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Removing /root/.bash_history inside sentinelmesh-authservice triggers modify_shell_history outside /var/lib/docker.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Delete or rename shell history",
+        "attack_script": "attack_scripts/scenario28_delete_shell_history.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Delete or rename shell history"
+      }
+    },
+    "S29": {
+      "name": "Mount Launched in Privileged Container",
+      "tactic": "Privilege Escalation",
+      "technique_id": "T1611",
+      "technique_name": "Escape to Host",
+      "cve": null,
+      "cwe": null,
+      "target_container": "sentinelmesh-debug",
+      "attack_path": [
+        "Inside an isolated disposable VM with --privileged-debug, attacker runs mount inside the privileged sentinelmesh-debug container"
+      ],
+      "severity": 5,
+      "asset_criticality": 3,
+      "expected_route": "admin",
+      "expected_alert": true,
+      "expected_alert_reason": "Running mount with filesystem arguments inside privileged sentinelmesh-debug triggers Mount Launched in Privileged Container.",
+      "detection": {
+        "source": "falco-stock",
+        "rule_file": "detection/falco-stock/falco-incubating_rules.yaml",
+        "rule_name": "Mount Launched in Privileged Container",
+        "attack_script": "attack_scripts/scenario29_privileged_mount.sh",
+        "expected_scenario": "",
+        "expected_severity": "WARNING",
+        "expected_title": "Mount Launched in Privileged Container"
+      }
     }
   }
 }

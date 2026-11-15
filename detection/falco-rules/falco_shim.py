@@ -51,7 +51,7 @@ def scenario_from_tags(tags):
         m = SCENARIO_TAG_RE.match(tag)
         if m:
             return f"S{m.group(1)}"
-    return "UNKNOWN"
+    return ""
 
 
 def service_from_container(container_name):
@@ -106,16 +106,20 @@ def translate(falco_alert):
         severity = "CRITICAL" if severity in ("EMERGENCY", "ALERT", "ERROR") else "WARNING"
 
     container_name = output_fields.get("container.name")
+    scenario = scenario_from_tags(tags)
 
-    return {
+    result = {
         "source": "falco",
-        "scenario": scenario_from_tags(tags),
+        "scenario": scenario,
         "severity": severity,
         "title": falco_alert.get("rule", "Unknown Falco Rule"),
         "timestamp": normalize_timestamp(falco_alert.get("time")),
         "service": service_from_container(container_name),
         "event": output_fields,
     }
+    if not scenario:
+        result["falco_tags"] = list(tags)
+    return result
 
 
 import argparse

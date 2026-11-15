@@ -1,0 +1,20 @@
+# =============================================================================
+# SentinelMesh — Privileged Debug Container (S29 ONLY)
+# ONLY for use inside an isolated disposable VM when --privileged-debug is set.
+# Usage: docker compose -f docker-compose.debug.yml up -d
+# =============================================================================
+
+services:
+  debug:
+    image: alpine:3.19
+    container_name: sentinelmesh-debug
+    privileged: true
+    command: ["sleep", "infinity"]
+    networks:
+      - sentinelmesh_net
+    restart: unless-stopped
+
+networks:
+  sentinelmesh_net:
+    external: true
+    name: sentinelmesh_net

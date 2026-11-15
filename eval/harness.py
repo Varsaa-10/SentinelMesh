@@ -34,17 +34,26 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from eval.attribute import attribute_alerts, summarize_attribution  # noqa: E402
+
 
 # ---------------------------------------------------------------------------
 # Attack order
 # ---------------------------------------------------------------------------
 
-# All single-technique scenarios.
-#
-# S7 is now included because the Grafana attack script has been built.
-#
-# S10 is the chained scenario and is intentionally NOT included here by
-# default. It is appended separately when --chain-script is supplied.
+STOCK_FALCO_FILES = (
+    "falco_rules.yaml",
+    "falco-incubating_rules.yaml",
+    "falco-sandbox_rules.yaml",
+)
+
+# All single-technique scenarios (S1-S9 + ENV2 S11-S28).
+# S10 (chain) is appended when --chain-script is supplied.
+# S29 (privileged debug container) is appended ONLY when --privileged-debug is passed.
 DEFAULT_ATTACK_ORDER = [
     ("S1", "scenario1_sqli.sh", "bash"),
     ("S2", "scenario2_bruteforce.sh", "bash"),
@@ -52,15 +61,30 @@ DEFAULT_ATTACK_ORDER = [
     ("S4", "scenario4_jwt_confusion.py", "python3"),
     ("S5", "scenario5_db_connection.sh", "bash"),
     ("S6", "scenario6_log_tampering.sh", "bash"),
-
-    # S7 — Grafana default credentials + anonymous access
     ("S7", "scenario7_grafana_default_creds.sh", "bash"),
-
-    # Existing credential-access scenario
     ("S9", "scenario9_credential_access.sh", "bash"),
-
     ("S8", "scenario8_exfiltration.sh", "bash"),
+    ("S11", "scenario11_terminal_shell.sh", "bash"),
+    ("S12", "scenario12_search_private_keys.sh", "bash"),
+    ("S13", "scenario13_memfd_exec.sh", "bash"),
+    ("S14", "scenario14_ptrace_attach.sh", "bash"),
+    ("S15", "scenario15_packet_socket.sh", "bash"),
+    ("S16", "scenario16_remove_bulk_data.sh", "bash"),
+    ("S17", "scenario17_exec_dev_shm.sh", "bash"),
+    ("S18", "scenario18_cron_persistence.sh", "bash"),
+    ("S19", "scenario19_shell_config.sh", "bash"),
+    ("S20", "scenario20_useradd.sh", "bash"),
+    ("S21", "scenario21_setuid.sh", "bash"),
+    ("S22", "scenario22_remote_file_copy.sh", "bash"),
+    ("S23", "scenario23_authorized_keys.sh", "bash"),
+    ("S24", "scenario24_read_proc_environ.sh", "bash"),
+    ("S25", "scenario25_network_tool.sh", "bash"),
+    ("S26", "scenario26_hidden_files.sh", "bash"),
+    ("S27", "scenario27_decode_payload.sh", "bash"),
+    ("S28", "scenario28_delete_shell_history.sh", "bash"),
 ]
+
+PRIVILEGED_DEBUG_SCENARIO = ("S29", "scenario29_privileged_mount.sh", "bash")
 
 
 SECONDS_BETWEEN_ATTACKS = 4
@@ -82,24 +106,55 @@ def log(msg):
 # Falco
 # ---------------------------------------------------------------------------
 
-def start_falco(rules_dir, shim_path, out_path, stderr_dir):
+def resolve_rule_files(rules_dir, include_stock_falco=False, stock_falco_dir=None):
+    """Collect custom s0*.yaml rule files and optionally stock Falco rules."""
     rules_dir = Path(rules_dir)
-
     rule_files = sorted(rules_dir.glob("s0*.yaml"))
 
     if not rule_files:
         log(f"WARNING: no s0*.yaml rule files found in {rules_dir}")
 
-    falco_cmd = [
-        "stdbuf",
-        "-oL",
-        "falco",
-        "-o",
-        "json_output=true",
-    ]
+    if include_stock_falco:
+        if stock_falco_dir is not None:
+            stock_dir = Path(stock_falco_dir)
+        else:
+            candidate = rules_dir.parent / "falco-stock"
+            stock_dir = candidate if candidate.exists() else REPO_ROOT / "detection" / "falco-stock"
+        for fname in STOCK_FALCO_FILES:
+            sf = stock_dir / fname
+            if not sf.exists():
+                raise FileNotFoundError(f"Stock Falco rule file not found: {sf}")
+            rule_files.append(sf)
 
+    return rule_files
+
+
+def build_falco_command(rules_dir, include_stock_falco=False, stock_falco_dir=None):
+    """Build the stdbuf/falco command line with ordered -r rule arguments."""
+    rule_files = resolve_rule_files(
+        rules_dir,
+        include_stock_falco=include_stock_falco,
+        stock_falco_dir=stock_falco_dir,
+    )
+    cmd = ["stdbuf", "-oL", "falco", "-o", "json_output=true"]
     for rf in rule_files:
-        falco_cmd += ["-r", str(rf)]
+        cmd += ["-r", str(rf)]
+    return cmd
+
+
+def start_falco(
+    rules_dir,
+    shim_path,
+    out_path,
+    stderr_dir,
+    include_stock_falco=False,
+    stock_falco_dir=None,
+):
+    falco_cmd = build_falco_command(
+        rules_dir,
+        include_stock_falco=include_stock_falco,
+        stock_falco_dir=stock_falco_dir,
+    )
 
     log(
         f"starting falco: {' '.join(falco_cmd)} | {shim_path}"
@@ -226,29 +281,43 @@ def start_grafana_detector(
 # Attack scripts
 # ---------------------------------------------------------------------------
 
+def build_attack_order(chain_script=None, privileged_debug=False):
+    """Return ordered (scenario, filename, interpreter, extra_args) tuples."""
+    order = [(sid, fname, interp, []) for sid, fname, interp in DEFAULT_ATTACK_ORDER]
+    if privileged_debug:
+        sid, fname, interp = PRIVILEGED_DEBUG_SCENARIO
+        order.append((sid, fname, interp, ["--privileged-debug"]))
+    if chain_script:
+        order.append(("S10", chain_script, "bash", []))
+    return order
+
+
+def start_benign_workload(script_path, duration_minutes, log_path):
+    """Launch linux_run/benign_workload.sh asynchronously and return (proc, log_f)."""
+    cmd = ["bash", str(script_path), "--duration", str(duration_minutes)]
+    log(f"starting benign workload: {' '.join(cmd)}")
+    log_f = open(log_path, "w")
+    proc = subprocess.Popen(cmd, stdout=log_f, stderr=subprocess.STDOUT)
+    return proc, log_f
+
+
 def run_attack_scripts(
     attack_scripts_dir,
     chain_script=None,
+    privileged_debug=False,
 ):
     attack_scripts_dir = Path(attack_scripts_dir)
+    order = build_attack_order(
+        chain_script=chain_script,
+        privileged_debug=privileged_debug,
+    )
 
-    order = list(DEFAULT_ATTACK_ORDER)
+    scenario_windows = {}
+    post_wait = max(1, SECONDS_BETWEEN_ATTACKS - 1) if SECONDS_BETWEEN_ATTACKS > 1 else 0
+    inter_gap = max(1, SECONDS_BETWEEN_ATTACKS - post_wait)
 
-    if chain_script:
-        order.append(
-            ("S10", chain_script, "bash")
-        )
-
-    chain_window = None
-
-    for scenario, filename, interpreter in order:
+    for scenario, filename, interpreter, extra_args in order:
         script_path = (attack_scripts_dir / filename).resolve()
-
-        if scenario == "S10" and script_path.exists():
-            chain_window = {
-                "start": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "end": None,
-            }
 
         if not script_path.exists():
             log(
@@ -257,48 +326,35 @@ def run_attack_scripts(
             )
             continue
 
-        log(
-            f"firing {scenario}: {filename}"
-        )
+        start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        log(f"firing {scenario}: {filename}")
 
         try:
             result = subprocess.run(
-                [interpreter, str(script_path)],
+                [interpreter, str(script_path), *extra_args],
                 timeout=30,
                 capture_output=True,
                 text=True,
             )
 
             if result.stdout:
-                log(
-                    f"{scenario} stdout:\n"
-                    f"{result.stdout.strip()}"
-                )
+                log(f"{scenario} stdout:\n{result.stdout.strip()}")
 
             if result.stderr:
-                log(
-                    f"{scenario} stderr:\n"
-                    f"{result.stderr.strip()}"
-                )
+                log(f"{scenario} stderr:\n{result.stderr.strip()}")
 
         except subprocess.TimeoutExpired:
-            log(
-                f"WARNING: {filename} timed out "
-                f"after 30s, continuing"
-            )
+            log(f"WARNING: {filename} timed out after 30s, continuing")
 
         except Exception as exc:
-            log(
-                f"WARNING: {filename} raised {exc}, "
-                f"continuing"
-            )
+            log(f"WARNING: {filename} raised {exc}, continuing")
 
-        time.sleep(SECONDS_BETWEEN_ATTACKS)
+        time.sleep(post_wait)
+        end_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        scenario_windows[scenario] = {"start": start_ts, "end": end_ts}
+        time.sleep(inter_gap)
 
-        if scenario == "S10" and chain_window is not None:
-            chain_window["end"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    return chain_window
+    return scenario_windows, scenario_windows.get("S10")
 
 
 # ---------------------------------------------------------------------------
@@ -410,69 +466,83 @@ def merge_alerts(
 def score_against_ground_truth(
     alerts,
     ground_truth,
+    include_stock_falco=False,
+    privileged_debug=False,
+    benign_only=False,
 ):
     """
-    For each scenario in ground_truth (excluding S10),
-    check whether at least one alert matches:
+    Score captured alerts against ground_truth.json scenarios.
 
-        expected_scenario
-        expected_title
-        expected_severity
-
-    S10 is scored separately because it is a multi-alert chain.
+    - In benign-only mode, returns {} (every alert is scored as a false positive).
+    - Lab scenarios (detection.source != 'falco-stock') match expected_scenario,
+      expected_title prefix, and expected_severity.
+    - Stock Falco scenarios (S11-S29) are scored only when include_stock_falco=True
+      (and S29 only when privileged_debug=True), using attributed_scenario.
+    - S10 is scored separately because it is a multi-alert chain.
     """
+    if benign_only:
+        return {}
 
     results = {}
-
     scenarios = ground_truth["scenarios"]
 
     for sid, spec in scenarios.items():
-
         if sid == "S10":
             continue
 
-        detection = spec.get(
-            "detection",
-            {},
-        )
+        detection = spec.get("detection", {})
+        is_stock = detection.get("source") == "falco-stock"
+        if is_stock and not include_stock_falco:
+            continue
+        if sid == "S29" and not privileged_debug:
+            continue
 
-        expected_scenario = detection.get(
-            "expected_scenario"
-        )
+        expected_scenario = detection.get("expected_scenario")
+        expected_title = detection.get("expected_title")
+        expected_severity = detection.get("expected_severity")
 
-        expected_title = detection.get(
-            "expected_title"
-        )
-
-        expected_severity = detection.get(
-            "expected_severity"
-        )
-
-        matches = [
-            alert
-            for alert in alerts
-            if (
-                alert.get("scenario")
-                == expected_scenario
-                and str(
-                    alert.get("title", "")
-                ).startswith(
-                    expected_title or ""
+        if is_stock:
+            matches = [
+                alert
+                for alert in alerts
+                if (
+                    alert.get("attributed_scenario") == sid
+                    and str(alert.get("title", "")).startswith(expected_title or "")
+                    and (not expected_severity or alert.get("severity") == expected_severity)
                 )
-                and alert.get("severity")
-                == expected_severity
-            )
-        ]
-
-        results[sid] = {
-            "name": spec.get("name"),
-            "expected_scenario": expected_scenario,
-            "expected_title": expected_title,
-            "expected_severity": expected_severity,
-            "fired": len(matches) > 0,
-            "match_count": len(matches),
-            "matched_alerts": matches,
-        }
+            ]
+            expected_alert = spec.get("expected_alert")
+            fired = len(matches) > 0
+            results[sid] = {
+                "name": spec.get("name"),
+                "expected_scenario": expected_scenario,
+                "expected_title": expected_title,
+                "expected_severity": expected_severity,
+                "expected_alert": expected_alert,
+                "fired": fired,
+                "matches_expectation": (fired == expected_alert) if expected_alert is not None else fired,
+                "match_count": len(matches),
+                "matched_alerts": matches,
+            }
+        else:
+            matches = [
+                alert
+                for alert in alerts
+                if (
+                    alert.get("scenario") == expected_scenario
+                    and str(alert.get("title", "")).startswith(expected_title or "")
+                    and alert.get("severity") == expected_severity
+                )
+            ]
+            results[sid] = {
+                "name": spec.get("name"),
+                "expected_scenario": expected_scenario,
+                "expected_title": expected_title,
+                "expected_severity": expected_severity,
+                "fired": len(matches) > 0,
+                "match_count": len(matches),
+                "matched_alerts": matches,
+            }
 
     # -----------------------------------------------------------------------
     # S10 chain scoring
@@ -635,6 +705,46 @@ def main():
         ),
     )
 
+    ap.add_argument(
+        "--include-stock-falco",
+        action="store_true",
+        help=(
+            "Also load stock Falco rules from detection/falco-stock/ "
+            "(falco_rules.yaml, falco-incubating_rules.yaml, falco-sandbox_rules.yaml)"
+        ),
+    )
+
+    ap.add_argument(
+        "--stock-falco-dir",
+        default=None,
+        help="Override path to detection/falco-stock directory",
+    )
+
+    ap.add_argument(
+        "--privileged-debug",
+        action="store_true",
+        help="Include S29 (privileged debug mount; disposable VM ONLY)",
+    )
+
+    ap.add_argument(
+        "--benign-minutes",
+        type=float,
+        default=0,
+        help="Run linux_run/benign_workload.sh for N minutes alongside attacks",
+    )
+
+    ap.add_argument(
+        "--benign-only",
+        action="store_true",
+        help="Run benign_workload.sh with no attack scripts (requires --benign-minutes > 0)",
+    )
+
+    ap.add_argument(
+        "--benign-workload-script",
+        default=None,
+        help="Override path to linux_run/benign_workload.sh",
+    )
+
     # Output
     ap.add_argument(
         "--run-dir",
@@ -645,6 +755,11 @@ def main():
     )
 
     args = ap.parse_args()
+
+    if args.benign_only and args.benign_minutes <= 0:
+        ap.error("--benign-only requires --benign-minutes > 0")
+    if args.auto_run_attacks and not args.benign_only and not args.attack_scripts_dir:
+        ap.error("--auto-run-attacks requires --attack-scripts-dir")
 
     # -----------------------------------------------------------------------
     # Ground truth
@@ -711,6 +826,9 @@ def main():
     grafana_f = None
     grafana_err_f = None
 
+    benign_proc = None
+    benign_f = None
+
     # -----------------------------------------------------------------------
     # Start Falco
     # -----------------------------------------------------------------------
@@ -726,6 +844,8 @@ def main():
         args.falco_shim,
         falco_out,
         run_path,
+        include_stock_falco=args.include_stock_falco,
+        stock_falco_dir=args.stock_falco_dir,
     )
 
     # -----------------------------------------------------------------------
@@ -857,9 +977,35 @@ def main():
 
     try:
 
+        scenario_windows = {}
         chain_window = None
 
-        if args.auto_run_attacks:
+        benign_script = (
+            Path(args.benign_workload_script)
+            if args.benign_workload_script
+            else REPO_ROOT / "linux_run" / "benign_workload.sh"
+        )
+        if args.benign_only or args.benign_minutes > 0:
+            if not benign_script.exists():
+                log(f"ERROR: benign workload script not found: {benign_script}")
+                sys.exit(1)
+            benign_proc, benign_f = start_benign_workload(
+                benign_script,
+                args.benign_minutes,
+                run_path / "benign_workload.log",
+            )
+
+        if args.benign_only:
+
+            log(
+                f"benign-only capture: running workload for "
+                f"{args.benign_minutes} minute(s) with no attacks"
+            )
+            benign_proc.wait()
+            log("benign workload completed. waiting 5s for final alerts to land...")
+            time.sleep(5)
+
+        elif args.auto_run_attacks:
 
             if not args.attack_scripts_dir:
 
@@ -870,9 +1016,10 @@ def main():
 
                 sys.exit(1)
 
-            chain_window = run_attack_scripts(
+            scenario_windows, chain_window = run_attack_scripts(
                 args.attack_scripts_dir,
                 chain_script=args.chain_script,
+                privileged_debug=args.privileged_debug,
             )
 
             log(
@@ -908,6 +1055,10 @@ def main():
         # ---------------------------------------------------------------
 
         processes = [
+            (
+                "benign workload",
+                benign_proc,
+            ),
             (
                 "grafana detector",
                 grafana_proc,
@@ -968,6 +1119,7 @@ def main():
         # ---------------------------------------------------------------
 
         for f in (
+            benign_f,
             falco_f,
             tailer_f,
             grafana_f,
@@ -1011,20 +1163,38 @@ def main():
         f"{merged_path}"
     )
 
+    if scenario_windows:
+        with open(run_path / "scenario_windows.json", "w") as f:
+            json.dump(scenario_windows, f, indent=2)
+
+    attributed = attribute_alerts(
+        alerts,
+        scenario_windows,
+        ground_truth,
+        benign_only=args.benign_only,
+    )
+    attribution_summary = summarize_attribution(attributed)
+    with open(run_path / "alerts_attributed.jsonl", "w") as f:
+        for alert in attributed:
+            f.write(json.dumps(alert) + "\n")
+
     # -----------------------------------------------------------------------
     # Score
     # -----------------------------------------------------------------------
 
     results = score_against_ground_truth(
-        alerts,
+        attributed,
         ground_truth,
+        include_stock_falco=args.include_stock_falco,
+        privileged_debug=args.privileged_debug,
+        benign_only=args.benign_only,
     )
 
     passed = sum(
         1
         for sid, result in results.items()
         if sid != "S10"
-        and result.get("fired")
+        and result.get("matches_expectation", result.get("fired"))
     )
 
     total_single = sum(
@@ -1034,7 +1204,9 @@ def main():
     )
 
     s10_pass = (
-        results
+        None
+        if args.benign_only
+        else results
         .get("S10", {})
         .get(
             "all_stages_fired",
@@ -1054,6 +1226,12 @@ def main():
             "(Falco-only + log-tail + S7 Grafana detector, "
             "no RAG/graph/response)"
         ),
+        "include_stock_falco": args.include_stock_falco,
+        "privileged_debug": args.privileged_debug,
+        "benign_only": args.benign_only,
+        "benign_minutes": args.benign_minutes,
+        "scenario_windows": scenario_windows,
+        "attribution_summary": attribution_summary,
         "ground_truth_file": str(
             Path(
                 args.ground_truth
