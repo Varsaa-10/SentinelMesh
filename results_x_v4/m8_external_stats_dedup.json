@@ -1,0 +1,77 @@
+{
+ "input": "results_x_v3/m4_external_events.json",
+ "events_in": 5935,
+ "events_used": 4710,
+ "dedup": true,
+ "bootstrap_draws": 2000,
+ "permutation_draws": 20000,
+ "seeds": {
+  "bootstrap": 7,
+  "permutation": 11
+ },
+ "rows": [
+  {
+   "subset": "All (abstain = error)",
+   "events": 4710,
+   "atomic_tests": 1320,
+   "techniques": 281,
+   "sigma": 0.055414012738853505,
+   "tfidf": 0.20955414012738854,
+   "diff": -0.15414012738853503,
+   "diff_ci95_technique_bootstrap": [
+    -0.201014867861013,
+    -0.10973914675230358
+   ],
+   "x2_test": 106.69554655870445,
+   "p_test": 5.190918215847968e-25,
+   "x2_tech": 27.051734756723466,
+   "p_tech": 1.9808238308914254e-07,
+   "p_perm_tech": 4.999750012499375e-05,
+   "p_test_holm": 1.5572754647543906e-24,
+   "p_tech_holm": 5.942471492674276e-07,
+   "p_perm_tech_holm": 0.00014999250037498125
+  },
+  {
+   "subset": "Technique has a rule",
+   "events": 3365,
+   "atomic_tests": 1095,
+   "techniques": 182,
+   "sigma": 0.07756315007429421,
+   "tfidf": 0.1726597325408618,
+   "diff": -0.0950965824665676,
+   "diff_ci95_technique_bootstrap": [
+    -0.13960103931407317,
+    -0.05212214740057709
+   ],
+   "x2_test": 43.389830508474574,
+   "p_test": 4.4851303850450846e-11,
+   "x2_tech": 14.21038023868998,
+   "p_tech": 0.0001634662877843691,
+   "p_perm_tech": 4.999750012499375e-05,
+   "p_test_holm": 8.970260770090169e-11,
+   "p_tech_holm": 0.0003269325755687382,
+   "p_perm_tech_holm": 0.00014999250037498125
+  },
+  {
+   "subset": "A rule fired",
+   "events": 810,
+   "atomic_tests": 580,
+   "techniques": 185,
+   "sigma": 0.32222222222222224,
+   "tfidf": 0.19135802469135801,
+   "diff": 0.1308641975308642,
+   "diff_ci95_technique_bootstrap": [
+    0.059131878557874766,
+    0.20251933016689128
+   ],
+   "x2_test": 27.40487804878049,
+   "p_test": 1.650144664523248e-07,
+   "x2_tech": 7.738292011019284,
+   "p_tech": 0.005406191191360008,
+   "p_perm_tech": 0.001799910004499775,
+   "p_test_holm": 1.650144664523248e-07,
+   "p_tech_holm": 0.005406191191360008,
+   "p_perm_tech_holm": 0.001799910004499775
+  }
+ ]
+}

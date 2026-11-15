@@ -1,0 +1,77 @@
+{
+ "input": "results_x_v3/m4_external_events.json",
+ "events_in": 5935,
+ "events_used": 5935,
+ "dedup": false,
+ "bootstrap_draws": 2000,
+ "permutation_draws": 20000,
+ "seeds": {
+  "bootstrap": 7,
+  "permutation": 11
+ },
+ "rows": [
+  {
+   "subset": "All (abstain = error)",
+   "events": 5935,
+   "atomic_tests": 1320,
+   "techniques": 281,
+   "sigma": 0.05627632687447346,
+   "tfidf": 0.21668070766638584,
+   "diff": -0.16040438079191238,
+   "diff_ci95_technique_bootstrap": [
+    -0.21181046582131652,
+    -0.1079584054540042
+   ],
+   "x2_test": 100.29924745462594,
+   "p_test": 1.3102656267316067e-23,
+   "x2_tech": 23.616426933500104,
+   "p_tech": 1.1757947587526505e-06,
+   "p_perm_tech": 4.999750012499375e-05,
+   "p_test_holm": 3.93079688019482e-23,
+   "p_tech_holm": 3.5273842762579516e-06,
+   "p_perm_tech_holm": 0.00014999250037498125
+  },
+  {
+   "subset": "Technique has a rule",
+   "events": 4271,
+   "atomic_tests": 1095,
+   "techniques": 182,
+   "sigma": 0.07820182627019433,
+   "tfidf": 0.1800515101849684,
+   "diff": -0.10184968391477406,
+   "diff_ci95_technique_bootstrap": [
+    -0.16017020645525182,
+    -0.04196628210363989
+   ],
+   "x2_test": 36.09097844745375,
+   "p_test": 1.883166650147035e-09,
+   "x2_tech": 8.362057536789075,
+   "p_tech": 0.0038313650353043053,
+   "p_perm_tech": 0.00039998000099995,
+   "p_test_holm": 3.76633330029407e-09,
+   "p_tech_holm": 0.0076627300706086105,
+   "p_perm_tech_holm": 0.0007999600019999
+  },
+  {
+   "subset": "A rule fired",
+   "events": 1023,
+   "atomic_tests": 580,
+   "techniques": 185,
+   "sigma": 0.32649071358748777,
+   "tfidf": 0.1798631476050831,
+   "diff": 0.1466275659824047,
+   "diff_ci95_technique_bootstrap": [
+    0.0551186101861593,
+    0.2413912861236928
+   ],
+   "x2_test": 26.53301886792453,
+   "p_test": 2.5907197013494453e-07,
+   "x2_tech": 5.667506297229219,
+   "p_tech": 0.01728200638946128,
+   "p_perm_tech": 0.0050497475126243686,
+   "p_test_holm": 2.5907197013494453e-07,
+   "p_tech_holm": 0.01728200638946128,
+   "p_perm_tech_holm": 0.0050497475126243686
+  }
+ ]
+}

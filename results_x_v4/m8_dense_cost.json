@@ -1,0 +1,31 @@
+{
+ "hardware": "same container as this run; 1 process; CPU only",
+ "n_queries": 300,
+ "methods": {
+  "dense-minilm-onnx": {
+   "index_build_s": 33.21232030300007,
+   "p50_ms": 8.024309999996149,
+   "p95_ms": 18.404808099899128,
+   "throughput_qps": 107.36553418109276
+  },
+  "dense-minilm-onnx-chunked": {
+   "index_build_s": 59.01287849899995,
+   "p50_ms": 6.415257499952531,
+   "p95_ms": 14.470240349987765,
+   "throughput_qps": 133.30748258356502
+  },
+  "bm25": {
+   "p50_ms": 0.14991049999935058,
+   "p95_ms": 0.4905410000105804,
+   "throughput_qps": 5209.923626254507
+  },
+  "tfidf": {
+   "p50_ms": 0.47571550010161445,
+   "p95_ms": 0.5529638998837072,
+   "throughput_qps": 2080.7511789140503
+  }
+ },
+ "max_rss_MB": 416.78515625,
+ "rss_before_model_MB": 175.89453125,
+ "model_file_MB": 90.387606
+}

@@ -1,0 +1,100 @@
+{
+ "model": {
+  "model": "sentence-transformers/all-MiniLM-L6-v2, ONNX export (Xenova)",
+  "model_onnx_sha256": "759c3cd2b7fe7e93933ad23c4c9181b7396442a2ed746ec7c1d46192c469c46e",
+  "tokenizer_sha256": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0",
+  "functional_check_cosine": 0.7553
+ },
+ "events_before_dedup": 5935,
+ "events_after_dedup": 4710,
+ "dedup_rule": "keep one copy of events with the same event_id and technique; Atomic's index.yaml lists each test once under every tactic of its technique",
+ "atomic_index_sha256": "86e8c1600920fc04c3e80ef51164b89604175fe609252e8bfe8a643af623616a",
+ "atomic_tests": 1320,
+ "techniques": 281,
+ "text_only": {
+  "tfidf": {
+   "P@1": 0.20955414012738854,
+   "P@1_ci95_test_cluster": [
+    0.1923521187924897,
+    0.22793122484634962
+   ],
+   "R@5": 0.332484076433121,
+   "MRR": 0.2784598466216189,
+   "nDCG@5": 0.2751851577634259,
+   "P@1_on_fired": 0.19135802469135801,
+   "median_query_ms": 0.421590999962973
+  },
+  "bm25": {
+   "P@1": 0.20276008492569003,
+   "P@1_ci95_test_cluster": [
+    0.18568362504997588,
+    0.21989524010799294
+   ],
+   "R@5": 0.31634819532908703,
+   "MRR": 0.2659583534104067,
+   "nDCG@5": 0.26222019627862153,
+   "P@1_on_fired": 0.1814814814814815,
+   "median_query_ms": 0.11446949997662159
+  },
+  "lsa": {
+   "P@1": 0.1970276008492569,
+   "P@1_ci95_test_cluster": [
+    0.18007568855298867,
+    0.2144824886699094
+   ],
+   "R@5": 0.29065817409766453,
+   "MRR": 0.2492554225537552,
+   "nDCG@5": 0.24522437695059873,
+   "P@1_on_fired": 0.15925925925925927,
+   "median_query_ms": 1.8564009999408881
+  },
+  "dense": {
+   "P@1": 0.12165605095541401,
+   "P@1_ci95_test_cluster": [
+    0.10620424270898238,
+    0.13896163942168982
+   ],
+   "R@5": 0.22738853503184714,
+   "MRR": 0.17968833782014274,
+   "nDCG@5": 0.17649064118659613,
+   "P@1_on_fired": 0.15432098765432098,
+   "median_query_ms": 6.228608499895927
+  },
+  "dense_windowed": {
+   "P@1": 0.12016985138004246,
+   "P@1_ci95_test_cluster": [
+    0.10502269922522633,
+    0.13667491676771512
+   ],
+   "R@5": 0.22632696390658175,
+   "MRR": 0.17773290468838213,
+   "nDCG@5": 0.1757927768575007,
+   "P@1_on_fired": 0.145679012345679,
+   "median_query_ms": 6.577813499916374
+  },
+  "hybrid_bm25_dense": {
+   "P@1": 0.13906581740976645,
+   "P@1_ci95_test_cluster": [
+    0.12338355065128792,
+    0.15804110931547213
+   ],
+   "R@5": 0.24331210191082803,
+   "MRR": 0.19639974143417877,
+   "nDCG@5": 0.19322415456134726,
+   "P@1_on_fired": 0.2,
+   "median_query_ms": 0.2428124998914427
+  }
+ },
+ "sigma": {
+  "fire_rate": 0.17197452229299362,
+  "precision_given_fired": 0.32222222222222224,
+  "precision_given_fired_ci95_test_cluster": [
+   0.2768254100344974,
+   0.3703366244419472
+  ],
+  "precision_parent_given_fired": 0.3790123456790123,
+  "events_uncovered": 1345,
+  "abstain_on_uncovered": 0.9345724907063196,
+  "top1_all_events": 0.055414012738853505
+ }
+}
