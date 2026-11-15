@@ -20,11 +20,11 @@ import json
 import re
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import yaml
 
-from .falco_cond import parse_condition, leaves, score as fscore, eval_leaf
+from .falco_cond import parse_condition, leaves, score as fscore, eval_leaf, expand_lists
 
 # ---------------------------------------------------------------------------------------------------------
 # Small generic lexicon (NOT scenario specific). Every entry is a public convention (IANA ports, well-known
@@ -326,20 +326,103 @@ def _render_log_tail(dk: DetectorKnowledge) -> None:
 
 
 # ------------------------------------------------------------------ Falco analyser -----------------------
-def load_falco_rules(path: Path) -> List[DetectorKnowledge]:
-    items = yaml.safe_load(path.read_text(encoding="utf-8")) or []
-    lists = {i["list"]: [str(x) for x in i["items"]] for i in items if isinstance(i, dict) and "list" in i}
+_TECH_TAG_RE = re.compile(r"^T\d{4}(?:\.\d{3})?$")
+STOCK_RULE_FILES = ("falco_rules.yaml", "falco-incubating_rules.yaml", "falco-sandbox_rules.yaml")
+
+
+def _clean_list_item(item: str) -> str:
+    if len(item) >= 2 and item[0] == item[-1] and item[0] in ('"', "'"):
+        return item[1:-1]
+    return item
+
+
+def _tag_technique(rule: dict) -> str:
+    for t in rule.get("tags") or []:
+        s = str(t)
+        if _TECH_TAG_RE.fullmatch(s):
+            return s
+    return ""
+
+
+def load_falco_rules(
+    path: Union[Path, Sequence[Path]],
+    registry: Optional[Dict[str, str]] = None,
+    unknown_leaves: Optional[List[Tuple[str, str]]] = None,
+) -> List[DetectorKnowledge]:
+    paths = [Path(path)] if isinstance(path, (str, Path)) else [Path(p) for p in path]
+    lists: Dict[str, List[str]] = {}
+    macros: Dict[str, str] = {}
+    rule_entries: List[Tuple[Path, dict]] = []
+    rule_idx: Dict[str, int] = {}
+
+    for p in paths:
+        items = yaml.safe_load(p.read_text(encoding="utf-8")) or []
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            if "list" in it:
+                name = str(it["list"])
+                cleaned = [_clean_list_item(str(x)) for x in (it.get("items") or [])]
+                if it.get("append") and name in lists:
+                    lists[name].extend(cleaned)
+                else:
+                    lists[name] = cleaned
+            elif "macro" in it:
+                name = str(it["macro"])
+                cond = " ".join(str(it["condition"]).split())
+                if it.get("append") and name in macros:
+                    macros[name] = f"({macros[name]}) {cond}"
+                else:
+                    macros[name] = cond
+            elif "rule" in it:
+                name = str(it["rule"])
+                if it.get("append") and name in rule_idx:
+                    idx = rule_idx[name]
+                    src_p, prev = rule_entries[idx]
+                    merged = dict(prev)
+                    merged["condition"] = f"({prev['condition']}) {it['condition']}"
+                    rule_entries[idx] = (src_p, merged)
+                else:
+                    rule_idx[name] = len(rule_entries)
+                    rule_entries.append((p, dict(it)))
+
+    lists = expand_lists(lists)
     out = []
-    for it in items:
-        if not (isinstance(it, dict) and "rule" in it):
-            continue
+    for src_path, it in rule_entries:
         cond = " ".join(str(it["condition"]).split())
-        ast_ = parse_condition(cond, lists)
-        dk = DetectorKnowledge(detector_id=str(path.name), kind="falco", technique="", rule_name=it["rule"], severity=str(it.get("priority", "")), cond_ast=ast_)
+        ast_ = parse_condition(
+            cond,
+            lists,
+            macros,
+            rule_name=it["rule"],
+            unknown_leaves=unknown_leaves,
+        )
+        technique = registry[it["rule"]] if (registry and it["rule"] in registry) else _tag_technique(it)
+        dk = DetectorKnowledge(
+            detector_id=str(src_path.name),
+            kind="falco",
+            technique=technique,
+            rule_name=it["rule"],
+            severity=str(it.get("priority", "")),
+            cond_ast=ast_,
+        )
         dk.cond_ast = ast_
         _render_falco(dk, it, ast_, lists)
         out.append(dk)
     return out
+
+
+def load_stock_falco_rules(
+    stock_dir: Path,
+    registry: Optional[Dict[str, str]] = None,
+    unknown_leaves: Optional[List[Tuple[str, str]]] = None,
+) -> List[DetectorKnowledge]:
+    stock_dir = Path(stock_dir)
+    return load_falco_rules(
+        [stock_dir / name for name in STOCK_RULE_FILES],
+        registry=registry,
+        unknown_leaves=unknown_leaves,
+    )
 
 
 def _render_falco(dk: DetectorKnowledge, rule: dict, ast_, lists) -> None:
@@ -348,6 +431,8 @@ def _render_falco(dk: DetectorKnowledge, rule: dict, ast_, lists) -> None:
     lex = []
     kinds = set()
     for (_, f, op, val, neg) in ls:
+        if op == "unknown":
+            continue
         v = ", ".join(map(str, val)) if isinstance(val, list) else str(val)
         if f == "evt.type":
             dk.event_types += [x.strip() for x in v.split(",")]
