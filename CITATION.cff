@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+title: "SentinelMesh-X"
+message: "If you use this software, please cite it."
+type: software
+authors:
+  - name: "SentinelMesh authors (Vellore Institute of Technology, Chennai)"

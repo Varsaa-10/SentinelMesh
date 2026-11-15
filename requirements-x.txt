@@ -1,0 +1,19 @@
+# Direct dependencies of SentinelMesh-X, exact versions. Full transitive set: requirements-lock.txt (generated in a clean venv, see REPRODUCE.md).
+# Tested with Python 3.12.
+cryptography==50.0.2
+fastapi==0.162.0
+httpx==0.28.1
+httpx2==2.16.0
+matplotlib==3.11.2
+networkx==3.7
+numpy==2.5.4
+onnxruntime==1.31.0
+pandas==3.0.6
+pydantic>=2.0
+pytest==9.2.0
+PyYAML==6.0.3
+scikit-learn==1.9.1
+scipy==1.18.1
+starlette==1.10.0
+uvicorn>=0.22.0
+websockets>=11.0

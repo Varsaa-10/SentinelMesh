@@ -1,0 +1,11 @@
+measure,value
+Sigma rules usable,995
+Atomic events,5935
+techniques with executable detector knowledge and independent events,182
+rule fire rate,0.17236731255265375
+precision top-1 when fired,0.32649071358748777
+CI95 (cluster by atomic test),"[0.28, 0.38]"
+abstained on unsupported-technique events,0.9158653846153846
+TF-IDF P@1 all events,0.21668070766638584
+BM25 P@1,0.2151642796967144
+LSA (non-pretrained dense) P@1,0.2064026958719461

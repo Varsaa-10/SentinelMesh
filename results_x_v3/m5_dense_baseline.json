@@ -1,0 +1,6 @@
+{
+ "status": "BLOCKED",
+ "reason": "no ONNX model at 'models/all-MiniLM-L6-v2'; huggingface.co unreachable from the build environment (HTTP 000)",
+ "what_to_do": "set SENTINELMESH_MINILM_ONNX and rerun",
+ "simulated_results": null
+}

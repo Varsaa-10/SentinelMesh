@@ -1,0 +1,1070 @@
+{
+ "provenance": {
+  "sigma": {
+   "url": "https://github.com/SigmaHQ/sigma (master, tarball via codeload.github.com)",
+   "sha256": "915a209f49f45a879eb4b373fead9913199df9d890c4a659de97e37293796966",
+   "retrieved": "2026-11-06",
+   "licence_note": "Detection Rule License 1.1 per Sigma repository documentation (not verified through the API in this environment); not redistributed in this package"
+  },
+  "atomic_red_team": {
+   "url": "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/Indexes/index.yaml",
+   "sha256": "86e8c1600920fc04c3e80ef51164b89604175fe609252e8bfe8a643af623616a",
+   "retrieved": "2026-11-06",
+   "licence_note": "MIT per repository documentation (not verified through the API here); not redistributed"
+  },
+  "commit_ids": "UNAVAILABLE: GitHub API not reachable from this environment; tarball/file sha256 recorded instead"
+ },
+ "scope_limits": [
+  "Atomic Red Team gives command definitions, not captured telemetry",
+  "Image field is inferred from the command (assumption)",
+  "only windows/process_creation Sigma rules and Windows command_prompt/powershell atomics",
+  "no benign data exists in either source; none was synthesised",
+  "rules using unsupported constructs are excluded (counted below)"
+ ],
+ "sigma_rules": {
+  "windows_process_creation_files": 1462,
+  "with_technique_tag": 1079,
+  "usable_after_parsing": 995,
+  "unsupported_or_unparseable": 84,
+  "distinct_techniques_tagged": 234
+ },
+ "atomic": {
+  "windows_tests": 1681,
+  "windows_techniques": 281,
+  "events": 5935,
+  "events_with_technique_in_corpus": 5935,
+  "distinct_techniques": 281,
+  "distinct_tests": 1320
+ },
+ "detector_aware_sigma": {
+  "events": 5935,
+  "events_where_a_rule_fired": 1023,
+  "fire_rate": 0.17236731255265375,
+  "events_whose_technique_has_any_sigma_rule": 4271,
+  "recall_on_covered_events_top1": 0.07820182627019433,
+  "precision_top1_given_fired": 0.32649071358748777,
+  "precision_top1_given_fired_ci95_test_cluster": [
+   0.28022743620702945,
+   0.37968211527035056
+  ],
+  "precision_parent_level_given_fired": 0.37145650048875856,
+  "truth_among_fired_techniques_given_fired": 0.4946236559139785,
+  "false_confident_rate_given_fired": 0.6735092864125123,
+  "unsupported_technique_events": 1664,
+  "abstained_on_unsupported": 0.9158653846153846,
+  "false_confident_on_unsupported": 0.08413461538461539
+ },
+ "per_technique_top1_given_fired": {
+  "T1001.002": {
+   "events": 15,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1003": {
+   "events": 20,
+   "fired": 6,
+   "precision": 0.6666666666666666
+  },
+  "T1003.001": {
+   "events": 30,
+   "fired": 13,
+   "precision": 0.6923076923076923
+  },
+  "T1003.002": {
+   "events": 18,
+   "fired": 9,
+   "precision": 0.7777777777777778
+  },
+  "T1003.003": {
+   "events": 24,
+   "fired": 15,
+   "precision": 0.06666666666666667
+  },
+  "T1003.004": {
+   "events": 2,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1003.005": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1003.006": {
+   "events": 2,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1007": {
+   "events": 16,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1012": {
+   "events": 58,
+   "fired": 19,
+   "precision": 0.0
+  },
+  "T1016": {
+   "events": 82,
+   "fired": 12,
+   "precision": 0.75
+  },
+  "T1016.002": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1018": {
+   "events": 30,
+   "fired": 13,
+   "precision": 0.46153846153846156
+  },
+  "T1020": {
+   "events": 10,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1021.001": {
+   "events": 11,
+   "fired": 3,
+   "precision": 0.6666666666666666
+  },
+  "T1021.002": {
+   "events": 4,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1021.003": {
+   "events": 4,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1027": {
+   "events": 20,
+   "fired": 3,
+   "precision": 0.3333333333333333
+  },
+  "T1027.007": {
+   "events": 3,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1027.009": {
+   "events": 62,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1027.013": {
+   "events": 16,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1027.018": {
+   "events": 9,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1030": {
+   "events": 8,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1033": {
+   "events": 29,
+   "fired": 8,
+   "precision": 0.875
+  },
+  "T1036.002": {
+   "events": 18,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1036.003": {
+   "events": 17,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1036.004": {
+   "events": 4,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1036.007": {
+   "events": 18,
+   "fired": 5,
+   "precision": 0.0
+  },
+  "T1037.001": {
+   "events": 4,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1039": {
+   "events": 2,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1040": {
+   "events": 22,
+   "fired": 8,
+   "precision": 1.0
+  },
+  "T1041": {
+   "events": 17,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1046": {
+   "events": 58,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1047": {
+   "events": 25,
+   "fired": 9,
+   "precision": 0.7777777777777778
+  },
+  "T1048": {
+   "events": 2,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1048.002": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1048.003": {
+   "events": 19,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1049": {
+   "events": 17,
+   "fired": 3,
+   "precision": 0.6666666666666666
+  },
+  "T1053.002": {
+   "events": 3,
+   "fired": 3,
+   "precision": 1.0
+  },
+  "T1053.005": {
+   "events": 180,
+   "fired": 27,
+   "precision": 0.7777777777777778
+  },
+  "T1055": {
+   "events": 44,
+   "fired": 14,
+   "precision": 0.0
+  },
+  "T1055.001": {
+   "events": 8,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1055.012": {
+   "events": 16,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1056.001": {
+   "events": 2,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1056.004": {
+   "events": 4,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1057": {
+   "events": 42,
+   "fired": 8,
+   "precision": 0.0
+  },
+  "T1059.001": {
+   "events": 42,
+   "fired": 17,
+   "precision": 0.29411764705882354
+  },
+  "T1059.003": {
+   "events": 6,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1059.005": {
+   "events": 7,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1059.007": {
+   "events": 5,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1068": {
+   "events": 4,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1069.001": {
+   "events": 8,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1069.002": {
+   "events": 25,
+   "fired": 12,
+   "precision": 0.0
+  },
+  "T1070": {
+   "events": 4,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1070.003": {
+   "events": 4,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1070.005": {
+   "events": 8,
+   "fired": 2,
+   "precision": 0.5
+  },
+  "T1071.001": {
+   "events": 8,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1071.004": {
+   "events": 7,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1074.001": {
+   "events": 2,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1078.001": {
+   "events": 28,
+   "fired": 28,
+   "precision": 0.0
+  },
+  "T1078.003": {
+   "events": 32,
+   "fired": 24,
+   "precision": 0.0
+  },
+  "T1082": {
+   "events": 61,
+   "fired": 19,
+   "precision": 0.21052631578947367
+  },
+  "T1087.001": {
+   "events": 16,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1087.002": {
+   "events": 32,
+   "fired": 12,
+   "precision": 0.4166666666666667
+  },
+  "T1095": {
+   "events": 31,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1098": {
+   "events": 426,
+   "fired": 46,
+   "precision": 0.0
+  },
+  "T1105": {
+   "events": 85,
+   "fired": 19,
+   "precision": 0.5263157894736842
+  },
+  "T1106": {
+   "events": 6,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1110.002": {
+   "events": 2,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1110.003": {
+   "events": 41,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1112": {
+   "events": 244,
+   "fired": 88,
+   "precision": 0.5454545454545454
+  },
+  "T1114.001": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1115": {
+   "events": 9,
+   "fired": 3,
+   "precision": 0.6666666666666666
+  },
+  "T1119": {
+   "events": 24,
+   "fired": 3,
+   "precision": 0.3333333333333333
+  },
+  "T1120": {
+   "events": 7,
+   "fired": 2,
+   "precision": 0.5
+  },
+  "T1123": {
+   "events": 5,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1124": {
+   "events": 6,
+   "fired": 3,
+   "precision": 1.0
+  },
+  "T1127": {
+   "events": 8,
+   "fired": 4,
+   "precision": 1.0
+  },
+  "T1127.003": {
+   "events": 140,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1132.001": {
+   "events": 9,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1134.001": {
+   "events": 26,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1134.002": {
+   "events": 12,
+   "fired": 6,
+   "precision": 0.0
+  },
+  "T1134.004": {
+   "events": 14,
+   "fired": 4,
+   "precision": 1.0
+  },
+  "T1134.005": {
+   "events": 2,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1135": {
+   "events": 14,
+   "fired": 5,
+   "precision": 0.0
+  },
+  "T1136.001": {
+   "events": 5,
+   "fired": 4,
+   "precision": 0.5
+  },
+  "T1136.002": {
+   "events": 16,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1137.005": {
+   "events": 100,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1140": {
+   "events": 11,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1176": {
+   "events": 9,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1187": {
+   "events": 5,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1197": {
+   "events": 27,
+   "fired": 12,
+   "precision": 0.25
+  },
+  "T1201": {
+   "events": 6,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1202": {
+   "events": 12,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1204.002": {
+   "events": 90,
+   "fired": 18,
+   "precision": 0.0
+  },
+  "T1204.003": {
+   "events": 6,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1207": {
+   "events": 13,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1216.001": {
+   "events": 1,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1216.002": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1217": {
+   "events": 11,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1218": {
+   "events": 42,
+   "fired": 9,
+   "precision": 0.5555555555555556
+  },
+  "T1218.001": {
+   "events": 8,
+   "fired": 3,
+   "precision": 1.0
+  },
+  "T1218.003": {
+   "events": 2,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1218.005": {
+   "events": 15,
+   "fired": 4,
+   "precision": 0.25
+  },
+  "T1218.008": {
+   "events": 3,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1218.009": {
+   "events": 7,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1218.010": {
+   "events": 5,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1218.011": {
+   "events": 18,
+   "fired": 14,
+   "precision": 0.7857142857142857
+  },
+  "T1219": {
+   "events": 20,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1220": {
+   "events": 4,
+   "fired": 4,
+   "precision": 0.5
+  },
+  "T1222.001": {
+   "events": 10,
+   "fired": 3,
+   "precision": 0.3333333333333333
+  },
+  "T1482": {
+   "events": 17,
+   "fired": 12,
+   "precision": 0.25
+  },
+  "T1484.001": {
+   "events": 24,
+   "fired": 12,
+   "precision": 1.0
+  },
+  "T1485": {
+   "events": 4,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1489": {
+   "events": 4,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1490": {
+   "events": 16,
+   "fired": 13,
+   "precision": 0.6153846153846154
+  },
+  "T1491.001": {
+   "events": 52,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1505.002": {
+   "events": 3,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1505.005": {
+   "events": 24,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1518": {
+   "events": 9,
+   "fired": 4,
+   "precision": 0.25
+  },
+  "T1518.001": {
+   "events": 41,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1529": {
+   "events": 6,
+   "fired": 3,
+   "precision": 1.0
+  },
+  "T1531": {
+   "events": 11,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1539": {
+   "events": 37,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1543.003": {
+   "events": 44,
+   "fired": 12,
+   "precision": 0.8333333333333334
+  },
+  "T1546": {
+   "events": 50,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1546.002": {
+   "events": 14,
+   "fired": 8,
+   "precision": 1.0
+  },
+  "T1546.007": {
+   "events": 4,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1546.008": {
+   "events": 106,
+   "fired": 4,
+   "precision": 0.5
+  },
+  "T1546.011": {
+   "events": 10,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1546.013": {
+   "events": 44,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1547": {
+   "events": 6,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1547.001": {
+   "events": 120,
+   "fired": 24,
+   "precision": 0.16666666666666666
+  },
+  "T1547.002": {
+   "events": 4,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1547.004": {
+   "events": 18,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1547.009": {
+   "events": 34,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1547.012": {
+   "events": 16,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1547.015": {
+   "events": 6,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1548.002": {
+   "events": 56,
+   "fired": 11,
+   "precision": 0.0
+  },
+  "T1550.002": {
+   "events": 4,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1550.003": {
+   "events": 8,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1552": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1552.001": {
+   "events": 21,
+   "fired": 6,
+   "precision": 0.0
+  },
+  "T1552.002": {
+   "events": 3,
+   "fired": 3,
+   "precision": 1.0
+  },
+  "T1552.004": {
+   "events": 42,
+   "fired": 6,
+   "precision": 0.16666666666666666
+  },
+  "T1552.006": {
+   "events": 3,
+   "fired": 3,
+   "precision": 0.3333333333333333
+  },
+  "T1553.004": {
+   "events": 4,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1555": {
+   "events": 21,
+   "fired": 6,
+   "precision": 0.0
+  },
+  "T1555.003": {
+   "events": 39,
+   "fired": 13,
+   "precision": 0.6923076923076923
+  },
+  "T1555.004": {
+   "events": 3,
+   "fired": 2,
+   "precision": 0.5
+  },
+  "T1556.001": {
+   "events": 3,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1556.002": {
+   "events": 36,
+   "fired": 6,
+   "precision": 0.0
+  },
+  "T1557.001": {
+   "events": 6,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1558.001": {
+   "events": 63,
+   "fired": 6,
+   "precision": 0.0
+  },
+  "T1558.002": {
+   "events": 33,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1558.003": {
+   "events": 15,
+   "fired": 9,
+   "precision": 0.3333333333333333
+  },
+  "T1558.004": {
+   "events": 5,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1559": {
+   "events": 36,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1560.001": {
+   "events": 45,
+   "fired": 3,
+   "precision": 1.0
+  },
+  "T1563.002": {
+   "events": 3,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1564": {
+   "events": 10,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1564.001": {
+   "events": 8,
+   "fired": 2,
+   "precision": 1.0
+  },
+  "T1564.002": {
+   "events": 2,
+   "fired": 2,
+   "precision": 0.5
+  },
+  "T1564.004": {
+   "events": 21,
+   "fired": 7,
+   "precision": 0.7142857142857143
+  },
+  "T1564.006": {
+   "events": 12,
+   "fired": 4,
+   "precision": 0.0
+  },
+  "T1564.012": {
+   "events": 2,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1566.001": {
+   "events": 7,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1566.002": {
+   "events": 16,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1567.003": {
+   "events": 10,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1567.004": {
+   "events": 6,
+   "fired": 2,
+   "precision": 0.0
+  },
+  "T1569.002": {
+   "events": 15,
+   "fired": 5,
+   "precision": 0.0
+  },
+  "T1572": {
+   "events": 9,
+   "fired": 3,
+   "precision": 0.3333333333333333
+  },
+  "T1574.001": {
+   "events": 58,
+   "fired": 4,
+   "precision": 0.5
+  },
+  "T1614.001": {
+   "events": 14,
+   "fired": 1,
+   "precision": 1.0
+  },
+  "T1615": {
+   "events": 7,
+   "fired": 4,
+   "precision": 0.25
+  },
+  "T1620": {
+   "events": 9,
+   "fired": 5,
+   "precision": 0.0
+  },
+  "T1649": {
+   "events": 7,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1654": {
+   "events": 2,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1680": {
+   "events": 3,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1685": {
+   "events": 280,
+   "fired": 61,
+   "precision": 0.22950819672131148
+  },
+  "T1685.001": {
+   "events": 23,
+   "fired": 5,
+   "precision": 1.0
+  },
+  "T1685.005": {
+   "events": 8,
+   "fired": 3,
+   "precision": 0.0
+  },
+  "T1686": {
+   "events": 16,
+   "fired": 5,
+   "precision": 0.0
+  },
+  "T1688": {
+   "events": 1,
+   "fired": 1,
+   "precision": 0.0
+  },
+  "T1689": {
+   "events": 2,
+   "fired": 1,
+   "precision": 0.0
+  }
+ },
+ "text_only_baselines": {
+  "tfidf": {
+   "P@1": 0.21668070766638584,
+   "P@1_ci95_test_cluster": [
+    0.19852524103309951,
+    0.23590194107279647
+   ],
+   "R@5": 0.3393428812131424,
+   "MRR": 0.2862079848140379,
+   "P@1_on_sigma_covered_events": 0.1800515101849684,
+   "n_events": 5935
+  },
+  "bm25": {
+   "P@1": 0.2151642796967144,
+   "P@1_ci95_test_cluster": [
+    0.19641282081310085,
+    0.23508349495344832
+   ],
+   "R@5": 0.3251895534962089,
+   "MRR": 0.2770396375108558,
+   "P@1_on_sigma_covered_events": 0.18520252868180753,
+   "n_events": 5935
+  },
+  "lsa_dense_nonpretrained": {
+   "P@1": 0.2064026958719461,
+   "P@1_ci95_test_cluster": [
+    0.18851399990742085,
+    0.22472760023032873
+   ],
+   "R@5": 0.29941027801179443,
+   "MRR": 0.259882907935144,
+   "P@1_on_sigma_covered_events": 0.17794427534535237,
+   "n_events": 5935
+  }
+ },
+ "coverage": {
+  "lab_8_techniques": {
+   "techniques": 8,
+   "tactics": 5
+  },
+  "sigma_tagged_techniques_in_corpus": {
+   "techniques": 234,
+   "tactics": 15,
+   "by_tactic": {
+    "Collection": 12,
+    "Stealth": 61,
+    "Credential Access": 27,
+    "Defense Evasion": 12,
+    "Execution": 19,
+    "Persistence": 17,
+    "Lateral Movement": 11,
+    "Impact": 7,
+    "Exfiltration": 5,
+    "Command and Control": 14,
+    "Privilege Escalation": 11,
+    "Discovery": 27,
+    "Reconnaissance": 3,
+    "Initial Access": 4,
+    "Resource Development": 4
+   }
+  },
+  "atomic_windows_techniques": {
+   "techniques": 281,
+   "tactics": 14,
+   "by_tactic": {
+    "Stealth": 76,
+    "Exfiltration": 9,
+    "Persistence": 32,
+    "Discovery": 31,
+    "Lateral Movement": 10,
+    "Impact": 8,
+    "Execution": 18,
+    "Credential Access": 29,
+    "Defense Evasion": 20,
+    "Privilege Escalation": 14,
+    "Collection": 15,
+    "Command and Control": 13,
+    "Initial Access": 4,
+    "Reconnaissance": 2
+   }
+  },
+  "executable_detector_knowledge_AND_independent_test_events": {
+   "techniques": 182,
+   "tactics": 13
+  }
+ }
+}

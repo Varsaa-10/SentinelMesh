@@ -1,0 +1,62 @@
+{
+ "note": "regimes: known = knowledge for the alert's technique present; unseen = that technique's knowledge withheld (truth is one of the 8 lab techniques); unsupported = see m4_external_eval.json (92% abstained by Sigma-based detector-aware path)",
+ "calibrator_and_tau_fit_on": "development captures only (all 8 withhold-one-technique configurations)",
+ "tau": 0.33,
+ "n_dev_observations": 960,
+ "known": {
+  "n_observations": 1960,
+  "n_original_alerts": 140,
+  "top1": 1.0,
+  "R@5": 1.0,
+  "parent_in_top5": 0.0,
+  "same_tactic_top1": 1.0,
+  "tfidf_top1": 0.7295918367346939,
+  "bm25_top1": 0.8571428571428571,
+  "no_abstention_false_confident_rate": 0.0,
+  "no_abstention_false_confident_ci95": [
+   0.0,
+   0.0
+  ],
+  "abstain_rate": 0.0,
+  "abstain_rate_ci95": [
+   0.0,
+   0.0
+  ],
+  "false_confident_after_abstention": 0.0,
+  "false_confident_after_abstention_ci95": [
+   0.0,
+   0.0
+  ],
+  "selective_accuracy_on_answered": 1.0,
+  "coverage": 1.0
+ },
+ "unseen": {
+  "n_observations": 280,
+  "n_original_alerts": 140,
+  "top1": 0.2142857142857143,
+  "R@5": 0.39285714285714285,
+  "parent_in_top5": 0.0,
+  "same_tactic_top1": 0.2857142857142857,
+  "tfidf_top1": 0.25,
+  "bm25_top1": 0.21428571428571427,
+  "no_abstention_false_confident_rate": 0.7857142857142857,
+  "no_abstention_false_confident_ci95": [
+   0.7214285714285714,
+   0.8392857142857143
+  ],
+  "abstain_rate": 0.42857142857142855,
+  "abstain_rate_ci95": [
+   0.3535714285714286,
+   0.5036607142857142
+  ],
+  "false_confident_after_abstention": 0.35714285714285715,
+  "false_confident_after_abstention_ci95": [
+   0.2785714285714286,
+   0.44285714285714284
+  ],
+  "selective_accuracy_on_answered": 0.375,
+  "coverage": 0.5714285714285714
+ },
+ "historical_baseline": "results_x/generalisation_ablation.json leave_one_technique_out (DAHR ~12% top-1), preserved unchanged",
+ "unknown_class_detection_unseen": 0.42857142857142855
+}

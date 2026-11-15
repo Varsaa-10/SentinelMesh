@@ -179,3 +179,5 @@ Gowri Ajith built the Docker lab and its planted weaknesses, curated the knowled
 ## License
 
 No license has been chosen yet.
+## SentinelMesh-X extension
+See `IMPROVEMENT_STATUS.md` (what is done vs pending), `PENDING.md`, `docs/SENTINELMESH_X_METHODS.md`, `sentinelmesh_x/`, `results_x/`, `figures_x/` and `run_all_x.sh`.

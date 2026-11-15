@@ -259,12 +259,12 @@ def init_alerts_from_benchmark():
 
 # --- Pydantic Data Models ---
 class AlertModel(BaseModel):
-    source: str = Field(..., example="log-tail")
-    scenario: str = Field(..., example="S1")
-    severity: str = Field(..., example="CRITICAL")
-    title: str = Field(..., example="SQL Injection Authentication Bypass")
+    source: str = Field(..., json_schema_extra={"example": "log-tail"})
+    scenario: str = Field(..., json_schema_extra={"example": "S1"})
+    severity: str = Field(..., json_schema_extra={"example": "CRITICAL"})
+    title: str = Field(..., json_schema_extra={"example": "SQL Injection Authentication Bypass"})
     timestamp: Optional[str] = Field(default_factory=lambda: time.strftime("%Y-%m-%dT%H:%M:%SZ"))
-    service: str = Field(..., example="webapp")
+    service: str = Field(..., json_schema_extra={"example": "webapp"})
     event: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -277,7 +277,7 @@ class DecisionModel(BaseModel):
 
 
 class TriggerModel(BaseModel):
-    scenario_id: str = Field(..., example="S1")
+    scenario_id: str = Field(..., json_schema_extra={"example": "S1"})
 
 
 # --- WebSocket Manager ---
@@ -341,7 +341,7 @@ def get_alerts():
 
 @app.post("/api/alerts")
 async def create_alert(alert: AlertModel):
-    data = alert.dict()
+    data = alert.model_dump()
     if "alert_id" not in data:
         data["alert_id"] = f"ALT-{len(ALERTS_STORE) + 1:04d}"
 
@@ -541,7 +541,7 @@ def get_decisions():
 
 @app.post("/api/decisions")
 async def record_decision(decision: DecisionModel):
-    data = decision.dict()
+    data = decision.model_dump()
     data["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
     DECISIONS_STORE.append(data)
 

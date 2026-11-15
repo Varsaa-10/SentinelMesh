@@ -1,0 +1,61 @@
+{
+ "schema": "smx-run-manifest/1",
+ "python": "3.12.3",
+ "platform": "Linux-6.18.44-fc-v260-x86_64-with-glibc2.39",
+ "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+ "cores": 1,
+ "packages": {
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "scikit-learn": "1.9.1",
+  "pandas": "3.0.6",
+  "matplotlib": "3.11.2",
+  "cryptography": "50.0.2",
+  "PyYAML": "6.0.3",
+  "fastapi": "0.162.0",
+  "starlette": "1.10.0",
+  "pytest": "9.2.0",
+  "onnxruntime": "1.31.0"
+ },
+ "seeds": {
+  "SEED": 20261105,
+  "calibration_bootstrap": 20261106,
+  "annotation_packet": 20261105
+ },
+ "inputs": {
+  "ground_truth_sha256": "412d948170b266d3a6c140092961d0a938f32a99172124b4ca5242e62eed740b",
+  "held_out_ground_truth_sha256": "542562c83330d50fce73f8f82437efbc32bb323a827f57d6bededf10094e63d4",
+  "all_alerts_jsonl_combined_sha256": "f192483457ce58eda8b2435ce69d5e0a33c63247321c44c89905978d81a3fca1"
+ },
+ "m1_frozen_files_checked": 16,
+ "m1_frozen_files_changed": [],
+ "results_v3_sha256": {
+  "RUN_MANIFEST.json": "c262fb23d622fbe85ccd30d81ca353e80be92b8aa595496d403a3510a8c4be29",
+  "m2_safety_eval.json": "32fea8ec4d31a3cb9fbaa9dc670a3740979536ff9335df593828ea96ca2d592b",
+  "m3_integrity_eval.json": "18e60c5c9613ca013ead19f4a764243096c98e55ad33a581fcd8261e780af5d5",
+  "m4_external_eval.json": "faead53a9f602885e32c995cedabeb0428b1e3e5ad88963a1e3c98885710bfd0",
+  "m4_external_events.json": "42a517db8fcb028664a882cdfd7568165fa4a81ee3e8406a9b924741e2b7f5fd",
+  "m5_ablation_stats.json": "2cff4d7c396b4696b1174d8f62d2d23a0d47fda8ff61b7840f5f65225e71b880",
+  "m5_dense_baseline.json": "fb14edc88aba4a81bd140341c4df0b77c2e8787264b7b4f5589eb0458d256de0",
+  "m5_external_stats.json": "f83a1ab8992ef0af31e4ff1bd6491e7e44b3c2845371977835ca0c8cc10f0f2a",
+  "m5_zero_shot.json": "b3cdc3049b7108aa23fade3b688f5e6cb19903da92794155c6d7f9034131a5f8",
+  "m6_adaptive_attacks.json": "1faf15f7ad9ec595fde649366092f42e5367f3934b2dc2ec6a39958ee5eb041e",
+  "m6_efficiency.json": "7d6581baced667acd57df53d41e3471fbd470e2af6eb75a7eeba564a33480e44"
+ },
+ "external_data": {
+  "sigma": {
+   "url": "https://github.com/SigmaHQ/sigma (master, tarball via codeload.github.com)",
+   "sha256": "915a209f49f45a879eb4b373fead9913199df9d890c4a659de97e37293796966",
+   "retrieved": "2026-11-06",
+   "licence_note": "Detection Rule License 1.1 per Sigma repository documentation (not verified through the API in this environment); not redistributed in this package"
+  },
+  "atomic_red_team": {
+   "url": "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/Indexes/index.yaml",
+   "sha256": "86e8c1600920fc04c3e80ef51164b89604175fe609252e8bfe8a643af623616a",
+   "retrieved": "2026-11-06",
+   "licence_note": "MIT per repository documentation (not verified through the API here); not redistributed"
+  },
+  "commit_ids": "UNAVAILABLE: GitHub API not reachable from this environment; tarball/file sha256 recorded instead"
+ },
+ "git_commit": "NOT AVAILABLE (project was delivered as a zip without .git)"
+}

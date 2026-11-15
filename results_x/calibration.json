@@ -1,0 +1,324 @@
+{
+ "n_dev": 2160,
+ "n_test": 5040,
+ "test_accuracy_pooled": 0.6799603174603175,
+ "features": [
+  "z_top",
+  "z_margin",
+  "field_top",
+  "sem_top",
+  "w_field",
+  "oov",
+  "field_cov",
+  "sem_margin",
+  "src_agree"
+ ],
+ "coef": {
+  "z_top": 1.457,
+  "z_margin": 5.666,
+  "field_top": 1.876,
+  "sem_top": 7.579,
+  "w_field": 0.001,
+  "oov": 2.88,
+  "field_cov": 2.502,
+  "sem_margin": 5.054,
+  "src_agree": 0.001
+ },
+ "manual_weights (original)": {
+  "brier": 0.235090436640873,
+  "ECE10": 0.22364867063492064,
+  "ECE_adaptive": 0.27068236111111116,
+  "reliability": [
+   {
+    "bin": 3,
+    "conf": 0.36266553067185975,
+    "acc": 0.5063291139240507,
+    "n": 2054
+   },
+   {
+    "bin": 4,
+    "conf": 0.4440906132665832,
+    "acc": 0.6314142678347935,
+    "n": 1598
+   },
+   {
+    "bin": 5,
+    "conf": 0.5345190542420029,
+    "acc": 0.9860917941585535,
+    "n": 719
+   },
+   {
+    "bin": 6,
+    "conf": 0.6545261306532663,
+    "acc": 1.0,
+    "n": 398
+   },
+   {
+    "bin": 7,
+    "conf": 0.7374691729323308,
+    "acc": 1.0,
+    "n": 266
+   },
+   {
+    "bin": 8,
+    "conf": 0.8503000000000001,
+    "acc": 1.0,
+    "n": 5
+   }
+  ]
+ },
+ "raw_fused_score": {
+  "brier": 0.24446980292853693,
+  "ECE10": 0.2302171093380293,
+  "ECE_adaptive": 0.2858044287354079,
+  "reliability": [
+   {
+    "bin": 3,
+    "conf": 0.34892902647964286,
+    "acc": 0.5809599156118144,
+    "n": 3792
+   },
+   {
+    "bin": 4,
+    "conf": 0.47433749939016834,
+    "acc": 0.8648648648648649,
+    "n": 74
+   },
+   {
+    "bin": 5,
+    "conf": 0.5417294193373907,
+    "acc": 0.9586206896551724,
+    "n": 145
+   },
+   {
+    "bin": 6,
+    "conf": 0.6618838967339902,
+    "acc": 0.9864253393665159,
+    "n": 442
+   },
+   {
+    "bin": 7,
+    "conf": 0.7655523506768772,
+    "acc": 0.984,
+    "n": 125
+   },
+   {
+    "bin": 8,
+    "conf": 0.8348594780619967,
+    "acc": 1.0,
+    "n": 99
+   },
+   {
+    "bin": 9,
+    "conf": 0.9890284993045769,
+    "acc": 1.0,
+    "n": 363
+   }
+  ]
+ },
+ "learned_LR": {
+  "brier": 0.0913480300709072,
+  "ECE10": 0.04482828454819767,
+  "ECE_adaptive": 0.04732709871816564,
+  "reliability": [
+   {
+    "bin": 0,
+    "conf": 0.07802342934870811,
+    "acc": 0.05,
+    "n": 60
+   },
+   {
+    "bin": 1,
+    "conf": 0.15537046450947492,
+    "acc": 0.09363957597173145,
+    "n": 566
+   },
+   {
+    "bin": 2,
+    "conf": 0.2364598098316036,
+    "acc": 0.15051903114186851,
+    "n": 578
+   },
+   {
+    "bin": 3,
+    "conf": 0.34354407766107614,
+    "acc": 0.4290657439446367,
+    "n": 289
+   },
+   {
+    "bin": 4,
+    "conf": 0.43602410972347705,
+    "acc": 0.4435483870967742,
+    "n": 124
+   },
+   {
+    "bin": 5,
+    "conf": 0.5483730979155522,
+    "acc": 0.5467128027681661,
+    "n": 289
+   },
+   {
+    "bin": 6,
+    "conf": 0.6549548508735199,
+    "acc": 0.7389162561576355,
+    "n": 203
+   },
+   {
+    "bin": 7,
+    "conf": 0.7631415215318972,
+    "acc": 0.8422619047619048,
+    "n": 336
+   },
+   {
+    "bin": 8,
+    "conf": 0.8574619164507531,
+    "acc": 0.8181818181818182,
+    "n": 396
+   },
+   {
+    "bin": 9,
+    "conf": 0.9712016529483058,
+    "acc": 0.9959072305593452,
+    "n": 2199
+   }
+  ]
+ },
+ "by_condition": {
+  "mitre": {
+   "acc": 0.21845238095238095,
+   "brier_manual": 0.18666602957142855,
+   "brier_learned": 0.13887000412728917
+  },
+  "expert": {
+   "acc": 0.9154761904761904,
+   "brier_manual": 0.3251762646011905,
+   "brier_learned": 0.07527641904629725
+  },
+  "auto": {
+   "acc": 0.905952380952381,
+   "brier_manual": 0.19342901575,
+   "brier_learned": 0.05989766703913519
+  }
+ },
+ "dev_loco": [
+  {
+   "held": "20260818T052007Z",
+   "brier": 0.0971540443733671,
+   "brier_manual": 0.23063336211805552
+  },
+  {
+   "held": "20260818T052217Z_chaintagged",
+   "brier": 0.08099995442174877,
+   "brier_manual": 0.22945987668981485
+  },
+  {
+   "held": "20261012T030225Z_chaintagged",
+   "brier": 0.09485667141156924,
+   "brier_manual": 0.22824351650462962
+  },
+  {
+   "held": "20261012T031032Z_chaintagged",
+   "brier": 0.07883309917853851,
+   "brier_manual": 0.23121938581349205
+  },
+  {
+   "held": "20261012T140201Z",
+   "brier": 0.09052474555353283,
+   "brier_manual": 0.23624906319444447
+  }
+ ],
+ "risk_routing_test": {
+  "manual": {
+   "decision_accuracy": 0.048214285714285716,
+   "under_escalation_rate": 0.9517857142857142,
+   "over_escalation_rate": 0.0,
+   "auto_on_wrong_prediction": 0.9268443893366398,
+   "spearman_risk_vs_oracle": 0.7472751599715718
+  },
+  "learned": {
+   "decision_accuracy": 0.5464285714285714,
+   "under_escalation_rate": 0.45357142857142857,
+   "over_escalation_rate": 0.0,
+   "auto_on_wrong_prediction": 0.8592684438933664,
+   "spearman_risk_vs_oracle": 0.5256183541602288
+  }
+ },
+ "derived_vs_hand": [
+  {
+   "scenario": "S1",
+   "sev_hand": 5,
+   "sev_derived": 4,
+   "crit_hand": 4,
+   "crit_derived": 3
+  },
+  {
+   "scenario": "S2",
+   "sev_hand": 3,
+   "sev_derived": 4,
+   "crit_hand": 4,
+   "crit_derived": 3
+  },
+  {
+   "scenario": "S3",
+   "sev_hand": 4,
+   "sev_derived": 4,
+   "crit_hand": 5,
+   "crit_derived": 4
+  },
+  {
+   "scenario": "S4",
+   "sev_hand": 5,
+   "sev_derived": 4,
+   "crit_hand": 5,
+   "crit_derived": 4
+  },
+  {
+   "scenario": "S5",
+   "sev_hand": 4,
+   "sev_derived": 4,
+   "crit_hand": 5,
+   "crit_derived": 5
+  },
+  {
+   "scenario": "S6",
+   "sev_hand": 4,
+   "sev_derived": 3,
+   "crit_hand": 3,
+   "crit_derived": 1
+  },
+  {
+   "scenario": "S7",
+   "sev_hand": 4,
+   "sev_derived": 4,
+   "crit_hand": 3,
+   "crit_derived": 4
+  },
+  {
+   "scenario": "S8",
+   "sev_hand": 5,
+   "sev_derived": 5,
+   "crit_hand": 4,
+   "crit_derived": 3
+  },
+  {
+   "scenario": "S9",
+   "sev_hand": 5,
+   "sev_derived": 4,
+   "crit_hand": 5,
+   "crit_derived": 3
+  }
+ ],
+ "derived_corr": {
+  "severity_spearman": 0.4,
+  "criticality_spearman": 0.5260722588802249,
+  "criticality_by_service": {
+   "webapp": 3,
+   "authservice": 4,
+   "database": 5,
+   "logcollector": 1,
+   "dashboard": 4,
+   "proxy": 2,
+   "ngrok": 2
+  }
+ }
+}

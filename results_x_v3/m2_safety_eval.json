@@ -1,0 +1,484 @@
+{
+ "note": "Dev-only: trust tiers, calibrator, tau. Test: 140 original alerts x attacks x 2 KB conditions x 2 query forms. Oracle route = impact tier of the TRUE technique at confidence 1.0.",
+ "chosen_trusted_tiers": [
+  "trusted",
+  "partial"
+ ],
+ "dev_tier_accuracy_under_attack": {
+  "0": 0.635,
+  "1": 0.6958333333333333
+ },
+ "tau": 0.5,
+ "n_dev_eligible_for_tau": 455,
+ "oracle_route_distribution": {
+  "auto": 0,
+  "analyst": 1320,
+  "admin": 4840
+ },
+ "overall": {
+  "n_observations": 6160,
+  "n_original_alerts": 140,
+  "acc_legacy_view": 0.5459415584415584,
+  "acc_sanitised_view": 0.5417207792207792,
+  "acc_trusted_view": 0.4446428571428571,
+  "P0_legacy_manual": {
+   "under_escalation": 0.9275974025974026,
+   "over_escalation": 0.0,
+   "auto_rate": 0.6506493506493507,
+   "auto_on_wrong_prediction": 0.4383116883116883,
+   "n_auto_on_wrong": 2700,
+   "route_matches_oracle": 0.0724025974025974
+  },
+  "P1_learned_conf_legacy_formula": {
+   "under_escalation": 0.6493506493506493,
+   "over_escalation": 0.0,
+   "auto_rate": 0.5607142857142857,
+   "auto_on_wrong_prediction": 0.4394480519480519,
+   "n_auto_on_wrong": 2707,
+   "route_matches_oracle": 0.35064935064935066
+  },
+  "P2_safety_gate": {
+   "under_escalation": 0.045454545454545456,
+   "over_escalation": 0.030194805194805194,
+   "auto_rate": 0.0,
+   "auto_on_wrong_prediction": 0.0,
+   "n_auto_on_wrong": 0,
+   "route_matches_oracle": 0.9243506493506494,
+   "abstain_rate": 0.4060064935064935,
+   "automatic_action_permitted_rate": 0.0
+  }
+ },
+ "by_attack": {
+  "clean": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.625,
+   "acc_sanitised_view": 0.625,
+   "acc_trusted_view": 0.5,
+   "P0_legacy_manual": {
+    "under_escalation": 0.8571428571428571,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5357142857142857,
+    "auto_on_wrong_prediction": 0.375,
+    "n_auto_on_wrong": 210,
+    "route_matches_oracle": 0.14285714285714285
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.4642857142857143,
+    "over_escalation": 0.0,
+    "auto_rate": 0.42857142857142855,
+    "auto_on_wrong_prediction": 0.375,
+    "n_auto_on_wrong": 210,
+    "route_matches_oracle": 0.5357142857142857
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.03571428571428571,
+    "over_escalation": 0.017857142857142856,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9464285714285714,
+    "abstain_rate": 0.375,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "missing_30": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.6035714285714285,
+   "acc_sanitised_view": 0.6035714285714285,
+   "acc_trusted_view": 0.4714285714285714,
+   "P0_legacy_manual": {
+    "under_escalation": 0.8875,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6125,
+    "auto_on_wrong_prediction": 0.39285714285714285,
+    "n_auto_on_wrong": 220,
+    "route_matches_oracle": 0.1125
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.5535714285714286,
+    "over_escalation": 0.0,
+    "auto_rate": 0.4732142857142857,
+    "auto_on_wrong_prediction": 0.3875,
+    "n_auto_on_wrong": 217,
+    "route_matches_oracle": 0.44642857142857145
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.03571428571428571,
+    "over_escalation": 0.017857142857142856,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9464285714285714,
+    "abstain_rate": 0.38571428571428573,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "missing_80": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.4160714285714286,
+   "acc_sanitised_view": 0.4160714285714286,
+   "acc_trusted_view": 0.32142857142857145,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9678571428571429,
+    "over_escalation": 0.0,
+    "auto_rate": 0.7821428571428571,
+    "auto_on_wrong_prediction": 0.575,
+    "n_auto_on_wrong": 322,
+    "route_matches_oracle": 0.03214285714285714
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.8125,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6982142857142857,
+    "auto_on_wrong_prediction": 0.5714285714285714,
+    "n_auto_on_wrong": 320,
+    "route_matches_oracle": 0.1875
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.08214285714285714,
+    "over_escalation": 0.025,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.8928571428571429,
+    "abstain_rate": 0.5571428571428572,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "corrupt_noise15": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.48035714285714287,
+   "acc_sanitised_view": 0.48035714285714287,
+   "acc_trusted_view": 0.38392857142857145,
+   "P0_legacy_manual": {
+    "under_escalation": 1.0,
+    "over_escalation": 0.0,
+    "auto_rate": 0.7642857142857142,
+    "auto_on_wrong_prediction": 0.5196428571428572,
+    "n_auto_on_wrong": 291,
+    "route_matches_oracle": 0.0
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.9035714285714286,
+    "over_escalation": 0.0,
+    "auto_rate": 0.7553571428571428,
+    "auto_on_wrong_prediction": 0.5196428571428572,
+    "n_auto_on_wrong": 291,
+    "route_matches_oracle": 0.09642857142857143
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.048214285714285716,
+    "over_escalation": 0.019642857142857142,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9321428571428572,
+    "abstain_rate": 0.5,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "rename_50": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.6089285714285714,
+   "acc_sanitised_view": 0.6089285714285714,
+   "acc_trusted_view": 0.41964285714285715,
+   "P0_legacy_manual": {
+    "under_escalation": 0.8875,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6053571428571428,
+    "auto_on_wrong_prediction": 0.39107142857142857,
+    "n_auto_on_wrong": 219,
+    "route_matches_oracle": 0.1125
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.5107142857142857,
+    "over_escalation": 0.0,
+    "auto_rate": 0.4589285714285714,
+    "auto_on_wrong_prediction": 0.3892857142857143,
+    "n_auto_on_wrong": 218,
+    "route_matches_oracle": 0.48928571428571427
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.03571428571428571,
+    "over_escalation": 0.017857142857142856,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9464285714285714,
+    "abstain_rate": 0.3767857142857143,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "substitute_shuffle": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.575,
+   "acc_sanitised_view": 0.575,
+   "acc_trusted_view": 0.42857142857142855,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9946428571428572,
+    "over_escalation": 0.0,
+    "auto_rate": 0.7571428571428571,
+    "auto_on_wrong_prediction": 0.425,
+    "n_auto_on_wrong": 238,
+    "route_matches_oracle": 0.005357142857142857
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.8053571428571429,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6821428571428572,
+    "auto_on_wrong_prediction": 0.4142857142857143,
+    "n_auto_on_wrong": 232,
+    "route_matches_oracle": 0.19464285714285715
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.05178571428571429,
+    "over_escalation": 0.017857142857142856,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9303571428571429,
+    "abstain_rate": 0.4142857142857143,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "inject_decoy": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.5410714285714285,
+   "acc_sanitised_view": 0.5410714285714285,
+   "acc_trusted_view": 0.475,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9196428571428571,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6035714285714285,
+    "auto_on_wrong_prediction": 0.42678571428571427,
+    "n_auto_on_wrong": 239,
+    "route_matches_oracle": 0.08035714285714286
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.6089285714285714,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5107142857142857,
+    "auto_on_wrong_prediction": 0.4303571428571429,
+    "n_auto_on_wrong": 241,
+    "route_matches_oracle": 0.39107142857142857
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.039285714285714285,
+    "over_escalation": 0.044642857142857144,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9160714285714285,
+    "abstain_rate": 0.37142857142857144,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "repeat_vocab_x20": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.5178571428571429,
+   "acc_sanitised_view": 0.5178571428571429,
+   "acc_trusted_view": 0.46785714285714286,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9285714285714286,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6428571428571429,
+    "auto_on_wrong_prediction": 0.44285714285714284,
+    "n_auto_on_wrong": 248,
+    "route_matches_oracle": 0.07142857142857142
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.6267857142857143,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5589285714285714,
+    "auto_on_wrong_prediction": 0.45535714285714285,
+    "n_auto_on_wrong": 255,
+    "route_matches_oracle": 0.3732142857142857
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.04642857142857143,
+    "over_escalation": 0.039285714285714285,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9142857142857143,
+    "abstain_rate": 0.3875,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "oversized_8KB": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.5017857142857143,
+   "acc_sanitised_view": 0.5017857142857143,
+   "acc_trusted_view": 0.4642857142857143,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9285714285714286,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6607142857142857,
+    "auto_on_wrong_prediction": 0.4625,
+    "n_auto_on_wrong": 259,
+    "route_matches_oracle": 0.07142857142857142
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.6285714285714286,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5660714285714286,
+    "auto_on_wrong_prediction": 0.4642857142857143,
+    "n_auto_on_wrong": 260,
+    "route_matches_oracle": 0.37142857142857144
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.05178571428571429,
+    "over_escalation": 0.03571428571428571,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9125,
+    "abstain_rate": 0.39464285714285713,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "unicode_obfuscated": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.625,
+   "acc_sanitised_view": 0.5785714285714286,
+   "acc_trusted_view": 0.5,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9107142857142857,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5892857142857143,
+    "auto_on_wrong_prediction": 0.375,
+    "n_auto_on_wrong": 210,
+    "route_matches_oracle": 0.08928571428571429
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.6071428571428571,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5,
+    "auto_on_wrong_prediction": 0.375,
+    "n_auto_on_wrong": 210,
+    "route_matches_oracle": 0.39285714285714285
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.030357142857142857,
+    "over_escalation": 0.04285714285714286,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9267857142857143,
+    "abstain_rate": 0.3375,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "conflict_struct_vs_text": {
+   "n_observations": 560,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.5107142857142857,
+   "acc_sanitised_view": 0.5107142857142857,
+   "acc_trusted_view": 0.4589285714285714,
+   "P0_legacy_manual": {
+    "under_escalation": 0.9214285714285714,
+    "over_escalation": 0.0,
+    "auto_rate": 0.6035714285714285,
+    "auto_on_wrong_prediction": 0.4357142857142857,
+    "n_auto_on_wrong": 244,
+    "route_matches_oracle": 0.07857142857142857
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.6214285714285714,
+    "over_escalation": 0.0,
+    "auto_rate": 0.5357142857142857,
+    "auto_on_wrong_prediction": 0.4517857142857143,
+    "n_auto_on_wrong": 253,
+    "route_matches_oracle": 0.37857142857142856
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.04285714285714286,
+    "over_escalation": 0.05357142857142857,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9035714285714286,
+    "abstain_rate": 0.36607142857142855,
+    "automatic_action_permitted_rate": 0.0
+   }
+  }
+ },
+ "by_kb": {
+  "auto": {
+   "n_observations": 3080,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.8730519480519481,
+   "acc_sanitised_view": 0.865909090909091,
+   "acc_trusted_view": 0.7253246753246754,
+   "P0_legacy_manual": {
+    "under_escalation": 0.8551948051948052,
+    "over_escalation": 0.0,
+    "auto_rate": 0.42694805194805197,
+    "auto_on_wrong_prediction": 0.10746753246753246,
+    "n_auto_on_wrong": 331,
+    "route_matches_oracle": 0.1448051948051948
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.32922077922077925,
+    "over_escalation": 0.0,
+    "auto_rate": 0.2292207792207792,
+    "auto_on_wrong_prediction": 0.1012987012987013,
+    "n_auto_on_wrong": 312,
+    "route_matches_oracle": 0.6707792207792208
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.007467532467532467,
+    "over_escalation": 0.044805194805194806,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.9477272727272728,
+    "abstain_rate": 0.07694805194805195,
+    "automatic_action_permitted_rate": 0.0
+   }
+  },
+  "mitre": {
+   "n_observations": 3080,
+   "n_original_alerts": 140,
+   "acc_legacy_view": 0.21883116883116882,
+   "acc_sanitised_view": 0.21753246753246752,
+   "acc_trusted_view": 0.16396103896103897,
+   "P0_legacy_manual": {
+    "under_escalation": 1.0,
+    "over_escalation": 0.0,
+    "auto_rate": 0.8743506493506493,
+    "auto_on_wrong_prediction": 0.7691558441558441,
+    "n_auto_on_wrong": 2369,
+    "route_matches_oracle": 0.0
+   },
+   "P1_learned_conf_legacy_formula": {
+    "under_escalation": 0.9694805194805195,
+    "over_escalation": 0.0,
+    "auto_rate": 0.8922077922077922,
+    "auto_on_wrong_prediction": 0.7775974025974026,
+    "n_auto_on_wrong": 2395,
+    "route_matches_oracle": 0.03051948051948052
+   },
+   "P2_safety_gate": {
+    "under_escalation": 0.08344155844155844,
+    "over_escalation": 0.015584415584415584,
+    "auto_rate": 0.0,
+    "auto_on_wrong_prediction": 0.0,
+    "n_auto_on_wrong": 0,
+    "route_matches_oracle": 0.900974025974026,
+    "abstain_rate": 0.7350649350649351,
+    "automatic_action_permitted_rate": 0.0
+   }
+  }
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "track_b_input_schema_hash": "a1b2c42f2e6974ff",
+ "forbidden_phrase_count": 14,
+ "channels": {
+  "field_matching": "Executes detector-derived constraints that are registered to a technique -> Track A only; disabled in Track B (no constraints are loaded).",
+  "tfidf_bm25": "Text only. Leaks exactly what the query contains; Track B query = filtered event fields only.",
+  "hierarchy": "Operates on KB records (tactic/parent) -> no query information; no leakage.",
+  "query_construction": "FINDING: eval.alert_query renders Falco 'raw' text from the rule's own output template, looked up by rule title; 'title_raw' prepends the detector title; 'rewrite' uses hand-written scenario rules keyed on title/rule. All three carry detector-authored wording.",
+  "knowledge_generation": "FINDING: generated knowledge is attached to the technique the operator registered for each detector (registry from ground_truth.json) -> Track A only; Track B KB is the unmodified ATT&CK corpus (assert_kb_clean).",
+  "metadata_lookup": "Registry lookup uses scenario id -> diagnostic upper bound, never a Track B method."
+ },
+ "existing_query_forms_test_set": {
+  "raw": {
+   "queries_with_leakage": 70,
+   "of": 140,
+   "fraction": 0.5,
+   "by_kind_counts": {
+    "annotation_key": 20,
+    "detector_phrase": 60
+   }
+  },
+  "title_raw": {
+   "queries_with_leakage": 140,
+   "of": 140,
+   "fraction": 1.0,
+   "by_kind_counts": {
+    "detector_phrase": 200,
+    "annotation_key": 20
+   }
+  },
+  "rewrite": {
+   "queries_with_leakage": 20,
+   "of": 140,
+   "fraction": 0.14285714285714285,
+   "by_kind_counts": {
+    "detector_phrase": 20
+   }
+  }
+ },
+ "track_b_queries_with_leakage": 0,
+ "track_b_queries_total": 205,
+ "kb_clean_check": {
+  "corpus_36": "passed",
+  "corpus_200": "passed",
+  "corpus_full": "passed"
+ },
+ "residual_key_name_fingerprint": {
+  "accuracy_keys_only_test": 0.6428571428571429,
+  "majority_class_accuracy": 0.21428571428571427,
+  "interpretation": "Accuracy far above the majority rate means field-name schema alone identifies the detector; Track B cannot remove this."
+ }
+}

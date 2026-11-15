@@ -1,0 +1,17 @@
+\begin{table}[t]\centering\caption{Cryptographic KB integrity (300 trials per attack; local-dev Ed25519 signing)}
+\begin{tabular}{lll}\hline
+attack & detection\_rate & expected\_failure\_code\_rate \\\hline
+description\_modification & 1.000 & 1.000 \\
+rule\_modification & 1.000 & 1.000 \\
+record\_replacement\_same\_id & 1.000 & 1.000 \\
+record\_replacement\_content\_swap & 1.000 & 1.000 \\
+record\_deletion & 1.000 & 1.000 \\
+record\_insertion & 1.000 & 1.000 \\
+manifest\_modification & 1.000 & 1.000 \\
+signature\_modification & 1.000 & 1.000 \\
+rollback\_to\_old\_signed\_kb & 1.000 & 1.000 \\
+invalid\_signing\_key & 1.000 & 1.000 \\
+fork\_same\_version & 1.000 & 1.000 \\
+chain\_break\_skipped\_version & 1.000 & 1.000 \\
+false\_positive\_benign\_reserialisation & 0.000 &  \\
+\hline\end{tabular}\end{table}

@@ -1,0 +1,4 @@
+    data = decision.dict()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+90 passed, 3 skipped, 10 warnings in 3.41s

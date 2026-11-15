@@ -1,0 +1,184 @@
+{
+ "note": "unit = original alert (140); each value averages 4 perturbation modes x 2 query forms. CIs: two-way cluster bootstrap over captures and scenarios.",
+ "variants": {
+  "full (tuned)": {
+   "MRR": 0.9373235134767155,
+   "MRR_ci95": [
+    0.888867323963915,
+    0.9756261134015003
+   ],
+   "P@1": 0.9107142857142857
+  },
+  "default weights": {
+   "MRR": 0.8974049428179973,
+   "MRR_ci95": [
+    0.8248116838014428,
+    0.957857277526395
+   ],
+   "P@1": 0.8464285714285714
+  },
+  "- field matching": {
+   "MRR": 0.8235234240892454,
+   "MRR_ci95": [
+    0.6879754547917025,
+    0.931171875
+   ],
+   "P@1": 0.7598214285714285
+  },
+  "- semantic TF-IDF": {
+   "MRR": 0.9400452436409344,
+   "MRR_ci95": [
+    0.892814936640417,
+    0.9785675829774844
+   ],
+   "P@1": 0.9133928571428571
+  },
+  "- BM25": {
+   "MRR": 0.9023630054005065,
+   "MRR_ci95": [
+    0.8396398410541753,
+    0.9553155993689282
+   ],
+   "P@1": 0.8535714285714285
+  },
+  "- hierarchy (already w_h=0 in tuned config)": {
+   "MRR": 0.9373235134767155,
+   "MRR_ci95": [
+    0.888867323963915,
+    0.9756261134015003
+   ],
+   "P@1": 0.9107142857142857
+  },
+  "- adaptive weights": {
+   "MRR": 0.9373235134767155,
+   "MRR_ci95": [
+    0.888867323963915,
+    0.9756261134015003
+   ],
+   "P@1": 0.9107142857142857
+  },
+  "- generated knowledge (MITRE-only KB)": {
+   "MRR": 0.31185040919881035,
+   "MRR_ci95": [
+    0.09905754993701696,
+    0.562326070984022
+   ],
+   "P@1": 0.24732142857142858
+  }
+ },
+ "paired_vs_full": [
+  {
+   "variant": "default weights",
+   "mean_diff_MRR": -0.03991857065871821,
+   "diff_ci95_cluster": [
+    -0.07819600810137767,
+    -0.008464663370895693
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 1.1892858244283496e-11,
+   "p_holm_alert_level": 5.89518986360493e-11
+  },
+  {
+   "variant": "- field matching",
+   "mean_diff_MRR": -0.11380008938747008,
+   "diff_ci95_cluster": [
+    -0.21099568158775744,
+    -0.04028372668997672
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 1.0136033929596707e-13,
+   "p_holm_alert_level": 6.081620357758025e-13
+  },
+  {
+   "variant": "- semantic TF-IDF",
+   "mean_diff_MRR": 0.0027217301642190987,
+   "diff_ci95_cluster": [
+    -0.00534342797073235,
+    0.01266382324727795
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 0.09641093954577709,
+   "p_holm_alert_level": 0.2892328186373313
+  },
+  {
+   "variant": "- BM25",
+   "mean_diff_MRR": -0.034960508076208985,
+   "diff_ci95_cluster": [
+    -0.06560714583896349,
+    -0.00897032519111325
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 1.179037972720986e-11,
+   "p_holm_alert_level": 5.89518986360493e-11
+  },
+  {
+   "variant": "- hierarchy (already w_h=0 in tuned config)",
+   "mean_diff_MRR": 0.0,
+   "diff_ci95_cluster": [
+    0.0,
+    0.0
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 1.0,
+   "p_holm_alert_level": 1.0
+  },
+  {
+   "variant": "- adaptive weights",
+   "mean_diff_MRR": 0.0,
+   "diff_ci95_cluster": [
+    0.0,
+    0.0
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 1.0,
+   "p_holm_alert_level": 1.0
+  },
+  {
+   "variant": "- generated knowledge (MITRE-only KB)",
+   "mean_diff_MRR": -0.6254731042779051,
+   "diff_ci95_cluster": [
+    -0.8118984146557777,
+    -0.3952892216351939
+   ],
+   "wilcoxon_p_alert_level_NOT_cluster_aware": 4.757488174183136e-22,
+   "p_holm_alert_level": 3.330241721928195e-21
+  }
+ ],
+ "by_perturbation_mrr": {
+  "none": {
+   "full (tuned)": 1.0,
+   "default weights": 1.0,
+   "- field matching": 0.8641418105703819,
+   "- semantic TF-IDF": 1.0,
+   "- BM25": 1.0,
+   "- hierarchy (already w_h=0 in tuned config)": 1.0,
+   "- adaptive weights": 1.0,
+   "- generated knowledge (MITRE-only KB)": 0.3160739855480844
+  },
+  "drop": {
+   "full (tuned)": 0.97263856362217,
+   "default weights": 0.9381111394557824,
+   "- field matching": 0.8049667489579755,
+   "- semantic TF-IDF": 0.9779956004140786,
+   "- BM25": 0.9565641534391534,
+   "- hierarchy (already w_h=0 in tuned config)": 0.97263856362217,
+   "- adaptive weights": 0.97263856362217,
+   "- generated knowledge (MITRE-only KB)": 0.31512619231606637
+  },
+  "noise": {
+   "full (tuned)": 0.786859571917345,
+   "default weights": 0.692347852119713,
+   "- field matching": 0.763390184162243,
+   "- semantic TF-IDF": 0.7941751700680272,
+   "- BM25": 0.6774910427660473,
+   "- hierarchy (already w_h=0 in tuned config)": 0.786859571917345,
+   "- adaptive weights": 0.786859571917345,
+   "- generated knowledge (MITRE-only KB)": 0.303598202148803
+  },
+  "rename": {
+   "full (tuned)": 0.9897959183673468,
+   "default weights": 0.9591607796964938,
+   "- field matching": 0.8615949526663812,
+   "- semantic TF-IDF": 0.9880102040816325,
+   "- BM25": 0.9753968253968253,
+   "- hierarchy (already w_h=0 in tuned config)": 0.9897959183673468,
+   "- adaptive weights": 0.9897959183673468,
+   "- generated knowledge (MITRE-only KB)": 0.31260325678228784
+  }
+ },
+ "paired_vs_full_interpretation": "Use the cluster CI for inference; the Wilcoxon p-values treat alerts as independent and are shown only for comparison."
+}

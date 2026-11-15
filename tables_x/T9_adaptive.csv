@@ -1,0 +1,5 @@
+attack,legacy_wrong_pred,safe_wrong_pred,safe_under_escalation,safe_auto_route,conflict_flag_rate
+clean,0.0,0.0,0.0,0.0,0.2857142857142857
+greedy_untrusted_decoy_search_budget10,0.14285714285714285,0.14285714285714285,0.0,0.0,0.42857142857142855
+partial_field_mimicry_from_other_technique,0.014285714285714285,0.014285714285714285,0.0,0.0,0.35714285714285715
+combined_mimicry_then_decoy,0.17142857142857143,0.17142857142857143,0.0,0.0,0.45

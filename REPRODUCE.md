@@ -121,3 +121,16 @@ python3 eval/plot_paper_figures.py eval/results/scores_tfidf-word.json figures e
 `linux_run/set_subnet.sh A.B` moves the lab to subnet A.B.0.0/16. `linux_run/preflight.sh` and
 `linux_run/check_run.py` check a host and a finished run. `docs/held_out_step6_README.md` gives the
 held-out protocol. The runbook used for the test captures describes the steps in order.
+
+## SentinelMesh-X reproduction (M1-M7)
+Environment: Python 3.12. `python3 -m venv .venv && .venv/bin/pip install -r requirements-x.txt` (direct pins) or `-r requirements-lock.txt` (full transitive set from a clean venv). Verified: in a fresh venv the complete suite gives `146 passed, 3 skipped` with `pytest -q -W error`.
+External data (M4), retrieved 2026-11-06, not redistributed:
+```
+mkdir -p /tmp/ext && cd /tmp/ext
+curl -L https://codeload.github.com/SigmaHQ/sigma/tar.gz/refs/heads/master -o sigma.tgz
+curl -L https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/Indexes/index.yaml -o atomic_index.yaml
+```
+These track `master`, so a later download will differ; compare with the sha256 in `results_x_v3/m4_external_eval.json` and expect different numbers if they do not match.
+Order: `./run_all_x.sh` (then run `m4_external_eval.py` and `m5_external_stats.py` once the two files exist). Seeds are fixed (see `results_x_v3/RUN_MANIFEST.json`). Efficiency numbers depend on the machine; the manifest records hardware.
+Result directories: `results_x/` (pre-M1, frozen), `results_x_v2/` (M1, frozen), `results_x_v3/` (M2-M7). `RUN_MANIFEST.json` verifies the frozen files are byte-identical to their recorded hashes (16 checked, 0 changed).
+Not reproducible here: pretrained dense baselines (set `SENTINELMESH_MINILM_ONNX`), independent annotations, git commit ids of the external data.

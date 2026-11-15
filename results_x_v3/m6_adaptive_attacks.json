@@ -1,0 +1,43 @@
+{
+ "clean": {
+  "n": 140,
+  "legacy_wrong_prediction_rate": 0.0,
+  "safe_pipeline_wrong_prediction_rate": 0.0,
+  "safe_under_escalation": 0.0,
+  "safe_auto_route_rate": 0.0,
+  "safe_wrong_and_not_escalated_to_review": 0.0,
+  "safe_abstain_rate": 0.0,
+  "conflict_flag_rate": 0.2857142857142857
+ },
+ "greedy_untrusted_decoy_search_budget10": {
+  "n": 140,
+  "legacy_wrong_prediction_rate": 0.14285714285714285,
+  "safe_pipeline_wrong_prediction_rate": 0.14285714285714285,
+  "safe_under_escalation": 0.0,
+  "safe_auto_route_rate": 0.0,
+  "safe_wrong_and_not_escalated_to_review": 0.0,
+  "safe_abstain_rate": 0.0,
+  "conflict_flag_rate": 0.42857142857142855
+ },
+ "partial_field_mimicry_from_other_technique": {
+  "n": 140,
+  "legacy_wrong_prediction_rate": 0.014285714285714285,
+  "safe_pipeline_wrong_prediction_rate": 0.014285714285714285,
+  "safe_under_escalation": 0.0,
+  "safe_auto_route_rate": 0.0,
+  "safe_wrong_and_not_escalated_to_review": 0.0,
+  "safe_abstain_rate": 0.0,
+  "conflict_flag_rate": 0.35714285714285715
+ },
+ "combined_mimicry_then_decoy": {
+  "n": 140,
+  "legacy_wrong_prediction_rate": 0.17142857142857143,
+  "safe_pipeline_wrong_prediction_rate": 0.17142857142857143,
+  "safe_under_escalation": 0.0,
+  "safe_auto_route_rate": 0.0,
+  "safe_wrong_and_not_escalated_to_review": 0.0,
+  "safe_abstain_rate": 0.0,
+  "conflict_flag_rate": 0.45
+ },
+ "note": "Attacker model: black-box, 10 queries to the legacy retriever for decoy text in untrusted fields; mimicry copies partial-trust fields (fd.name, client_ip, algorithm...) from another technique's alert. Attacker cannot alter trusted sensor fields (assumption, see SECURITY_REVIEW.md)."
+}

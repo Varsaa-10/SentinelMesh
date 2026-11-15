@@ -1,0 +1,53 @@
+{
+ "comparisons": [
+  {
+   "subset": "all events (Sigma abstention counts as wrong)",
+   "n_events": 5935,
+   "n_atomic_tests": 1320,
+   "sigma_top1": 0.05627632687447346,
+   "tfidf_top1": 0.21668070766638584,
+   "diff": -0.16040438079191238,
+   "diff_ci95_test_cluster": [
+    -0.18340303519386233,
+    -0.13782424485254674
+   ],
+   "sigma_only_correct": 242,
+   "tfidf_only_correct": 1194,
+   "p_mcnemar_exact_event_level_NOT_cluster_aware": 2.6079930635582406e-151,
+   "p_holm": 7.823979190674722e-151
+  },
+  {
+   "subset": "events whose technique has a Sigma rule",
+   "n_events": 4271,
+   "n_atomic_tests": 1095,
+   "sigma_top1": 0.07820182627019433,
+   "tfidf_top1": 0.1800515101849684,
+   "diff": -0.10184968391477406,
+   "diff_ci95_test_cluster": [
+    -0.1279061977735332,
+    -0.0759845528397602
+   ],
+   "sigma_only_correct": 242,
+   "tfidf_only_correct": 677,
+   "p_mcnemar_exact_event_level_NOT_cluster_aware": 2.6048148511005553e-48,
+   "p_holm": 5.2096297022011106e-48
+  },
+  {
+   "subset": "events where a Sigma rule fired",
+   "n_events": 1023,
+   "n_atomic_tests": 580,
+   "sigma_top1": 0.32649071358748777,
+   "tfidf_top1": 0.1798631476050831,
+   "diff": 0.1466275659824047,
+   "diff_ci95_test_cluster": [
+    0.09428271677145782,
+    0.19963961166463204
+   ],
+   "sigma_only_correct": 242,
+   "tfidf_only_correct": 92,
+   "p_mcnemar_exact_event_level_NOT_cluster_aware": 1.0700071962487866e-16,
+   "p_holm": 1.0700071962487866e-16
+  }
+ ],
+ "interpretation": "Sigma rules fire rarely but, when they fire, compare their precision with text retrieval only on the fired subset; the all-events row penalises abstention."
+}

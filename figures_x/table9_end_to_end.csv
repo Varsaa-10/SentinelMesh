@@ -1,0 +1,9 @@
+metric,P0 original,PX SentinelMesh-X
+retrieval_acc,0.846,1.000
+chain_stage_acc,0.926,1.000
+routing_matches_oracle,0.000,1.000
+under_escalated,1.000,0.000
+latency_ms_per_alert_retrieval,4.086,6.236
+missed_slots,0.000,0.000
+auto_on_wrong_prediction,2.000,0.000
+chain_path_exact_captures,6.000,10.000

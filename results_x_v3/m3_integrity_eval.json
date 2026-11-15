@@ -1,0 +1,117 @@
+{
+ "n_trials_per_attack": 300,
+ "records": 706,
+ "signing_mode": "local-dev (Ed25519; key outside KB; NOT production key management)",
+ "attacks": {
+  "description_modification": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "record_modified"
+   ]
+  },
+  "rule_modification": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "record_modified"
+   ]
+  },
+  "record_replacement_same_id": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "record_modified"
+   ]
+  },
+  "record_replacement_content_swap": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "record_modified"
+   ]
+  },
+  "record_deletion": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "record_missing"
+   ]
+  },
+  "record_insertion": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "record_unexpected"
+   ]
+  },
+  "manifest_modification": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "signature_invalid"
+   ]
+  },
+  "signature_modification": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "signature_invalid"
+   ]
+  },
+  "rollback_to_old_signed_kb": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "rollback"
+   ]
+  },
+  "invalid_signing_key": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "signature_invalid"
+   ]
+  },
+  "fork_same_version": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "fork_same_version"
+   ]
+  },
+  "chain_break_skipped_version": {
+   "detection_rate": 1.0,
+   "expected_failure_code_rate": 1.0,
+   "expected_codes": [
+    "chain_break"
+   ]
+  }
+ },
+ "false_positive_rate_benign_reserialisation": {
+  "rate": 0.0,
+  "trials": 500
+ },
+ "semantic_poisoning_boundary": {
+  "poisoned_before_signing_verifies_ok": true,
+  "poisoned_after_signing_detected": true,
+  "meaning": "Integrity protects the signed content only. Semantic poisoning of the signing source needs separate defences (see results_x/robustness.json, unchanged)."
+ },
+ "latency": [
+  {
+   "records": 706,
+   "sign_manifest_s": 0.037447423000003255,
+   "verify_s_median": 0.039532969999982015
+  },
+  {
+   "records": 5000,
+   "sign_manifest_s": 0.2750230699999747,
+   "verify_s_median": 0.2698841799999627
+  },
+  {
+   "records": 25000,
+   "sign_manifest_s": 1.3639932849999923,
+   "verify_s_median": 1.3955767140000717
+  }
+ ]
+}

@@ -1,0 +1,494 @@
+{
+ "captures": [
+  {
+   "run": "20261014T104641Z",
+   "P0": {
+    "n_alerts": 16,
+    "retrieval_acc": 0.75,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": false,
+    "chain_technique_seqs": [
+     [
+      "T1078",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 0.8,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 3.8175290625019898,
+    "graph_ms": 0.5055389999597537
+   },
+   "PX": {
+    "n_alerts": 16,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 5.092869062494287,
+    "graph_ms": 0.25059499989765754
+   }
+  },
+  {
+   "run": "20261014T111618Z",
+   "P0": {
+    "n_alerts": 18,
+    "retrieval_acc": 0.7777777777777778,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": false,
+    "chain_technique_seqs": [
+     [
+      "T1078",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 0.8571428571428571,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 3.4896492222237105,
+    "graph_ms": 0.24689499991836783
+   },
+   "PX": {
+    "n_alerts": 18,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 5.28057566667586,
+    "graph_ms": 0.23177399998530746
+   }
+  },
+  {
+   "run": "20261014T113310Z",
+   "P0": {
+    "n_alerts": 18,
+    "retrieval_acc": 0.7777777777777778,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": false,
+    "chain_technique_seqs": [
+     [
+      "T1078",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 0.8,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 3.455897444445731,
+    "graph_ms": 0.2404280000973813
+   },
+   "PX": {
+    "n_alerts": 18,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 5.355412999999014,
+    "graph_ms": 0.31326800012720923
+   }
+  },
+  {
+   "run": "20261014T122816Z",
+   "P0": {
+    "n_alerts": 18,
+    "retrieval_acc": 0.7777777777777778,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": false,
+    "chain_technique_seqs": [
+     [
+      "T1078",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 0.8,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 4.333705722223789,
+    "graph_ms": 0.3124659999684809
+   },
+   "PX": {
+    "n_alerts": 18,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 6.764992055562086,
+    "graph_ms": 0.2897300000768155
+   }
+  },
+  {
+   "run": "20261014T130955Z",
+   "P0": {
+    "n_alerts": 20,
+    "retrieval_acc": 0.9,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 4.362786100000449,
+    "graph_ms": 0.26969299983647943
+   },
+   "PX": {
+    "n_alerts": 20,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 5.556987300008132,
+    "graph_ms": 0.3016699999989214
+   }
+  },
+  {
+   "run": "20261014T132438Z",
+   "P0": {
+    "n_alerts": 20,
+    "retrieval_acc": 0.9,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 4.994761749992449,
+    "graph_ms": 0.3132849999474274
+   },
+   "PX": {
+    "n_alerts": 20,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 7.096264350002457,
+    "graph_ms": 0.3917999999885069
+   }
+  },
+  {
+   "run": "20261014T134019Z",
+   "P0": {
+    "n_alerts": 20,
+    "retrieval_acc": 0.9,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 4.766398200001731,
+    "graph_ms": 0.36228099997970276
+   },
+   "PX": {
+    "n_alerts": 20,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 7.963547650001601,
+    "graph_ms": 0.3946740000628779
+   }
+  },
+  {
+   "run": "20261014T135319Z",
+   "P0": {
+    "n_alerts": 18,
+    "retrieval_acc": 0.8888888888888888,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 4.906891111116035,
+    "graph_ms": 4.37879600008273
+   },
+   "PX": {
+    "n_alerts": 18,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 7.62481072221514,
+    "graph_ms": 1.210900000160109
+   }
+  },
+  {
+   "run": "20261014T140601Z",
+   "P0": {
+    "n_alerts": 18,
+    "retrieval_acc": 0.8888888888888888,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 3.4738261111013142,
+    "graph_ms": 0.24272199993902177
+   },
+   "PX": {
+    "n_alerts": 18,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 5.260782388884561,
+    "graph_ms": 0.25700100013636984
+   }
+  },
+  {
+   "run": "20261014T141640Z",
+   "P0": {
+    "n_alerts": 20,
+    "retrieval_acc": 0.9,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 0.0,
+    "under_escalated": 1.0,
+    "auto_on_wrong_prediction": 2,
+    "latency_ms_per_alert_retrieval": 3.2601819499973317,
+    "graph_ms": 0.2571760001046641
+   },
+   "PX": {
+    "n_alerts": 20,
+    "retrieval_acc": 1.0,
+    "detected_slots": 14,
+    "missed_slots": 0,
+    "chain_path_exact": true,
+    "chain_technique_seqs": [
+     [
+      "T1190",
+      "T1078",
+      "T1212",
+      "T1003.008",
+      "T1041"
+     ]
+    ],
+    "chain_stage_acc": 1.0,
+    "routing_matches_oracle": 1.0,
+    "under_escalated": 0.0,
+    "auto_on_wrong_prediction": 0,
+    "latency_ms_per_alert_retrieval": 6.359811250001712,
+    "graph_ms": 0.3259190000335366
+   }
+  }
+ ],
+ "mean_P0": {
+  "retrieval_acc": 0.846111111111111,
+  "chain_stage_acc": 0.9257142857142856,
+  "routing_matches_oracle": 0.0,
+  "under_escalated": 1.0,
+  "latency_ms_per_alert_retrieval": 4.086162667360453,
+  "missed_slots": 0.0,
+  "auto_on_wrong_prediction": 2.0,
+  "chain_path_exact_captures": 6
+ },
+ "mean_PX": {
+  "retrieval_acc": 1.0,
+  "chain_stage_acc": 1.0,
+  "routing_matches_oracle": 1.0,
+  "under_escalated": 0.0,
+  "latency_ms_per_alert_retrieval": 6.235605344584485,
+  "missed_slots": 0.0,
+  "auto_on_wrong_prediction": 0.0,
+  "chain_path_exact_captures": 10
+ }
+}

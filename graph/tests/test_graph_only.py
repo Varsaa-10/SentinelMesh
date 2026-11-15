@@ -90,7 +90,8 @@ class TestNoRAGDependency(unittest.TestCase):
     def test_no_rag_module_imported(self):
         """GraphOnlyBaseline must not import any rag_engine modules."""
         import graph.graph_only_baseline as mod
-        source = open(mod.__file__, "r", encoding="utf-8").read()
+        with open(mod.__file__, "r", encoding="utf-8") as fh:
+            source = fh.read()
         self.assertNotIn("from rag_engine", source)
         self.assertNotIn("import rag_engine", source)
 

@@ -1,0 +1,14 @@
+attack,detection_rate,expected_failure_code_rate
+description_modification,1.0,1.0
+rule_modification,1.0,1.0
+record_replacement_same_id,1.0,1.0
+record_replacement_content_swap,1.0,1.0
+record_deletion,1.0,1.0
+record_insertion,1.0,1.0
+manifest_modification,1.0,1.0
+signature_modification,1.0,1.0
+rollback_to_old_signed_kb,1.0,1.0
+invalid_signing_key,1.0,1.0
+fork_same_version,1.0,1.0
+chain_break_skipped_version,1.0,1.0
+false_positive_benign_reserialisation,0.0,

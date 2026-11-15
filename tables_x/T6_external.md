@@ -1,0 +1,14 @@
+**Independent validation: Sigma rules x Atomic Red Team (not real telemetry; no benign data)**
+
+| measure | value |
+|---|---|
+| Sigma rules usable | 995 |
+| Atomic events | 5935 |
+| techniques with executable detector knowledge and independent events | 182 |
+| rule fire rate | 0.172 |
+| precision top-1 when fired | 0.326 |
+| CI95 (cluster by atomic test) | [0.28, 0.38] |
+| abstained on unsupported-technique events | 0.916 |
+| TF-IDF P@1 all events | 0.217 |
+| BM25 P@1 | 0.215 |
+| LSA (non-pretrained dense) P@1 | 0.206 |

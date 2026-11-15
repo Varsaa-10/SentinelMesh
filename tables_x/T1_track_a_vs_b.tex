@@ -1,0 +1,11 @@
+\begin{table}[t]\centering\caption{Detector-aware (A) vs detector-independent (B) retrieval, 706 records, 140 test alerts}
+\begin{tabular}{llllll}\hline
+method & TrackA\_P@1\_raw & TrackB\_P@1 & TrackB\_CI95\_cluster & TrackB\_R@5 & TrackB\_MRR \\\hline
+tfidf & 0.929 & 0.000 & [0.00,0.00] & 0.143 & 0.077 \\
+bm25 & 1.000 & 0.000 & [0.00,0.00] & 0.143 & 0.079 \\
+rrf & 1.000 & 0.000 & [0.00,0.00] & 0.143 & 0.078 \\
+dahr & 1.000 & 0.000 & [0.00,0.00] & 0.143 & 0.083 \\
+repo\_flat & 0.629 & 0.000 & [0.00,0.00] & 0.000 & 0.025 \\
+repo\_two\_layer & 0.529 & 0.000 & [0.00,0.00] & 0.000 & 0.010 \\
+supervised & 1.000 & 1.000 & [1.00,1.00] & 1.000 & 1.000 \\
+\hline\end{tabular}\end{table}

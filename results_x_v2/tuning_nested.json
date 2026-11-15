@@ -1,0 +1,325 @@
+{
+ "note": "Development captures only (60 alerts, 5 captures). Old numbers are the pre-M1 procedure, shown for comparison; they are optimistic because the shortlist saw the held-out capture.",
+ "A": {
+  "n_examples": 1080,
+  "n_configs": 1152,
+  "nested_loco": [
+   {
+    "held_out_capture": "20260818T052007Z",
+    "n_heldout": 144,
+    "mrr_nested": 0.9109833227934067,
+    "mrr_default": 0.9052881200623464,
+    "chosen": {
+     "w_f": 0.55,
+     "w_s": 0.1,
+     "w_b": 0.2,
+     "w_h": 0.0,
+     "top_m": 2,
+     "adaptive": false
+    },
+    "inner_mrr": 0.9277014898377242,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052217Z_chaintagged",
+     "20261012T030225Z_chaintagged",
+     "20261012T031032Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20260818T052217Z_chaintagged",
+    "n_heldout": 216,
+    "mrr_nested": 0.9242428096594764,
+    "mrr_default": 0.8914801926293584,
+    "chosen": {
+     "w_f": 0.55,
+     "w_s": 0.1,
+     "w_b": 0.2,
+     "w_h": 0.0,
+     "top_m": 2,
+     "adaptive": false
+    },
+    "inner_mrr": 0.9243866181212067,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20261012T030225Z_chaintagged",
+     "20261012T031032Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20261012T030225Z_chaintagged",
+    "n_heldout": 216,
+    "mrr_nested": 0.9249327425428054,
+    "mrr_default": 0.8891218917992492,
+    "chosen": {
+     "w_f": 0.55,
+     "w_s": 0.1,
+     "w_b": 0.2,
+     "w_h": 0.0,
+     "top_m": 2,
+     "adaptive": false
+    },
+    "inner_mrr": 0.9242141349003744,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20260818T052217Z_chaintagged",
+     "20261012T031032Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20261012T031032Z_chaintagged",
+    "n_heldout": 252,
+    "mrr_nested": 0.9319788456693219,
+    "mrr_default": 0.9004422602475837,
+    "chosen": {
+     "w_f": 0.55,
+     "w_s": 0.1,
+     "w_b": 0.2,
+     "w_h": 0.0,
+     "top_m": 2,
+     "adaptive": false
+    },
+    "inner_mrr": 0.9224526091187453,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20260818T052217Z_chaintagged",
+     "20261012T030225Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20261012T140201Z",
+    "n_heldout": 252,
+    "mrr_nested": 0.9296515614792926,
+    "mrr_default": 0.8964747289133623,
+    "chosen": {
+     "w_f": 0.55,
+     "w_s": 0.1,
+     "w_b": 0.2,
+     "w_h": 0.0,
+     "top_m": 2,
+     "adaptive": false
+    },
+    "inner_mrr": 0.9230344301662525,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20260818T052217Z_chaintagged",
+     "20261012T030225Z_chaintagged",
+     "20261012T031032Z_chaintagged"
+    ]
+   }
+  ],
+  "old_leaky_loco": [
+   {
+    "held_out_capture": "20260818T052007Z",
+    "mrr_old_leaky": 0.9109833227934067
+   },
+   {
+    "held_out_capture": "20260818T052217Z_chaintagged",
+    "mrr_old_leaky": 0.9242428096594764
+   },
+   {
+    "held_out_capture": "20261012T030225Z_chaintagged",
+    "mrr_old_leaky": 0.9249327425428054
+   },
+   {
+    "held_out_capture": "20261012T031032Z_chaintagged",
+    "mrr_old_leaky": 0.9319788456693219
+   },
+   {
+    "held_out_capture": "20261012T140201Z",
+    "mrr_old_leaky": 0.9296515614792926
+   }
+  ],
+  "mean_mrr_nested": 0.9243578564288605,
+  "mean_mrr_old_leaky": 0.9243578564288605,
+  "mean_mrr_default_weights": 0.8965614387303799,
+  "final_config_all_dev": {
+   "w_f": 0.55,
+   "w_s": 0.1,
+   "w_b": 0.2,
+   "w_h": 0.0,
+   "top_m": 2,
+   "adaptive": false,
+   "use_field": true
+  },
+  "final_info": {
+   "inner_mrr": 0.9243578564288605,
+   "shortlist_size": 25,
+   "train_captures": [
+    "20260818T052007Z",
+    "20260818T052217Z_chaintagged",
+    "20261012T030225Z_chaintagged",
+    "20261012T031032Z_chaintagged",
+    "20261012T140201Z"
+   ]
+  }
+ },
+ "B": {
+  "n_examples": 360,
+  "n_configs": 288,
+  "nested_loco": [
+   {
+    "held_out_capture": "20260818T052007Z",
+    "n_heldout": 48,
+    "mrr_nested": 0.04435829492470696,
+    "mrr_default": 0.04041576997572977,
+    "chosen": {
+     "w_f": 0.0,
+     "w_s": 0.1,
+     "w_b": 0.1,
+     "w_h": 0.3,
+     "top_m": 5,
+     "adaptive": true
+    },
+    "inner_mrr": 0.07158484874414427,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052217Z_chaintagged",
+     "20261012T030225Z_chaintagged",
+     "20261012T031032Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20260818T052217Z_chaintagged",
+    "n_heldout": 72,
+    "mrr_nested": 0.07402094403702814,
+    "mrr_default": 0.07046374486539249,
+    "chosen": {
+     "w_f": 0.0,
+     "w_s": 0.1,
+     "w_b": 0.1,
+     "w_h": 0.3,
+     "top_m": 5,
+     "adaptive": true
+    },
+    "inner_mrr": 0.06416918646606397,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20261012T030225Z_chaintagged",
+     "20261012T031032Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20261012T030225Z_chaintagged",
+    "n_heldout": 72,
+    "mrr_nested": 0.07601761234731756,
+    "mrr_default": 0.07323800973477107,
+    "chosen": {
+     "w_f": 0.0,
+     "w_s": 0.1,
+     "w_b": 0.1,
+     "w_h": 0.3,
+     "top_m": 5,
+     "adaptive": true
+    },
+    "inner_mrr": 0.06367001938849162,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20260818T052217Z_chaintagged",
+     "20261012T031032Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20261012T031032Z_chaintagged",
+    "n_heldout": 84,
+    "mrr_nested": 0.07135421756951901,
+    "mrr_default": 0.06736230568018725,
+    "chosen": {
+     "w_f": 0.0,
+     "w_s": 0.1,
+     "w_b": 0.1,
+     "w_h": 0.3,
+     "top_m": 5,
+     "adaptive": true
+    },
+    "inner_mrr": 0.06483586808294126,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20260818T052217Z_chaintagged",
+     "20261012T030225Z_chaintagged",
+     "20261012T140201Z"
+    ]
+   },
+   {
+    "held_out_capture": "20261012T140201Z",
+    "n_heldout": 84,
+    "mrr_nested": 0.06130489996272075,
+    "mrr_default": 0.06858175604798741,
+    "chosen": {
+     "w_f": 0.0,
+     "w_s": 0.1,
+     "w_b": 0.0,
+     "w_h": 0.2,
+     "top_m": 5,
+     "adaptive": true
+    },
+    "inner_mrr": 0.06684140119671493,
+    "shortlist_size": 25,
+    "train_captures": [
+     "20260818T052007Z",
+     "20260818T052217Z_chaintagged",
+     "20261012T030225Z_chaintagged",
+     "20261012T031032Z_chaintagged"
+    ]
+   }
+  ],
+  "old_leaky_loco": [
+   {
+    "held_out_capture": "20260818T052007Z",
+    "mrr_old_leaky": 0.04435829492470696
+   },
+   {
+    "held_out_capture": "20260818T052217Z_chaintagged",
+    "mrr_old_leaky": 0.07402094403702814
+   },
+   {
+    "held_out_capture": "20261012T030225Z_chaintagged",
+    "mrr_old_leaky": 0.07601761234731756
+   },
+   {
+    "held_out_capture": "20261012T031032Z_chaintagged",
+    "mrr_old_leaky": 0.07135421756951901
+   },
+   {
+    "held_out_capture": "20261012T140201Z",
+    "mrr_old_leaky": 0.06494662102271234
+   }
+  ],
+  "mean_mrr_nested": 0.06541119376825849,
+  "mean_mrr_old_leaky": 0.0661395379802568,
+  "mean_mrr_default_weights": 0.0640123172608136,
+  "final_config_all_dev": {
+   "w_f": 0.0,
+   "w_s": 0.1,
+   "w_b": 0.1,
+   "w_h": 0.3,
+   "top_m": 5,
+   "adaptive": true,
+   "use_field": false
+  },
+  "final_info": {
+   "inner_mrr": 0.0661395379802568,
+   "shortlist_size": 25,
+   "train_captures": [
+    "20260818T052007Z",
+    "20260818T052217Z_chaintagged",
+    "20261012T030225Z_chaintagged",
+    "20261012T031032Z_chaintagged",
+    "20261012T140201Z"
+   ]
+  }
+ }
+}
