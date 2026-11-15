@@ -1,5 +1,5 @@
 # SentinelMesh — Log Collector Service
-FROM fluentd:v1.16-1
+FROM fluentd:v1.16-1@sha256:1ad8ae3e827a63e119717cbc995ba416165edf47f802f35d9ec3a28b90874351
 
 USER root
 

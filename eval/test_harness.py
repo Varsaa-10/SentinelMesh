@@ -97,3 +97,96 @@ def test_score_against_ground_truth_stock_and_benign():
     assert "S29" in res_priv
 
     assert harness.score_against_ground_truth([stock_alert], gt, benign_only=True) == {}
+
+
+def test_start_benign_workload_passes_out_env(tmp_path, monkeypatch):
+    captured = {}
+
+    def fake_popen(cmd, stdout=None, stderr=None, env=None):
+        captured["cmd"] = cmd
+        captured["env"] = env
+        return type("Proc", (), {"poll": lambda self: 0})()
+
+    monkeypatch.setattr(harness.subprocess, "Popen", fake_popen)
+    out_dir = tmp_path / "run_001"
+    out_dir.mkdir()
+    _proc, log_f = harness.start_benign_workload(
+        tmp_path / "benign_workload.sh",
+        5,
+        out_dir / "benign.log",
+        out_dir=out_dir,
+    )
+    log_f.close()
+    assert captured["env"]["OUT"] == str(out_dir)
+
+
+def test_load_benign_actions_and_dual_reports(tmp_path):
+    gt = json.loads((Path(__file__).resolve().parents[1] / "eval" / "ground_truth.json").read_text(encoding="utf-8"))
+    actions_file = tmp_path / "benign_actions.jsonl"
+    actions_file.write_text(
+        json.dumps(
+            {
+                "start": "2026-11-15T12:00:02Z",
+                "end": "2026-11-15T12:00:02Z",
+                "container": "sentinelmesh-webapp",
+                "action": "log_rotation",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    loaded = harness.load_benign_actions(actions_file)
+    assert len(loaded) == 1
+    assert loaded[0]["action"] == "log_rotation"
+    assert harness.load_benign_actions(tmp_path / "missing.jsonl") == []
+
+    ambiguous_s11 = {
+        "source": "falco",
+        "scenario": "",
+        "attributed_scenario": "S11",
+        "attribution": "ambiguous",
+        "severity": "WARNING",
+        "title": "Terminal shell in container",
+    }
+    clear_s25 = {
+        "source": "falco",
+        "scenario": "",
+        "attributed_scenario": "S25",
+        "attribution": "attack",
+        "severity": "WARNING",
+        "title": "Launch Suspicious Network Tool in Container",
+    }
+    att_summary = harness.summarize_attribution([ambiguous_s11, clear_s25])
+    reports = harness.build_dual_reports(
+        [ambiguous_s11, clear_s25],
+        gt,
+        att_summary,
+        include_stock_falco=True,
+    )
+    assert reports["ambiguous_excluded"]["results"]["S11"]["fired"] is False
+    assert reports["ambiguous_excluded"]["results"]["S25"]["fired"] is True
+    assert reports["ambiguous_as_attack"]["results"]["S11"]["fired"] is True
+    assert reports["ambiguous_as_attack"]["results"]["S25"]["fired"] is True
+
+
+def test_write_run_manifest_records_container_digests(tmp_path, monkeypatch):
+    def fake_run(cmd, capture_output=True, text=True, timeout=15):
+        if cmd[:2] == ["docker", "ps"]:
+            return type("Res", (), {"returncode": 0, "stdout": "sentinelmesh-webapp\nsentinelmesh-debug\n"})()
+        if cmd[:2] == ["docker", "inspect"]:
+            name = cmd[-1]
+            if name == "sentinelmesh-debug":
+                return type("Res", (), {"returncode": 0, "stdout": "alpine:3.19@sha256:aaa\tsha256:111\n"})()
+            return type("Res", (), {"returncode": 0, "stdout": "sentinelmesh-webapp\tsha256:222\n"})()
+        if cmd[:3] == ["docker", "image", "inspect"]:
+            ref = cmd[-1]
+            if ref == "sha256:111":
+                return type("Res", (), {"returncode": 0, "stdout": json.dumps(["alpine@sha256:aaa"])})()
+            return type("Res", (), {"returncode": 0, "stdout": json.dumps([])})()
+        return type("Res", (), {"returncode": 1, "stdout": ""})()
+
+    monkeypatch.setattr(harness.subprocess, "run", fake_run)
+    manifest = harness.write_run_manifest(tmp_path)
+    text = manifest.read_text(encoding="utf-8")
+    assert "sentinelmesh-debug image=alpine:3.19@sha256:aaa digest=alpine@sha256:aaa image_id=sha256:111" in text
+    assert "sentinelmesh-webapp image=sentinelmesh-webapp digest=sha256:222 image_id=sha256:222" in text

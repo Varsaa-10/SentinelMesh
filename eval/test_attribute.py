@@ -147,3 +147,158 @@ def test_attribute_benign_only_marks_every_alert_false_positive():
     assert summary["false_positive_count"] == 2
     assert summary["unattributed_count"] == 2
     assert summary["attributed_count"] == 0
+
+
+def test_attribute_ambiguous_within_2s_of_benign_keeps_both_candidate_labels():
+    gt = _load_gt()
+    windows = {"S11": {"start": "2026-11-15T12:00:00Z", "end": "2026-11-15T12:00:05Z"}}
+    benign_actions = [
+        {
+            "start": "2026-11-15T12:00:04Z",
+            "end": "2026-11-15T12:00:04Z",
+            "container": "sentinelmesh-webapp",
+            "action": "log_rotation",
+        },
+        {
+            "start": "2026-11-15T12:00:02Z",
+            "end": "2026-11-15T12:00:02Z",
+            "container": "sentinelmesh-database",
+            "action": "pkg_index_update",
+        },
+    ]
+
+    # Inside S11 window AND exactly 2s before benign action end/start on same container -> ambiguous
+    overlap_alert = {
+        "timestamp": "2026-11-15T12:00:02Z",
+        "service": "webapp",
+        "event": {"container.name": "sentinelmesh-webapp"},
+        "falco_tags": ["T1059"],
+    }
+    att = attribute_alert(overlap_alert, windows, gt, benign_actions=benign_actions)
+    assert att["attribution"] == "ambiguous"
+    assert att["attributed_scenario"] == "S11"
+    assert att["ground_truth_technique"] == gt["scenarios"]["S11"]["technique_id"]
+    assert att["benign_action"] == "log_rotation"
+    assert att["candidate_labels"]["attack"]["scenario"] == "S11"
+    assert att["candidate_labels"]["attack"]["technique"] == gt["scenarios"]["S11"]["technique_id"]
+    assert att["candidate_labels"]["benign"][0]["action"] == "log_rotation"
+    assert att["false_positive"] is False
+
+    # 3s away from log_rotation (> +/-2s) and other benign is on database -> clear attack
+    clear_alert = {
+        "timestamp": "2026-11-15T12:00:01Z",
+        "service": "webapp",
+        "event": {"container.name": "sentinelmesh-webapp"},
+        "falco_tags": ["T1059"],
+    }
+    clear = attribute_alert(clear_alert, windows, gt, benign_actions=benign_actions)
+    assert clear["attribution"] == "attack"
+    assert clear["attributed_scenario"] == "S11"
+    assert clear["false_positive"] is False
+
+
+def test_attribute_benign_outside_scenario_window_marks_false_positive():
+    gt = _load_gt()
+    windows = {"S11": {"start": "2026-11-15T12:00:00Z", "end": "2026-11-15T12:00:05Z"}}
+    benign_actions = [
+        {
+            "start": "2026-11-15T12:00:10Z",
+            "end": "2026-11-15T12:00:11Z",
+            "container": "sentinelmesh-database",
+            "action": "pkg_index_update",
+        },
+        {
+            "start": "2026-11-15T12:00:20Z",
+            "end": "2026-11-15T12:00:20Z",
+            "container": "host",
+            "action": "outbound_https",
+        },
+    ]
+
+    db_fp = {
+        "timestamp": "2026-11-15T12:00:13Z",  # exactly +2s after benign end
+        "service": "database",
+        "event": {"container.name": "sentinelmesh-database"},
+    }
+    host_fp = {
+        "timestamp": "2026-11-15T12:00:19Z",  # -1s from host benign action
+        "service": "host",
+        "event": {"container.name": "host"},
+    }
+
+    res_db = attribute_alert(db_fp, windows, gt, benign_actions=benign_actions)
+    assert res_db["attribution"] == "benign"
+    assert res_db["false_positive"] is True
+    assert res_db["attributed_scenario"] == "unattributed"
+    assert res_db["ground_truth_technique"] is None
+    assert res_db["benign_action"] == "pkg_index_update"
+
+    res_host = attribute_alert(host_fp, windows, gt, benign_actions=benign_actions)
+    assert res_host["attribution"] == "benign"
+    assert res_host["false_positive"] is True
+    assert res_host["benign_action"] == "outbound_https"
+
+
+def test_summarize_attribution_reports_ambiguous_excluded_and_as_attack():
+    gt = _load_gt()
+    windows = {
+        "S11": {"start": "2026-11-15T12:00:00Z", "end": "2026-11-15T12:00:05Z"},
+        "S15": {"start": "2026-11-15T12:00:20Z", "end": "2026-11-15T12:00:25Z"},
+    }
+    benign_actions = [
+        {
+            "start": "2026-11-15T12:00:03Z",
+            "end": "2026-11-15T12:00:03Z",
+            "container": "sentinelmesh-webapp",
+            "action": "log_rotation",
+        },
+        {
+            "start": "2026-11-15T12:00:40Z",
+            "end": "2026-11-15T12:00:40Z",
+            "container": "sentinelmesh-database",
+            "action": "pkg_index_update",
+        },
+    ]
+    alerts = [
+        {
+            "timestamp": "2026-11-15T12:00:02Z",
+            "service": "webapp",
+            "event": {"container.name": "sentinelmesh-webapp"},
+        },  # ambiguous (S11 + log_rotation)
+        {
+            "timestamp": "2026-11-15T12:00:22Z",
+            "service": "logcollector",
+            "event": {"container.name": "sentinelmesh-logcollector"},
+        },  # attack (S15)
+        {
+            "timestamp": "2026-11-15T12:00:41Z",
+            "service": "database",
+            "event": {"container.name": "sentinelmesh-database"},
+        },  # benign
+        {
+            "timestamp": "2026-11-15T12:01:00Z",
+            "service": "webapp",
+            "event": {"container.name": "sentinelmesh-webapp"},
+        },  # unattributed
+    ]
+
+    attributed = attribute_alerts(alerts, windows, gt, benign_actions=benign_actions)
+    summary = summarize_attribution(attributed)
+
+    assert summary["attack_count"] == 1
+    assert summary["ambiguous_count"] == 1
+    assert summary["benign_count"] == 1
+
+    excl = summary["ambiguous_excluded"]
+    assert excl["total_alerts"] == 3
+    assert excl["attributed_count"] == 1
+    assert excl["unattributed_count"] == 2
+    assert excl["false_positive_count"] == 1
+    assert excl["by_scenario"] == {"S15": 1}
+
+    as_atk = summary["ambiguous_as_attack"]
+    assert as_atk["total_alerts"] == 4
+    assert as_atk["attributed_count"] == 2
+    assert as_atk["unattributed_count"] == 2
+    assert as_atk["false_positive_count"] == 1
+    assert as_atk["by_scenario"] == {"S11": 1, "S15": 1}

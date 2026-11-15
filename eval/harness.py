@@ -292,13 +292,116 @@ def build_attack_order(chain_script=None, privileged_debug=False):
     return order
 
 
-def start_benign_workload(script_path, duration_minutes, log_path):
+def start_benign_workload(script_path, duration_minutes, log_path, out_dir=None):
     """Launch linux_run/benign_workload.sh asynchronously and return (proc, log_f)."""
     cmd = ["bash", str(script_path), "--duration", str(duration_minutes)]
+    env = os.environ.copy()
+    if out_dir is not None:
+        env["OUT"] = str(out_dir)
     log(f"starting benign workload: {' '.join(cmd)}")
     log_f = open(log_path, "w")
-    proc = subprocess.Popen(cmd, stdout=log_f, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(cmd, stdout=log_f, stderr=subprocess.STDOUT, env=env)
     return proc, log_f
+
+
+def load_benign_actions(actions_path):
+    """Load benign action records from a JSONL file, if present."""
+    path = Path(actions_path)
+    if not path.exists():
+        return []
+    actions = []
+    with open(path, encoding="utf-8") as f:
+        for line_no, line in enumerate(f, start=1):
+            raw = line.strip()
+            if not raw:
+                continue
+            try:
+                actions.append(json.loads(raw))
+            except json.JSONDecodeError as exc:
+                log(f"WARNING: skipping invalid benign action at {path}:{line_no}: {exc}")
+    return actions
+
+
+def collect_container_image_digests():
+    """Return running containers paired with their image tags, IDs, and repo digests."""
+    try:
+        ps_proc = subprocess.run(
+            ["docker", "ps", "--format", "{{.Names}}"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+    except Exception:
+        return []
+    if ps_proc.returncode != 0:
+        return []
+
+    names = sorted(line.strip() for line in ps_proc.stdout.splitlines() if line.strip())
+    entries = []
+    for name in names:
+        config_image = ""
+        image_id = ""
+        repo_digest = ""
+        try:
+            c_proc = subprocess.run(
+                ["docker", "inspect", "-f", "{{.Config.Image}}\t{{.Image}}", name],
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+            if c_proc.returncode == 0 and c_proc.stdout.strip():
+                parts = c_proc.stdout.strip().split("\t", 1)
+                config_image = parts[0]
+                image_id = parts[1] if len(parts) > 1 else ""
+        except Exception:
+            pass
+
+        lookup_ref = image_id or config_image
+        if lookup_ref:
+            try:
+                i_proc = subprocess.run(
+                    ["docker", "image", "inspect", "-f", "{{json .RepoDigests}}", lookup_ref],
+                    capture_output=True,
+                    text=True,
+                    timeout=15,
+                )
+                if i_proc.returncode == 0 and i_proc.stdout.strip():
+                    digests = json.loads(i_proc.stdout.strip())
+                    if isinstance(digests, list) and digests:
+                        repo_digest = str(digests[0])
+            except Exception:
+                pass
+
+        entries.append(
+            {
+                "container": name,
+                "config_image": config_image,
+                "image_id": image_id,
+                "repo_digest": repo_digest,
+            }
+        )
+    return entries
+
+
+def write_run_manifest(run_path):
+    """Write run metadata and running container image digests to run_manifest.txt."""
+    run_path = Path(run_path)
+    manifest_path = run_path / "run_manifest.txt"
+    containers = collect_container_image_digests()
+
+    lines = [
+        f"date_utc: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+        f"running_containers: {len(containers)}",
+    ]
+    for entry in containers:
+        digest = entry["repo_digest"] or entry["image_id"] or "unknown"
+        lines.append(
+            f"{entry['container']} image={entry['config_image'] or 'unknown'} "
+            f"digest={digest} image_id={entry['image_id'] or 'unknown'}"
+        )
+
+    manifest_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return manifest_path
 
 
 def run_attack_scripts(
@@ -469,11 +572,13 @@ def score_against_ground_truth(
     include_stock_falco=False,
     privileged_debug=False,
     benign_only=False,
+    exclude_ambiguous=False,
 ):
     """
     Score captured alerts against ground_truth.json scenarios.
 
     - In benign-only mode, returns {} (every alert is scored as a false positive).
+    - When exclude_ambiguous=True, alerts with attribution="ambiguous" are excluded.
     - Lab scenarios (detection.source != 'falco-stock') match expected_scenario,
       expected_title prefix, and expected_severity.
     - Stock Falco scenarios (S11-S29) are scored only when include_stock_falco=True
@@ -482,6 +587,9 @@ def score_against_ground_truth(
     """
     if benign_only:
         return {}
+
+    if exclude_ambiguous:
+        alerts = [a for a in alerts if a.get("attribution") != "ambiguous"]
 
     results = {}
     scenarios = ground_truth["scenarios"]
@@ -605,6 +713,48 @@ def score_against_ground_truth(
         }
 
     return results
+
+
+def _count_score_summary(results, benign_only=False):
+    passed = sum(
+        1
+        for sid, result in results.items()
+        if sid != "S10"
+        and result.get("matches_expectation", result.get("fired"))
+    )
+    total_single = sum(1 for sid in results if sid != "S10")
+    s10_pass = None if benign_only else results.get("S10", {}).get("all_stages_fired", None)
+    return passed, total_single, s10_pass
+
+
+def build_dual_reports(
+    attributed_alerts,
+    ground_truth,
+    attribution_summary,
+    include_stock_falco=False,
+    privileged_debug=False,
+    benign_only=False,
+):
+    """Compute scenario scoring with ambiguous alerts excluded and counted as attack."""
+    reports = {}
+    for key, exclude_flag in (("ambiguous_excluded", True), ("ambiguous_as_attack", False)):
+        scored = score_against_ground_truth(
+            attributed_alerts,
+            ground_truth,
+            include_stock_falco=include_stock_falco,
+            privileged_debug=privileged_debug,
+            benign_only=benign_only,
+            exclude_ambiguous=exclude_flag,
+        )
+        passed, total_single, s10_pass = _count_score_summary(scored, benign_only=benign_only)
+        reports[key] = {
+            "single_scenario_pass_count": passed,
+            "single_scenario_total": total_single,
+            "s10_chain_all_stages_fired": s10_pass,
+            "attribution": attribution_summary.get(key, {}),
+            "results": scored,
+        }
+    return reports
 
 
 # ---------------------------------------------------------------------------
@@ -993,6 +1143,7 @@ def main():
                 benign_script,
                 args.benign_minutes,
                 run_path / "benign_workload.log",
+                out_dir=run_path,
             )
 
         if args.benign_only:
@@ -1167,11 +1318,13 @@ def main():
         with open(run_path / "scenario_windows.json", "w") as f:
             json.dump(scenario_windows, f, indent=2)
 
+    benign_actions = load_benign_actions(run_path / "benign_actions.jsonl")
     attributed = attribute_alerts(
         alerts,
         scenario_windows,
         ground_truth,
         benign_only=args.benign_only,
+        benign_actions=benign_actions,
     )
     attribution_summary = summarize_attribution(attributed)
     with open(run_path / "alerts_attributed.jsonl", "w") as f:
@@ -1182,37 +1335,20 @@ def main():
     # Score
     # -----------------------------------------------------------------------
 
-    results = score_against_ground_truth(
+    dual_reports = build_dual_reports(
         attributed,
         ground_truth,
+        attribution_summary,
         include_stock_falco=args.include_stock_falco,
         privileged_debug=args.privileged_debug,
         benign_only=args.benign_only,
     )
-
-    passed = sum(
-        1
-        for sid, result in results.items()
-        if sid != "S10"
-        and result.get("matches_expectation", result.get("fired"))
-    )
-
-    total_single = sum(
-        1
-        for sid in results
-        if sid != "S10"
-    )
-
-    s10_pass = (
-        None
-        if args.benign_only
-        else results
-        .get("S10", {})
-        .get(
-            "all_stages_fired",
-            None,
-        )
-    )
+    as_attack = dual_reports["ambiguous_as_attack"]
+    excluded = dual_reports["ambiguous_excluded"]
+    results = as_attack["results"]
+    passed = as_attack["single_scenario_pass_count"]
+    total_single = as_attack["single_scenario_total"]
+    s10_pass = as_attack["s10_chain_all_stages_fired"]
 
     # -----------------------------------------------------------------------
     # Summary
@@ -1230,6 +1366,7 @@ def main():
         "privileged_debug": args.privileged_debug,
         "benign_only": args.benign_only,
         "benign_minutes": args.benign_minutes,
+        "benign_actions_count": len(benign_actions),
         "scenario_windows": scenario_windows,
         "attribution_summary": attribution_summary,
         "ground_truth_file": str(
@@ -1258,10 +1395,11 @@ def main():
         "single_scenario_total": total_single,
         "s10_chain_all_stages_fired": s10_pass,
         "results": results,
+        "reports": dual_reports,
     }
 
     # -----------------------------------------------------------------------
-    # Write results
+    # Write results and run manifest
     # -----------------------------------------------------------------------
 
     results_path = (
@@ -1278,13 +1416,24 @@ def main():
             default=str,
         )
 
+    manifest_path = write_run_manifest(run_path)
+
     log(
         "Baseline 1 results written to: "
         f"{results_path.resolve()}"
     )
+    log(
+        "Run manifest written to: "
+        f"{manifest_path.resolve()}"
+    )
 
     log(
-        f"Score: {passed}/{total_single} "
+        f"Score (ambiguous as attack): {passed}/{total_single} "
+        "single-technique scenarios fired correctly"
+    )
+    log(
+        f"Score (ambiguous excluded): "
+        f"{excluded['single_scenario_pass_count']}/{excluded['single_scenario_total']} "
         "single-technique scenarios fired correctly"
     )
 

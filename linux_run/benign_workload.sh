@@ -40,6 +40,10 @@ fi
 
 DURATION_SECONDS=$(awk -v m="$DURATION_MINUTES" 'BEGIN { s = int(m * 60 + 0.5); if (s < 1) s = 1; print s }')
 
+OUT="${OUT:-.}"
+mkdir -p "$OUT"
+BENIGN_ACTIONS_LOG="${OUT}/benign_actions.jsonl"
+
 RUNNING=1
 trap 'RUNNING=0' TERM INT
 
@@ -47,17 +51,45 @@ now_epoch() {
     date +%s
 }
 
+now_iso_utc() {
+    date -u +%Y-%m-%dT%H:%M:%SZ
+}
+
 log_msg() {
-    echo "[benign $(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"
+    echo "[benign $(now_iso_utc)] $*"
+}
+
+log_action() {
+    local container="$1"
+    local action="$2"
+    local start_ts="$3"
+    local end_ts="$4"
+    printf '{"start":"%s","end":"%s","container":"%s","action":"%s"}\n' \
+        "$start_ts" "$end_ts" "$container" "$action" >> "$BENIGN_ACTIONS_LOG"
+}
+
+run_docker_exec_logged() {
+    local container="$1"
+    local action="$2"
+    shift 2
+    local start_ts end_ts
+    start_ts=$(now_iso_utc)
+    MSYS_NO_PATHCONV=1 docker exec "$container" "$@" >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "$container" "$action" "$start_ts" "$end_ts"
 }
 
 do_correct_logins() {
+    local start_ts end_ts
+    start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
     curl -sf -m 5 -X POST "${AUTHSERVICE_URL}/auth/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "host" "correct_login" "$start_ts" "$end_ts"
 }
 
 # Distinct accounts for single typos; per-account cooldown >= 65s guarantees <= 1 typo/account/min
@@ -66,7 +98,7 @@ declare -A LAST_TYPO_EPOCH=()
 TYPO_IDX=0
 
 do_single_typo() {
-    local now acct last
+    local now acct last start_ts end_ts
     now=$(now_epoch)
     acct="${TYPO_ACCOUNTS[$((TYPO_IDX % ${#TYPO_ACCOUNTS[@]}))]}"
     TYPO_IDX=$((TYPO_IDX + 1))
@@ -75,52 +107,65 @@ do_single_typo() {
         return 0
     fi
     LAST_TYPO_EPOCH["$acct"]="$now"
+    start_ts=$(now_iso_utc)
     curl -s -m 5 -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
         -d "{\"username\":\"${acct}\",\"password\":\"wrongpass_typo\"}" >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "host" "single_typo" "$start_ts" "$end_ts"
 }
 
 do_grafana_view() {
+    local start_ts end_ts
+    start_ts=$(now_iso_utc)
     curl -sf -m 5 -u admin:admin "${GRAFANA_URL}/api/dashboards/home" >/dev/null 2>&1 || true
     curl -sf -m 5 -u admin:admin "${GRAFANA_URL}/api/search?limit=10" >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "host" "grafana_view" "$start_ts" "$end_ts"
 }
 
 do_pg_dump() {
+    local start_ts end_ts
+    start_ts=$(now_iso_utc)
     MSYS_NO_PATHCONV=1 docker exec -e PGPASSWORD=postgres sentinelmesh-webapp \
         sh -c 'pg_dump -h database -U postgres -d sentinelmesh -f /tmp/benign_pg_backup.sql >/dev/null 2>&1 && rm -f /tmp/benign_pg_backup.sql' \
         >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "sentinelmesh-webapp" "pg_dump" "$start_ts" "$end_ts"
 }
 
 do_log_rotation() {
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-webapp \
-        sh -c 'touch /tmp/benign_app.log && cp -f /tmp/benign_app.log /tmp/benign_app.log.1 && : > /tmp/benign_app.log && rm -f /tmp/benign_app.log /tmp/benign_app.log.1' \
-        >/dev/null 2>&1 || true
+    run_docker_exec_logged "sentinelmesh-webapp" "log_rotation" \
+        sh -c 'touch /tmp/benign_app.log && cp -f /tmp/benign_app.log /tmp/benign_app.log.1 && : > /tmp/benign_app.log && rm -f /tmp/benign_app.log /tmp/benign_app.log.1'
 }
 
 do_read_configs() {
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-webapp cat /app/requirements.txt >/dev/null 2>&1 || true
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-authservice cat /etc/hosts >/dev/null 2>&1 || true
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-database cat /etc/pg_hba_override/pg_hba.conf >/dev/null 2>&1 || true
+    run_docker_exec_logged "sentinelmesh-webapp" "read_configs" cat /app/requirements.txt
+    run_docker_exec_logged "sentinelmesh-authservice" "read_configs" cat /etc/hosts
+    run_docker_exec_logged "sentinelmesh-database" "read_configs" cat /etc/pg_hba_override/pg_hba.conf
 }
 
 do_pkg_index_update() {
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-database apk update >/dev/null 2>&1 || true
+    run_docker_exec_logged "sentinelmesh-database" "pkg_index_update" apk update
 }
 
 do_routine_docker_exec() {
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-webapp python --version >/dev/null 2>&1 || true
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-database pg_isready -U postgres >/dev/null 2>&1 || true
-    MSYS_NO_PATHCONV=1 docker exec sentinelmesh-logcollector fluentd --version >/dev/null 2>&1 || true
+    run_docker_exec_logged "sentinelmesh-webapp" "routine_docker_exec" python --version
+    run_docker_exec_logged "sentinelmesh-database" "routine_docker_exec" pg_isready -U postgres
+    run_docker_exec_logged "sentinelmesh-logcollector" "routine_docker_exec" fluentd --version
 }
 
 HTTPS_SITES=("https://example.com" "https://www.wikipedia.org" "https://pypi.org")
 HTTPS_IDX=0
 
 do_outbound_https() {
-    local url
+    local url start_ts end_ts
     url="${HTTPS_SITES[$((HTTPS_IDX % ${#HTTPS_SITES[@]}))]}"
     HTTPS_IDX=$((HTTPS_IDX + 1))
+    start_ts=$(now_iso_utc)
     curl -sS -m 5 -o /dev/null "$url" >/dev/null 2>&1 || true
+    end_ts=$(now_iso_utc)
+    log_action "host" "outbound_https" "$start_ts" "$end_ts"
 }
 
 START_EPOCH=$(now_epoch)
