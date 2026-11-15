@@ -190,3 +190,18 @@ def test_write_run_manifest_records_container_digests(tmp_path, monkeypatch):
     text = manifest.read_text(encoding="utf-8")
     assert "sentinelmesh-debug image=alpine:3.19@sha256:aaa digest=alpine@sha256:aaa image_id=sha256:111" in text
     assert "sentinelmesh-webapp image=sentinelmesh-webapp digest=sha256:222 image_id=sha256:222" in text
+
+
+def test_score_against_ground_truth_excludes_setup_alerts():
+    gt = json.loads((Path(__file__).resolve().parents[1] / "eval" / "ground_truth.json").read_text(encoding="utf-8"))
+    setup_s7 = {
+        "source": "log-tail",
+        "scenario": "S7",
+        "attributed_scenario": "unattributed",
+        "attribution": "setup",
+        "severity": "WARNING",
+        "title": gt["scenarios"]["S7"]["detection"]["expected_title"],
+    }
+    res = harness.score_against_ground_truth([setup_s7], gt, include_stock_falco=True)
+    assert res["S7"]["fired"] is False
+    assert res["S7"]["match_count"] == 0

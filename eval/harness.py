@@ -588,6 +588,7 @@ def score_against_ground_truth(
     if benign_only:
         return {}
 
+    alerts = [a for a in alerts if a.get("attribution") != "setup"]
     if exclude_ambiguous:
         alerts = [a for a in alerts if a.get("attribution") != "ambiguous"]
 

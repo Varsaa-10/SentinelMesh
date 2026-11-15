@@ -175,6 +175,25 @@ def attribute_alert(
     falco_technique = extract_falco_technique(out)
     out["falco_technique"] = falco_technique
 
+    alert_ts = parse_utc_timestamp(out.get("timestamp"))
+    alert_cont = alert_container_name(out)
+    matched_actions: List[Dict[str, Any]] = []
+    if alert_ts is not None and alert_cont:
+        matched_actions = _match_benign_actions(
+            alert_ts, alert_cont, benign_actions, benign_tolerance_seconds
+        )
+
+    matched_setup = [b for b in matched_actions if b.get("action") == "grafana_setup"]
+    if matched_setup:
+        out["attribution"] = "setup"
+        out["attributed_scenario"] = "unattributed"
+        out["ground_truth_technique"] = None
+        out["false_positive"] = False
+        out["benign_action"] = "grafana_setup"
+        out["benign_actions"] = [b["action"] for b in matched_setup if b.get("action")]
+        out["candidate_labels"] = {"setup": matched_setup}
+        return out
+
     if benign_only:
         out["attribution"] = "benign"
         out["attributed_scenario"] = "unattributed"
@@ -183,16 +202,10 @@ def attribute_alert(
         return out
 
     scenarios = ground_truth.get("scenarios", ground_truth)
-    alert_ts = parse_utc_timestamp(out.get("timestamp"))
-    alert_cont = alert_container_name(out)
-
     matched_sid: Optional[str] = None
-    matched_benign: List[Dict[str, Any]] = []
+    matched_benign = [b for b in matched_actions if b.get("action") != "grafana_setup"]
     if alert_ts is not None and alert_cont:
         matched_sid = _match_scenario_window(alert_ts, alert_cont, scenario_windows, scenarios)
-        matched_benign = _match_benign_actions(
-            alert_ts, alert_cont, benign_actions, benign_tolerance_seconds
-        )
 
     if matched_sid is not None:
         gt_tech = scenarios[matched_sid].get("technique_id")
@@ -252,8 +265,11 @@ def _summarize_single_view(alerts_view: Sequence[Mapping[str, Any]]) -> Dict[str
     unattributed = 0
     false_positives = 0
     tag_mismatches = 0
+    setup_count = 0
 
     for a in alerts_view:
+        if a.get("attribution") == "setup":
+            setup_count += 1
         if a.get("false_positive"):
             false_positives += 1
         sid = a.get("attributed_scenario", "unattributed")
@@ -271,6 +287,7 @@ def _summarize_single_view(alerts_view: Sequence[Mapping[str, Any]]) -> Dict[str
         "total_alerts": total,
         "attributed_count": total - unattributed,
         "unattributed_count": unattributed,
+        "setup_count": setup_count,
         "false_positive_count": false_positives,
         "tag_mismatches": tag_mismatches,
         "by_scenario": by_scenario,
@@ -288,6 +305,7 @@ def summarize_attribution(attributed_alerts: Sequence[Mapping[str, Any]]) -> Dic
         "attack_count": sum(1 for a in attributed_alerts if a.get("attribution") == "attack"),
         "ambiguous_count": sum(1 for a in attributed_alerts if a.get("attribution") == "ambiguous"),
         "benign_count": sum(1 for a in attributed_alerts if a.get("attribution") == "benign"),
+        "setup_count": sum(1 for a in attributed_alerts if a.get("attribution") == "setup"),
         "ambiguous_excluded": excluded,
         "ambiguous_as_attack": as_attack,
     }

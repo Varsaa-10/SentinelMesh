@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage:  sudo ./linux_run/run_linux_baseline.sh [--reset]
+# Usage:  sudo [RUN_DIR=eval/runs] ./linux_run/run_linux_baseline.sh [--reset] [harness args...]
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
@@ -10,13 +10,16 @@ if [ "${1:-}" = "--reset" ]; then
   echo ">> resetting lab"
   ./reset_lab.sh
   echo ">> waiting 30s for healthchecks + Grafana startup"; sleep 30
+  shift
 fi
 
 "$HERE/preflight.sh"
 source "$HERE/.paths.env"
 touch "$WEBAPP_LOG" "$AUTH_LOG"
 
-BEFORE="$(ls -1 eval/runs 2>/dev/null | sort | tail -n1 || true)"
+RUN_DIR="${RUN_DIR:-eval/runs}"
+RUN_DIR="${RUN_DIR%/}"
+BEFORE="$(ls -1 "$RUN_DIR" 2>/dev/null | sort | tail -n1 || true)"
 PY="$(command -v python3)"
 echo ">> starting harness"
 "$PY" eval/harness.py \
@@ -31,9 +34,10 @@ echo ">> starting harness"
   --auto-run-attacks \
   --attack-scripts-dir attack_scripts \
   --chain-script scenario10_chain.sh \
-  --run-dir eval/runs || echo "!! harness exited non-zero — continuing to report"
+  --run-dir "$RUN_DIR" \
+  "$@" || echo "!! harness exited non-zero — continuing to report"
 
-RUN="$(ls -1d eval/runs/2* | sort | tail -n1)"
+RUN="$(ls -1d "$RUN_DIR"/2* | sort | tail -n1)"
 [ "$(basename "$RUN")" != "$BEFORE" ] || { echo "no new run folder was created"; exit 1; }
 
 {
@@ -42,12 +46,12 @@ RUN="$(ls -1d eval/runs/2* | sort | tail -n1)"
   echo "falco: $(falco --version | head -n1)"
   echo "docker: $(docker --version)"
   echo "git_commit: $(git rev-parse HEAD 2>/dev/null || echo n/a)"
-  sha256sum detection/falco-rules/*.yaml eval/ground_truth.json attack_scripts/* docker-compose.yml
+  sha256sum detection/falco-rules/*.yaml detection/falco-stock/*.yaml linux_run/benign_workload.sh eval/attribute.py eval/ground_truth.json attack_scripts/* docker-compose.yml
   for c in $(docker ps --format '{{.Names}}' | grep '^sentinelmesh-'); do
     echo "$c $(docker inspect -f '{{.Config.Image}} {{.Image}}' "$c")"
   done
   docker compose ps
-} > "$RUN/run_manifest.txt" 2>&1 || true
+} >> "$RUN/run_manifest.txt" 2>&1 || true
 
 "$PY" "$HERE/check_run.py" "$RUN" | tee "$RUN/run_report.txt" || true
 echo; echo "Run folder: $RUN"

@@ -332,3 +332,49 @@ def test_log_tail_service_webapp_within_2s_of_correct_login_is_ambiguous():
     assert att["candidate_labels"]["attack"]["scenario"] == "S1"
     assert att["candidate_labels"]["benign"][0]["action"] == "correct_login"
     assert att["false_positive"] is False
+
+
+def test_attribute_grafana_setup_is_neither_attack_nor_false_positive():
+    gt = _load_gt()
+    windows = {"S7": {"start": "2026-11-15T12:00:00Z", "end": "2026-11-15T12:00:05Z"}}
+    benign_actions = [
+        {
+            "start": "2026-11-15T12:00:02Z",
+            "end": "2026-11-15T12:00:02Z",
+            "container": "sentinelmesh-dashboard",
+            "action": "grafana_setup",
+        }
+    ]
+    setup_alert = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Grafana Setup Activity",
+        "timestamp": "2026-11-15T12:00:04Z",  # exactly +2s from grafana_setup
+        "service": "dashboard",
+        "event": {"container.name": "sentinelmesh-dashboard"},
+    }
+
+    att_normal = attribute_alert(setup_alert, windows, gt, benign_actions=benign_actions)
+    assert att_normal["attribution"] == "setup"
+    assert att_normal["attributed_scenario"] == "unattributed"
+    assert att_normal["ground_truth_technique"] is None
+    assert att_normal["false_positive"] is False
+    assert att_normal["benign_action"] == "grafana_setup"
+
+    att_benign_only = attribute_alert(
+        setup_alert, windows, gt, benign_only=True, benign_actions=benign_actions
+    )
+    assert att_benign_only["attribution"] == "setup"
+    assert att_benign_only["attributed_scenario"] == "unattributed"
+    assert att_benign_only["false_positive"] is False
+
+    summary = summarize_attribution([att_normal])
+    assert summary["setup_count"] == 1
+    assert summary["attack_count"] == 0
+    assert summary["attributed_count"] == 0
+    assert summary["false_positive_count"] == 0
+    assert summary["by_scenario"] == {}
+    assert summary["ambiguous_excluded"]["setup_count"] == 1
+    assert summary["ambiguous_excluded"]["attributed_count"] == 0
+    assert summary["ambiguous_excluded"]["false_positive_count"] == 0

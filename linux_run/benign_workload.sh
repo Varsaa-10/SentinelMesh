@@ -88,26 +88,40 @@ generate_strong_password() {
 }
 
 setup_grafana_viewer() {
-    local lookup uid created
+    local lookup uid created start_ts end_ts
     GRAFANA_VIEWER_PASS=$(generate_strong_password)
+
+    start_ts=$(now_iso_utc)
     lookup=$(curl -sf -m 5 -u admin:admin \
         "${GRAFANA_URL}/api/users/lookup?loginOrEmail=${GRAFANA_VIEWER_USER}" 2>/dev/null || true)
+    end_ts=$(now_iso_utc)
+    log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
+
     uid=$(echo "$lookup" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     if [ -z "$uid" ]; then
+        start_ts=$(now_iso_utc)
         created=$(curl -sf -m 5 -u admin:admin -X POST "${GRAFANA_URL}/api/admin/users" \
             -H "Content-Type: application/json" \
             -d "{\"name\":\"Benign Viewer\",\"email\":\"${GRAFANA_VIEWER_USER}@sentinelmesh.local\",\"login\":\"${GRAFANA_VIEWER_USER}\",\"password\":\"${GRAFANA_VIEWER_PASS}\"}" \
             2>/dev/null || true)
+        end_ts=$(now_iso_utc)
+        log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
         uid=$(echo "$created" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     else
+        start_ts=$(now_iso_utc)
         curl -sf -m 5 -u admin:admin -X PUT "${GRAFANA_URL}/api/admin/users/${uid}/password" \
             -H "Content-Type: application/json" \
             -d "{\"password\":\"${GRAFANA_VIEWER_PASS}\"}" >/dev/null 2>&1 || true
+        end_ts=$(now_iso_utc)
+        log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
     fi
     if [ -n "$uid" ]; then
+        start_ts=$(now_iso_utc)
         curl -sf -m 5 -u admin:admin -X PATCH "${GRAFANA_URL}/api/orgs/1/users/${uid}" \
             -H "Content-Type: application/json" \
             -d '{"role":"Viewer"}' >/dev/null 2>&1 || true
+        end_ts=$(now_iso_utc)
+        log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
     fi
 }
 
