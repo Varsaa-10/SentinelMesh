@@ -175,7 +175,6 @@ services:
   # 7. ngrok — Tunnel (exposes proxy to teammates on other networks)
   # ---------------------------------------------------------------------------
   ngrok:
-    profiles: ["tunnel"]   # opt-in only: docker compose --profile tunnel up. Exposes a deliberately vulnerable app to the internet.
     image: ngrok/ngrok:latest
     container_name: sentinelmesh-ngrok
     command:
