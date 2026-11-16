@@ -46,3 +46,5 @@ SysArch (1).drawio
 SysArch.drawio.crswap
 linux_run/.paths.env
 models/
+eval/runs_smoke/
+runs_smoke.zip
