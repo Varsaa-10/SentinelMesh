@@ -14,7 +14,7 @@ echo "Response: ${LOGIN_RESPONSE}"
 
 echo
 echo "[2/2] Anonymous dashboard access (no credentials, no session)..."
-ANON_RESPONSE=$(curl -s -o /dev/null -w "HTTP %{http_code}" "${GRAFANA_URL}/api/dashboards/home")
+ANON_RESPONSE=$(curl -s -o /dev/null -w "HTTP %{http_code}" "${GRAFANA_URL}/api/search?type=dash-db")
 echo "Response: ${ANON_RESPONSE}"
 
 echo

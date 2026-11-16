@@ -87,7 +87,7 @@ DEFAULT_ATTACK_ORDER = [
 PRIVILEGED_DEBUG_SCENARIO = ("S29", "scenario29_privileged_mount.sh", "bash")
 
 
-SECONDS_BETWEEN_ATTACKS = 4
+SECONDS_BETWEEN_ATTACKS = 15
 
 
 # ---------------------------------------------------------------------------
@@ -292,12 +292,16 @@ def build_attack_order(chain_script=None, privileged_debug=False):
     return order
 
 
-def start_benign_workload(script_path, duration_minutes, log_path, out_dir=None):
+def start_benign_workload(script_path, duration_minutes, log_path, out_dir=None, attack_lock_path=None):
     """Launch linux_run/benign_workload.sh asynchronously and return (proc, log_f)."""
     cmd = ["bash", str(script_path), "--duration", str(duration_minutes)]
     env = os.environ.copy()
     if out_dir is not None:
         env["OUT"] = str(out_dir)
+    if attack_lock_path is not None:
+        env["SM_ATTACK_LOCK"] = str(attack_lock_path)
+    elif out_dir is not None:
+        env["SM_ATTACK_LOCK"] = str(Path(out_dir) / "attack.lock")
     log(f"starting benign workload: {' '.join(cmd)}")
     log_f = open(log_path, "w")
     proc = subprocess.Popen(cmd, stdout=log_f, stderr=subprocess.STDOUT, env=env)
@@ -408,6 +412,8 @@ def run_attack_scripts(
     attack_scripts_dir,
     chain_script=None,
     privileged_debug=False,
+    lock_path=None,
+    busy_timeout=60.0,
 ):
     attack_scripts_dir = Path(attack_scripts_dir)
     order = build_attack_order(
@@ -415,9 +421,15 @@ def run_attack_scripts(
         privileged_debug=privileged_debug,
     )
 
+    lock_file = Path(lock_path) if lock_path is not None else None
+    busy_file = Path(f"{lock_file}.busy") if lock_file is not None else None
+    if lock_file is not None:
+        lock_file.parent.mkdir(parents=True, exist_ok=True)
+
     scenario_windows = {}
-    post_wait = max(1, SECONDS_BETWEEN_ATTACKS - 1) if SECONDS_BETWEEN_ATTACKS > 1 else 0
-    inter_gap = max(1, SECONDS_BETWEEN_ATTACKS - post_wait)
+    post_wait = min(3, max(1, SECONDS_BETWEEN_ATTACKS - 1)) if SECONDS_BETWEEN_ATTACKS > 1 else 0
+    lock_tail_wait = 2 if SECONDS_BETWEEN_ATTACKS > 0 else 0
+    inter_gap = max(1, SECONDS_BETWEEN_ATTACKS - post_wait - lock_tail_wait) if SECONDS_BETWEEN_ATTACKS > 0 else 0
 
     for scenario, filename, interpreter, extra_args in order:
         script_path = (attack_scripts_dir / filename).resolve()
@@ -429,33 +441,63 @@ def run_attack_scripts(
             )
             continue
 
-        start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        log(f"firing {scenario}: {filename}")
-
+        lock_start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         try:
-            result = subprocess.run(
-                [interpreter, str(script_path), *extra_args],
-                timeout=30,
-                capture_output=True,
-                text=True,
-            )
+            if lock_file is not None:
+                lock_file.write_text(f"{scenario}\n", encoding="utf-8")
+                deadline = time.monotonic() + busy_timeout
+                while busy_file.exists():
+                    if time.monotonic() >= deadline:
+                        log(
+                            f"WARNING: benign busy file {busy_file} still present after "
+                            f"{busy_timeout:.0f}s before {scenario}, continuing"
+                        )
+                        break
+                    time.sleep(0.1)
 
-            if result.stdout:
-                log(f"{scenario} stdout:\n{result.stdout.strip()}")
+            start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            log(f"firing {scenario}: {filename}")
 
-            if result.stderr:
-                log(f"{scenario} stderr:\n{result.stderr.strip()}")
+            try:
+                result = subprocess.run(
+                    [interpreter, str(script_path), *extra_args],
+                    timeout=30,
+                    capture_output=True,
+                    text=True,
+                )
 
-        except subprocess.TimeoutExpired:
-            log(f"WARNING: {filename} timed out after 30s, continuing")
+                if result.stdout:
+                    log(f"{scenario} stdout:\n{result.stdout.strip()}")
 
-        except Exception as exc:
-            log(f"WARNING: {filename} raised {exc}, continuing")
+                if result.stderr:
+                    log(f"{scenario} stderr:\n{result.stderr.strip()}")
 
-        time.sleep(post_wait)
-        end_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        scenario_windows[scenario] = {"start": start_ts, "end": end_ts}
-        time.sleep(inter_gap)
+            except subprocess.TimeoutExpired:
+                log(f"WARNING: {filename} timed out after 30s, continuing")
+
+            except Exception as exc:
+                log(f"WARNING: {filename} raised {exc}, continuing")
+
+            time.sleep(post_wait)
+            end_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            if lock_file is not None and lock_tail_wait:
+                time.sleep(lock_tail_wait)
+        finally:
+            if lock_file is not None:
+                lock_file.unlink(missing_ok=True)
+            lock_end_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        if lock_file is not None:
+            scenario_windows[scenario] = {
+                "start": start_ts,
+                "end": end_ts,
+                "lock_start": lock_start_ts,
+                "lock_end": lock_end_ts,
+            }
+        else:
+            scenario_windows[scenario] = {"start": start_ts, "end": end_ts}
+        if inter_gap:
+            time.sleep(inter_gap)
 
     return scenario_windows, scenario_windows.get("S10")
 
@@ -588,7 +630,11 @@ def score_against_ground_truth(
     if benign_only:
         return {}
 
-    alerts = [a for a in alerts if a.get("attribution") != "setup"]
+    alerts = [
+        a
+        for a in alerts
+        if a.get("attribution") not in ("setup", "attack_collateral", "benign", "unattributed")
+    ]
     if exclude_ambiguous:
         alerts = [a for a in alerts if a.get("attribution") != "ambiguous"]
 
@@ -616,6 +662,7 @@ def score_against_ground_truth(
                 for alert in alerts
                 if (
                     alert.get("attributed_scenario") == sid
+                    and alert.get("designated_rule", True) is True
                     and str(alert.get("title", "")).startswith(expected_title or "")
                     and (not expected_severity or alert.get("severity") == expected_severity)
                 )
@@ -639,6 +686,7 @@ def score_against_ground_truth(
                 for alert in alerts
                 if (
                     alert.get("scenario") == expected_scenario
+                    and alert.get("designated_rule", True) is True
                     and str(alert.get("title", "")).startswith(expected_title or "")
                     and alert.get("severity") == expected_severity
                 )
@@ -684,7 +732,8 @@ def score_against_ground_truth(
                 alert
                 for alert in alerts
                 if (
-                    alert.get("scenario")
+                    alert.get("designated_rule", True) is True
+                    and alert.get("scenario")
                     == stage_spec.get(
                         "expected_scenario"
                     )
@@ -1126,6 +1175,8 @@ def main():
     # Run attacks / listen
     # -----------------------------------------------------------------------
 
+    attack_lock_path = run_path / "attack.lock"
+
     try:
 
         scenario_windows = {}
@@ -1145,6 +1196,7 @@ def main():
                 args.benign_minutes,
                 run_path / "benign_workload.log",
                 out_dir=run_path,
+                attack_lock_path=None if args.benign_only else attack_lock_path,
             )
 
         if args.benign_only:
@@ -1172,6 +1224,7 @@ def main():
                 args.attack_scripts_dir,
                 chain_script=args.chain_script,
                 privileged_debug=args.privileged_debug,
+                lock_path=attack_lock_path,
             )
 
             log(
@@ -1201,6 +1254,8 @@ def main():
         )
 
     finally:
+
+        attack_lock_path.unlink(missing_ok=True)
 
         # ---------------------------------------------------------------
         # Stop all detector processes
@@ -1367,7 +1422,9 @@ def main():
         "privileged_debug": args.privileged_debug,
         "benign_only": args.benign_only,
         "benign_minutes": args.benign_minutes,
-        "benign_actions_count": len(benign_actions),
+        "benign_actions_count": sum(
+            1 for a in benign_actions if a.get("action") not in ("pause", "resume")
+        ),
         "scenario_windows": scenario_windows,
         "attribution_summary": attribution_summary,
         "ground_truth_file": str(

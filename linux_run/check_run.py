@@ -21,7 +21,10 @@ def main():
     run = Path(args.run_dir)
     lab = ipaddress.ip_network(args.lab_cidr)
     alerts = load(run / "alerts.jsonl")
+    att_path = run / "alerts_attributed.jsonl"
+    attributed = load(att_path) if att_path.exists() else []
     res = json.loads((run / "baseline1_results.json").read_text())
+    benign_only = bool(res.get("benign_only"))
     by = {}
     for a in alerts:
         by.setdefault(a.get("scenario", "?"), []).append(a)
@@ -30,19 +33,59 @@ def main():
     print(f"RUN {run.name}: {len(alerts)} alerts, harness score "
           f"{res['single_scenario_pass_count']}/{res['single_scenario_total']}, "
           f"S10 stages all fired: {res.get('s10_chain_all_stages_fired')}")
+
+    att_summary = res.get("attribution_summary") or {}
+    by_att = att_summary.get("by_attribution")
+    if not by_att and attributed:
+        by_att = dict(Counter(a.get("attribution") or "unattributed" for a in attributed))
+    if by_att:
+        print("\nAttribution counts:")
+        for k, v in by_att.items():
+            print(f"  {k:<20} {v}")
+
     print("\nPer scenario")
-    for sid in sorted(set(EXPECT) | set(by), key=lambda s: (len(s), s)):
+    all_sids = (set(EXPECT) | set(by) | set(res.get("results", {}))) - {"S10"}
+    for sid in sorted(all_sids, key=lambda s: (len(s), s)):
         r = res["results"].get(sid, {})
-        n = len(by.get(sid, []))
+        if sid in by or not sid:
+            n = len(by.get(sid, []))
+        elif attributed:
+            n = sum(
+                1
+                for a in attributed
+                if a.get("attributed_scenario") == sid
+                and a.get("attribution") != "attack_collateral"
+            )
+        else:
+            n = r.get("match_count", 0)
+        scored_n = r.get("match_count", n) if sid in res["results"] else n
         exp = EXPECT.get(sid)
         flag = ""
-        if sid in res["results"] and not r.get("fired"):
+        if sid in res["results"] and not r.get("matches_expectation", r.get("fired")):
             flag = "  <-- DID NOT FIRE"; review.append(f"{sid} did not fire")
-        elif exp is not None and n > exp * 2:
-            flag = f"  <-- {n} alerts vs ~{exp} expected: noise"; review.append(f"{sid} noisy ({n} vs ~{exp})")
-        print(f"  {sid:<4} fired={str(r.get('fired','-')):<5} alerts={n:<3} (expect ~{exp if exp else 'n/a'}){flag}")
+        elif exp is not None and scored_n > exp * 2:
+            flag = f"  <-- {scored_n} alerts vs ~{exp} expected: noise"; review.append(f"{sid} noisy ({scored_n} vs ~{exp})")
+        label = sid if sid else "(stock)"
+        print(f"  {label:<7} fired={str(r.get('fired','-')):<5} alerts={n:<3} matched={str(r.get('match_count','-')):<3} (expect ~{exp if exp else 'n/a'}){flag}")
     if "UNKNOWN" in by:
         review.append("alerts with scenario=UNKNOWN")
+
+    collateral = [a for a in attributed if a.get("attribution") == "attack_collateral"]
+    print(f"\nCollateral alerts ({len(collateral)}):")
+    if not collateral:
+        print("  (none)")
+    else:
+        c_col = Counter(
+            (
+                a.get("attributed_scenario", "?"),
+                ev(a, "container.name") or a.get("service") or "unknown",
+                a.get("title", ""),
+                a.get("rule_technique"),
+            )
+            for a in collateral
+        )
+        for (csid, cont, title, rtech), cnt in c_col.most_common():
+            print(f"  {cnt:>3}x  [{csid}] {cont} / {title} (rule_technique={rtech})")
 
     print("\nS8 alerts by (container, process, dest):")
     c8 = Counter((ev(a, "container.name"), ev(a, "proc.name"), ev(a, "fd.sip") or ev(a, "fd.rip")) for a in by.get("S8", []))
@@ -81,12 +124,15 @@ def main():
     for t, n in Counter(a.get("title", "")[:60] for a in by.get("S7", [])).most_common():
         print(f"  {n:>3}x  {t}")
 
-    stages = ["S1", "S3", "S4", "S9", "S8"]
-    ts = [max((a["timestamp"] for a in by.get(s, [])), default=None) for s in stages]
-    print("\nS10 chain: latest alert per stage (should increase S1<S3<S4<S9<S8):")
-    for s, t in zip(stages, ts): print(f"  {s}: {t}")
-    if None in ts or ts != sorted(ts):
-        review.append("S10 chain stages missing or out of order")
+    if benign_only:
+        print("\nS10 chain: skipped (benign-only capture)")
+    else:
+        stages = ["S1", "S3", "S4", "S9", "S8"]
+        ts = [max((a["timestamp"] for a in by.get(s, [])), default=None) for s in stages]
+        print("\nS10 chain: latest alert per stage (should increase S1<S3<S4<S9<S8):")
+        for s, t in zip(stages, ts): print(f"  {s}: {t}")
+        if None in ts or ts != sorted(ts):
+            review.append("S10 chain stages missing or out of order")
 
     print("\n" + "=" * 60)
     if review:

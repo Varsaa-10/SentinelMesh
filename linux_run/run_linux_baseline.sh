@@ -9,7 +9,33 @@ cd "$ROOT"
 if [ "${1:-}" = "--reset" ]; then
   echo ">> resetting lab"
   ./reset_lab.sh
-  echo ">> waiting 30s for healthchecks + Grafana startup"; sleep 30
+  echo ">> waiting up to 180s for webapp /health, authservice /health, and Grafana /api/health..."
+  WEBAPP_HEALTH_URL="${WEBAPP_URL:-http://127.0.0.1:5000}/health"
+  AUTHSERVICE_HEALTH_URL="${AUTHSERVICE_URL:-http://127.0.0.1:5001}/health"
+  GRAFANA_HEALTH_URL="${GRAFANA_URL:-http://127.0.0.1:3000}/api/health"
+  waited=0
+  while true; do
+    webapp_ok=0
+    auth_ok=0
+    grafana_ok=0
+    curl -sf -m 2 "$WEBAPP_HEALTH_URL" >/dev/null 2>&1 && webapp_ok=1 || true
+    curl -sf -m 2 "$AUTHSERVICE_HEALTH_URL" >/dev/null 2>&1 && auth_ok=1 || true
+    curl -sf -m 2 -o /dev/null "$GRAFANA_HEALTH_URL" >/dev/null 2>&1 && grafana_ok=1 || true
+    if [ "$webapp_ok" -eq 1 ] && [ "$auth_ok" -eq 1 ] && [ "$grafana_ok" -eq 1 ]; then
+      echo ">> all services healthy after ${waited}s"
+      break
+    fi
+    if [ "$waited" -ge 180 ]; then
+      down=""
+      [ "$webapp_ok" -eq 0 ] && down="$down webapp($WEBAPP_HEALTH_URL)"
+      [ "$auth_ok" -eq 0 ] && down="$down authservice($AUTHSERVICE_HEALTH_URL)"
+      [ "$grafana_ok" -eq 0 ] && down="$down grafana($GRAFANA_HEALTH_URL)"
+      echo "ERROR: timed out after 180s waiting for service health; still down:${down}" >&2
+      exit 1
+    fi
+    sleep 2
+    waited=$((waited + 2))
+  done
   shift
 fi
 

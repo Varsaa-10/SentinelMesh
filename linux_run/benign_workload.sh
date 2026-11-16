@@ -43,9 +43,20 @@ DURATION_SECONDS=$(awk -v m="$DURATION_MINUTES" 'BEGIN { s = int(m * 60 + 0.5); 
 OUT="${OUT:-.}"
 mkdir -p "$OUT"
 BENIGN_ACTIONS_LOG="${OUT}/benign_actions.jsonl"
+SM_ATTACK_LOCK="${SM_ATTACK_LOCK:-}"
+SM_BENIGN_BUSY="${SM_BENIGN_BUSY:-}"
+if [ -n "$SM_ATTACK_LOCK" ] && [ -z "$SM_BENIGN_BUSY" ]; then
+    SM_BENIGN_BUSY="${SM_ATTACK_LOCK}.busy"
+fi
 
 RUNNING=1
-trap 'RUNNING=0' TERM INT
+cleanup_busy() {
+    if [ -n "${SM_BENIGN_BUSY:-}" ]; then
+        rm -f "$SM_BENIGN_BUSY"
+    fi
+}
+trap 'RUNNING=0; cleanup_busy' TERM INT
+trap 'cleanup_busy' EXIT
 
 now_epoch() {
     date +%s
@@ -68,14 +79,60 @@ log_action() {
         "$start_ts" "$end_ts" "$container" "$action" >> "$BENIGN_ACTIONS_LOG"
 }
 
+wait_for_attack_lock() {
+    [ -n "$SM_ATTACK_LOCK" ] || return 0
+    if [ -e "$SM_ATTACK_LOCK" ]; then
+        local pause_ts resume_ts
+        pause_ts=$(now_iso_utc)
+        log_action "" "pause" "$pause_ts" "$pause_ts"
+        while [ "$RUNNING" -eq 1 ] && [ -e "$SM_ATTACK_LOCK" ]; do
+            if [ -n "${END_EPOCH:-}" ] && [ "$(now_epoch)" -ge "$END_EPOCH" ]; then
+                break
+            fi
+            sleep 0.2
+        done
+        resume_ts=$(now_iso_utc)
+        log_action "" "resume" "$resume_ts" "$resume_ts"
+    fi
+}
+
+begin_benign_action() {
+    wait_for_attack_lock
+    [ "$RUNNING" -eq 1 ] || return 1
+    if [ -n "${END_EPOCH:-}" ] && [ "$(now_epoch)" -ge "$END_EPOCH" ]; then
+        return 1
+    fi
+    if [ -n "$SM_BENIGN_BUSY" ]; then
+        : > "$SM_BENIGN_BUSY"
+    fi
+    if [ -n "$SM_ATTACK_LOCK" ] && [ -e "$SM_ATTACK_LOCK" ]; then
+        cleanup_busy
+        wait_for_attack_lock
+        [ "$RUNNING" -eq 1 ] || return 1
+        if [ -n "${END_EPOCH:-}" ] && [ "$(now_epoch)" -ge "$END_EPOCH" ]; then
+            return 1
+        fi
+        if [ -n "$SM_BENIGN_BUSY" ]; then
+            : > "$SM_BENIGN_BUSY"
+        fi
+    fi
+    return 0
+}
+
+end_benign_action() {
+    cleanup_busy
+}
+
 run_docker_exec_logged() {
     local container="$1"
     local action="$2"
     shift 2
+    begin_benign_action || return 0
     local start_ts end_ts
     start_ts=$(now_iso_utc)
     MSYS_NO_PATHCONV=1 docker exec "$container" "$@" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "$container" "$action" "$start_ts" "$end_ts"
 }
 
@@ -91,54 +148,66 @@ setup_grafana_viewer() {
     local lookup uid created start_ts end_ts
     GRAFANA_VIEWER_PASS=$(generate_strong_password)
 
+    begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     lookup=$(curl -sf -m 5 -u admin:admin \
         "${GRAFANA_URL}/api/users/lookup?loginOrEmail=${GRAFANA_VIEWER_USER}" 2>/dev/null || true)
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
 
     uid=$(echo "$lookup" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     if [ -z "$uid" ]; then
+        begin_benign_action || return 0
         start_ts=$(now_iso_utc)
         created=$(curl -sf -m 5 -u admin:admin -X POST "${GRAFANA_URL}/api/admin/users" \
             -H "Content-Type: application/json" \
             -d "{\"name\":\"Benign Viewer\",\"email\":\"${GRAFANA_VIEWER_USER}@sentinelmesh.local\",\"login\":\"${GRAFANA_VIEWER_USER}\",\"password\":\"${GRAFANA_VIEWER_PASS}\"}" \
             2>/dev/null || true)
         end_ts=$(now_iso_utc)
+        end_benign_action
         log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
         uid=$(echo "$created" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     else
+        begin_benign_action || return 0
         start_ts=$(now_iso_utc)
         curl -sf -m 5 -u admin:admin -X PUT "${GRAFANA_URL}/api/admin/users/${uid}/password" \
             -H "Content-Type: application/json" \
             -d "{\"password\":\"${GRAFANA_VIEWER_PASS}\"}" >/dev/null 2>&1 || true
         end_ts=$(now_iso_utc)
+        end_benign_action
         log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
     fi
     if [ -n "$uid" ]; then
+        begin_benign_action || return 0
         start_ts=$(now_iso_utc)
         curl -sf -m 5 -u admin:admin -X PATCH "${GRAFANA_URL}/api/orgs/1/users/${uid}" \
             -H "Content-Type: application/json" \
             -d '{"role":"Viewer"}' >/dev/null 2>&1 || true
         end_ts=$(now_iso_utc)
+        end_benign_action
         log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
     fi
 }
 
 do_correct_logins() {
     local start_ts end_ts
+    begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "sentinelmesh-webapp" "correct_login" "$start_ts" "$end_ts"
 
+    begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${AUTHSERVICE_URL}/auth/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "sentinelmesh-authservice" "correct_login" "$start_ts" "$end_ts"
 }
 
@@ -156,31 +225,37 @@ do_single_typo() {
     if [ $((now - last)) -lt 65 ]; then
         return 0
     fi
-    LAST_TYPO_EPOCH["$acct"]="$now"
+    begin_benign_action || return 0
+    LAST_TYPO_EPOCH["$acct"]="$(now_epoch)"
     start_ts=$(now_iso_utc)
     curl -s -m 5 -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
         -d "{\"username\":\"${acct}\",\"password\":\"wrongpass_typo\"}" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "sentinelmesh-webapp" "single_typo" "$start_ts" "$end_ts"
 }
 
 do_grafana_view() {
     local start_ts end_ts
+    begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/dashboards/home" >/dev/null 2>&1 || true
     curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/search?limit=10" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "sentinelmesh-dashboard" "grafana_view" "$start_ts" "$end_ts"
 }
 
 do_pg_dump() {
     local start_ts end_ts
+    begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     MSYS_NO_PATHCONV=1 docker exec -e PGPASSWORD=postgres sentinelmesh-webapp \
         sh -c 'pg_dump -h database -U postgres -d sentinelmesh -f /tmp/benign_pg_backup.sql >/dev/null 2>&1 && rm -f /tmp/benign_pg_backup.sql' \
         >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "sentinelmesh-webapp" "pg_dump" "$start_ts" "$end_ts"
 }
 
@@ -212,16 +287,18 @@ do_outbound_https() {
     local url start_ts end_ts
     url="${HTTPS_SITES[$((HTTPS_IDX % ${#HTTPS_SITES[@]}))]}"
     HTTPS_IDX=$((HTTPS_IDX + 1))
+    begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     curl -sS -m 5 -o /dev/null "$url" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
+    end_benign_action
     log_action "host" "outbound_https" "$start_ts" "$end_ts"
 }
 
-setup_grafana_viewer
-
 START_EPOCH=$(now_epoch)
 END_EPOCH=$((START_EPOCH + DURATION_SECONDS))
+
+setup_grafana_viewer
 
 LAST_LOGIN=0
 LAST_TYPO=0
@@ -236,12 +313,14 @@ LAST_HTTPS=0
 log_msg "starting benign workload for ${DURATION_MINUTES} minute(s) (${DURATION_SECONDS}s)"
 
 while [ "$RUNNING" -eq 1 ]; do
+    wait_for_attack_lock
+    [ "$RUNNING" -eq 1 ] || break
     NOW=$(now_epoch)
     [ "$NOW" -ge "$END_EPOCH" ] && break
 
     if [ $((NOW - LAST_LOGIN)) -ge 20 ]; then
         do_correct_logins
-        LAST_LOGIN=$NOW
+        LAST_LOGIN=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -250,7 +329,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_TYPO)) -ge 20 ]; then
         do_single_typo
-        LAST_TYPO=$NOW
+        LAST_TYPO=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -259,7 +338,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_GRAFANA)) -ge 25 ]; then
         do_grafana_view
-        LAST_GRAFANA=$NOW
+        LAST_GRAFANA=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -268,7 +347,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_EXEC)) -ge 20 ]; then
         do_routine_docker_exec
-        LAST_EXEC=$NOW
+        LAST_EXEC=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -277,7 +356,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_HTTPS)) -ge 30 ]; then
         do_outbound_https
-        LAST_HTTPS=$NOW
+        LAST_HTTPS=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -286,7 +365,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_CONFIG)) -ge 45 ]; then
         do_read_configs
-        LAST_CONFIG=$NOW
+        LAST_CONFIG=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -295,7 +374,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_PGDUMP)) -ge 60 ]; then
         do_pg_dump
-        LAST_PGDUMP=$NOW
+        LAST_PGDUMP=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -304,7 +383,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_LOGROT)) -ge 60 ]; then
         do_log_rotation
-        LAST_LOGROT=$NOW
+        LAST_LOGROT=$(now_epoch)
     fi
 
     [ "$RUNNING" -eq 1 ] || break
@@ -313,7 +392,7 @@ while [ "$RUNNING" -eq 1 ]; do
 
     if [ $((NOW - LAST_PKG)) -ge 120 ]; then
         do_pkg_index_update
-        LAST_PKG=$NOW
+        LAST_PKG=$(now_epoch)
     fi
 
     sleep 1

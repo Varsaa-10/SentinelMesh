@@ -111,8 +111,16 @@ def test_attribute_unattributed_on_wrong_container_or_outside_window():
         "falco_tags": ["T1059"],
     }
 
-    res = attribute_alerts([wrong_container, outside_window, host_event], windows, gt)
-    for item in res:
+    res_wrong, res_outside, res_host = attribute_alerts(
+        [wrong_container, outside_window, host_event], windows, gt
+    )
+    assert res_wrong["attribution"] == "attack_collateral"
+    assert res_wrong["attributed_scenario"] == "S11"
+    assert res_wrong["ground_truth_technique"] == "T1059"
+    assert res_wrong["false_positive"] is False
+
+    for item in (res_outside, res_host):
+        assert item["attribution"] == "unattributed"
         assert item["attributed_scenario"] == "unattributed"
         assert item["ground_truth_technique"] is None
         assert item["falco_technique"] == "T1059"
@@ -378,3 +386,310 @@ def test_attribute_grafana_setup_is_neither_attack_nor_false_positive():
     assert summary["ambiguous_excluded"]["setup_count"] == 1
     assert summary["ambiguous_excluded"]["attributed_count"] == 0
     assert summary["ambiguous_excluded"]["false_positive_count"] == 0
+
+
+def test_f2_target_collateral_helper_host_attack_host_system_and_benign_outside():
+    gt = _load_gt()
+    windows = {
+        "S4": {"start": "2026-11-16T04:27:20Z", "end": "2026-11-16T04:27:26Z"},
+        "S5": {"start": "2026-11-16T04:27:27Z", "end": "2026-11-16T04:27:38Z"},
+        "S11": {"start": "2026-11-16T04:28:02Z", "end": "2026-11-16T04:28:06Z"},
+    }
+    benign_actions = [
+        {
+            "start": "2026-11-16T04:27:20Z",
+            "end": "2026-11-16T04:27:20Z",
+            "container": "",
+            "action": "pause",
+        },
+        {
+            "start": "2026-11-16T04:27:26Z",
+            "end": "2026-11-16T04:27:26Z",
+            "container": "",
+            "action": "resume",
+        },
+        {
+            "start": "2026-11-16T04:28:12Z",
+            "end": "2026-11-16T04:28:12Z",
+            "container": "host",
+            "action": "outbound_https",
+        },
+    ]
+
+    # 1. Target alert inside S11 window on sentinelmesh-webapp
+    target_alert = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Terminal shell in container",
+        "timestamp": "2026-11-16T04:28:03Z",
+        "service": "webapp",
+        "falco_tags": ["T1059", "container", "shell"],
+        "event": {"container.name": "sentinelmesh-webapp", "proc.name": "sh"},
+    }
+
+    # 2. Collateral alert in another lab container inside S11 window
+    collateral_lab_alert = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Non sudo setuid",
+        "timestamp": "2026-11-16T04:28:04Z",
+        "service": "database",
+        "falco_tags": ["T1548.001", "container"],
+        "event": {"container.name": "sentinelmesh-database", "proc.name": "su"},
+    }
+
+    # 3. Helper-container alert (e.g. S5 ephemeral psql container)
+    helper_alert = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Launch Sensitive Mount Container",
+        "timestamp": "2026-11-16T04:27:33Z",
+        "service": "pensive_knuth",
+        "falco_tags": ["T1610", "container"],
+        "event": {"container.name": "pensive_knuth", "proc.name": "psql"},
+    }
+
+    # 4. Host attack-script alert (proc.cmdline and proc.pcmdline)
+    host_attack_cmdline = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Unexpected UDP Traffic",
+        "timestamp": "2026-11-16T04:27:23Z",
+        "service": "host",
+        "falco_tags": ["TA0011", "host"],
+        "event": {
+            "container.name": "host",
+            "proc.cmdline": "python3 /home/kali/SentinelMesh/attack_scripts/scenario4_jwt_confusion.py",
+        },
+    }
+    host_attack_pcmdline = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Unexpected UDP Traffic",
+        "timestamp": "2026-11-16T04:27:24Z",
+        "service": "host",
+        "falco_tags": ["TA0011", "host"],
+        "event": {
+            "container.name": "host",
+            "proc.cmdline": "curl -s http://127.0.0.1:5001/auth/verify",
+            "proc.pcmdline": "bash /home/kali/SentinelMesh/attack_scripts/scenario1_sqli.sh",
+        },
+    }
+
+    # 5. Host system alert in a window (e.g. runc / containerd) -> stays unattributed
+    host_system_alert = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "BPF Program Not Profiled",
+        "timestamp": "2026-11-16T04:27:31Z",
+        "service": "host",
+        "falco_tags": ["TA0003", "host"],
+        "event": {"container.name": "host", "proc.cmdline": "runc create ..."},
+    }
+
+    # 6. Benign alert outside windows
+    benign_outside = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Unexpected UDP Traffic",
+        "timestamp": "2026-11-16T04:28:12Z",
+        "service": "host",
+        "falco_tags": ["TA0011", "host"],
+        "event": {"container.name": "host", "proc.cmdline": "curl https://pypi.org"},
+    }
+
+    attributed = attribute_alerts(
+        [
+            target_alert,
+            collateral_lab_alert,
+            helper_alert,
+            host_attack_cmdline,
+            host_attack_pcmdline,
+            host_system_alert,
+            benign_outside,
+        ],
+        windows,
+        gt,
+        benign_actions=benign_actions,
+    )
+    a_tgt, a_lab, a_hlp, a_hcmd, a_hpcmd, a_hsys, a_ben = attributed
+
+    assert a_tgt["attribution"] == "attack"
+    assert a_tgt["attributed_scenario"] == "S11"
+    assert a_tgt["ground_truth_technique"] == "T1059"
+    assert a_tgt["designated_rule"] is True
+    assert a_tgt["false_positive"] is False
+
+    assert a_lab["attribution"] == "attack_collateral"
+    assert a_lab["attributed_scenario"] == "S11"
+    assert a_lab["ground_truth_technique"] == "T1059"
+    assert a_lab["false_positive"] is False
+
+    assert a_hlp["attribution"] == "attack_collateral"
+    assert a_hlp["attributed_scenario"] == "S5"
+    assert a_hlp["ground_truth_technique"] == "T1021"
+    assert a_hlp["false_positive"] is False
+
+    for h_atk in (a_hcmd, a_hpcmd):
+        assert h_atk["attribution"] == "attack_collateral"
+        assert h_atk["attributed_scenario"] == "S4"
+        assert h_atk["ground_truth_technique"] == "T1212"
+        assert h_atk["false_positive"] is False
+
+    assert a_hsys["attribution"] == "unattributed"
+    assert a_hsys["attributed_scenario"] == "unattributed"
+    assert a_hsys["ground_truth_technique"] is None
+    assert a_hsys["designated_rule"] is False
+    assert a_hsys["false_positive"] is False
+
+    assert a_ben["attribution"] == "benign"
+    assert a_ben["attributed_scenario"] == "unattributed"
+    assert a_ben["ground_truth_technique"] is None
+    assert a_ben["designated_rule"] is False
+    assert a_ben["false_positive"] is True
+    assert a_ben["benign_action"] == "outbound_https"
+
+    summary = summarize_attribution(attributed)
+    assert summary["attack_count"] == 1
+    assert summary["attack_collateral_count"] == 4
+    assert summary["benign_count"] == 1
+    assert summary["by_attribution"] == {
+        "attack": 1,
+        "attack_collateral": 4,
+        "ambiguous": 0,
+        "benign": 1,
+        "setup": 0,
+        "unattributed": 1,
+    }
+
+
+def test_f3_rule_technique_and_designated_rule_stock_and_s09():
+    gt = _load_gt()
+    windows = {
+        "S7": {"start": "2026-11-16T04:27:44Z", "end": "2026-11-16T04:27:47Z"},
+        "S9": {"start": "2026-11-16T04:27:49Z", "end": "2026-11-16T04:27:55Z"},
+        "S17": {"start": "2026-11-16T04:28:44Z", "end": "2026-11-16T04:28:47Z"},
+        "S20": {"start": "2026-11-16T04:28:59Z", "end": "2026-11-16T04:29:04Z"},
+    }
+
+    # Stock rule with non-matching rule firing inside S17 (Execution from /dev/shm)
+    stock_non_designated = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Non sudo setuid",
+        "timestamp": "2026-11-16T04:28:44Z",
+        "service": "dashboard",
+        "falco_tags": ["T1548.001", "container", "users"],
+        "event": {"container.name": "sentinelmesh-dashboard"},
+    }
+    # Stock rule matching S17's designated rule
+    stock_designated = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Execution from /dev/shm",
+        "timestamp": "2026-11-16T04:28:45Z",
+        "service": "dashboard",
+        "falco_tags": ["T1059.004", "container", "mitre_execution"],
+        "event": {"container.name": "sentinelmesh-dashboard"},
+    }
+    # Stock rule with tactic-only tag (no Txxxx) -> rule_technique is None
+    stock_tactic_only = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Unexpected UDP Traffic",
+        "timestamp": "2026-11-16T04:29:10Z",
+        "service": "host",
+        "falco_tags": ["TA0011", "host"],
+        "event": {"container.name": "host"},
+    }
+    # s09 firing during S9 (designated)
+    s09_in_s9 = {
+        "source": "falco",
+        "scenario": "S9",
+        "severity": "CRITICAL",
+        "title": "SentinelMesh Sensitive Credential File Read",
+        "timestamp": "2026-11-16T04:27:52Z",
+        "service": "webapp",
+        "event": {"container.name": "sentinelmesh-webapp", "fd.name": "/etc/shadow"},
+    }
+    # s09 firing during S20 (useradd reading /etc/shadow in database) -> non-designated for S20
+    s09_in_s20 = {
+        "source": "falco",
+        "scenario": "S9",
+        "severity": "CRITICAL",
+        "title": "SentinelMesh Sensitive Credential File Read",
+        "timestamp": "2026-11-16T04:29:00Z",
+        "service": "database",
+        "event": {"container.name": "sentinelmesh-database", "fd.name": "/etc/shadow"},
+    }
+    # S7 Grafana login & anonymous dashboard access
+    s7_login = {
+        "source": "log-tail",
+        "scenario": "S7",
+        "severity": "WARNING",
+        "title": "Grafana Login Succeeded (unconfirmed — username not visible)",
+        "timestamp": "2026-11-16T04:27:44Z",
+        "service": "dashboard",
+        "event": {"raw_log_line": "..."},
+    }
+    s7_anon = {
+        "source": "log-tail",
+        "scenario": "S7",
+        "severity": "WARNING",
+        "title": "Grafana Anonymous Dashboard Access",
+        "timestamp": "2026-11-16T04:27:45Z",
+        "service": "dashboard",
+        "event": {"raw_log_line": "..."},
+    }
+
+    res = attribute_alerts(
+        [
+            stock_non_designated,
+            stock_designated,
+            stock_tactic_only,
+            s09_in_s9,
+            s09_in_s20,
+            s7_login,
+            s7_anon,
+        ],
+        windows,
+        gt,
+    )
+    r_nd, r_d, r_tac, r_s9, r_s9_s20, r_s7_log, r_s7_anon = res
+
+    assert r_nd["ground_truth_technique"] == "T1059.004"
+    assert r_nd["rule_technique"] == "T1548.001"
+    assert r_nd["designated_rule"] is False
+
+    assert r_d["ground_truth_technique"] == "T1059.004"
+    assert r_d["rule_technique"] == "T1059.004"
+    assert r_d["designated_rule"] is True
+
+    assert r_tac["ground_truth_technique"] is None
+    assert r_tac["rule_technique"] is None
+    assert r_tac["designated_rule"] is False
+
+    assert r_s9["attributed_scenario"] == "S9"
+    assert r_s9["ground_truth_technique"] == "T1003.008"
+    assert r_s9["rule_technique"] == "T1003.008"
+    assert r_s9["designated_rule"] is True
+
+    assert r_s9_s20["attributed_scenario"] == "S20"
+    assert r_s9_s20["ground_truth_technique"] == "T1098"
+    assert r_s9_s20["rule_technique"] == "T1003.008"
+    assert r_s9_s20["designated_rule"] is False
+
+    assert r_s7_log["rule_technique"] == "T1078"
+    assert r_s7_log["designated_rule"] is True
+    assert r_s7_anon["rule_technique"] == "T1078"
+    assert r_s7_anon["designated_rule"] is False

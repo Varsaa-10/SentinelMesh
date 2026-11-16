@@ -205,3 +205,205 @@ def test_score_against_ground_truth_excludes_setup_alerts():
     res = harness.score_against_ground_truth([setup_s7], gt, include_stock_falco=True)
     assert res["S7"]["fired"] is False
     assert res["S7"]["match_count"] == 0
+
+
+def test_run_attack_scripts_lock_busy_wait_and_seconds_between_attacks(tmp_path, monkeypatch):
+    assert harness.SECONDS_BETWEEN_ATTACKS == 15
+
+    scripts_dir = tmp_path / "scripts"
+    scripts_dir.mkdir()
+    for _, fname, _ in harness.DEFAULT_ATTACK_ORDER[:2]:
+        (scripts_dir / fname).write_text("exit 0\n", encoding="utf-8")
+
+    run_dir = tmp_path / "run_001"
+    run_dir.mkdir()
+    lock_path = run_dir / "attack.lock"
+    busy_path = Path(f"{lock_path}.busy")
+
+    busy_path.write_text("", encoding="utf-8")
+    sleeps = []
+    saw_lock_during_run = []
+
+    def fake_sleep(secs):
+        sleeps.append(secs)
+        # Clear busy file on the second busy poll tick before S1 runs
+        if secs == 0.1 and busy_path.exists() and len(sleeps) >= 2:
+            busy_path.unlink()
+
+    def fake_run(cmd, timeout=30, capture_output=True, text=True):
+        saw_lock_during_run.append((Path(cmd[1]).name, lock_path.exists(), busy_path.exists()))
+        return type("Res", (), {"stdout": "", "stderr": "", "returncode": 0})()
+
+    monkeypatch.setattr(harness.time, "sleep", fake_sleep)
+    monkeypatch.setattr(harness.subprocess, "run", fake_run)
+
+    windows, _ = harness.run_attack_scripts(scripts_dir, lock_path=lock_path)
+    assert not lock_path.exists()
+    assert len(saw_lock_during_run) == 2
+    assert all(locked and not busy for _, locked, busy in saw_lock_during_run)
+
+    for sid in ("S1", "S2"):
+        w = windows[sid]
+        assert w["lock_start"] <= w["start"] <= w["end"] <= w["lock_end"]
+
+    # Two busy-wait 0.1s ticks + two scenarios each with (post_wait=3, lock_tail=2, inter_gap=10)
+    assert sleeps == [0.1, 0.1, 3, 2, 10, 3, 2, 10]
+
+
+def test_start_benign_workload_passes_attack_lock_env(tmp_path, monkeypatch):
+    captured = {}
+
+    def fake_popen(cmd, stdout=None, stderr=None, env=None):
+        captured["env"] = env
+        return type("Proc", (), {"poll": lambda self: 0})()
+
+    monkeypatch.setattr(harness.subprocess, "Popen", fake_popen)
+    out_dir = tmp_path / "run_002"
+    out_dir.mkdir()
+    lock_path = out_dir / "attack.lock"
+    _proc, log_f = harness.start_benign_workload(
+        tmp_path / "benign_workload.sh",
+        5,
+        out_dir / "benign.log",
+        out_dir=out_dir,
+        attack_lock_path=lock_path,
+    )
+    log_f.close()
+    assert captured["env"]["OUT"] == str(out_dir)
+    assert captured["env"]["SM_ATTACK_LOCK"] == str(lock_path)
+
+
+def test_score_against_ground_truth_counts_designated_rule_and_excludes_collateral():
+    gt = json.loads((Path(__file__).resolve().parents[1] / "eval" / "ground_truth.json").read_text(encoding="utf-8"))
+    windows = {
+        "S11": {"start": "2026-11-16T04:28:02Z", "end": "2026-11-16T04:28:06Z"},
+        "S12": {"start": "2026-11-16T04:28:07Z", "end": "2026-11-16T04:28:16Z"},
+        "S20": {"start": "2026-11-16T04:28:59Z", "end": "2026-11-16T04:29:04Z"},
+    }
+    raw_alerts = [
+        # S9 lab rule firing during S20 on database -> designated_rule=False, must NOT count as S9 or S20 firing
+        {
+            "source": "falco",
+            "scenario": "S9",
+            "severity": "CRITICAL",
+            "title": "SentinelMesh Sensitive Credential File Read",
+            "timestamp": "2026-11-16T04:29:00Z",
+            "service": "database",
+            "event": {"container.name": "sentinelmesh-database", "fd.name": "/etc/shadow"},
+        },
+        # Non-designated stock rule during S12 -> must NOT count as S12 firing
+        {
+            "source": "falco",
+            "scenario": "",
+            "severity": "CRITICAL",
+            "title": "Read ssh information",
+            "timestamp": "2026-11-16T04:28:13Z",
+            "service": "webapp",
+            "falco_tags": ["T1005"],
+            "event": {"container.name": "sentinelmesh-webapp"},
+        },
+        # Collateral Terminal shell in database during S11 -> must NOT count as S11 firing
+        {
+            "source": "falco",
+            "scenario": "",
+            "severity": "WARNING",
+            "title": "Terminal shell in container",
+            "timestamp": "2026-11-16T04:28:03Z",
+            "service": "database",
+            "falco_tags": ["T1059"],
+            "event": {"container.name": "sentinelmesh-database"},
+        },
+    ]
+
+    attributed = harness.attribute_alerts(raw_alerts, windows, gt)
+    res = harness.score_against_ground_truth(attributed, gt, include_stock_falco=True)
+    assert res["S9"]["fired"] is False
+    assert res["S11"]["fired"] is False
+    assert res["S12"]["fired"] is False
+    assert res["S20"]["fired"] is False
+
+
+def test_check_run_benign_only_skips_s10_and_reports_collateral(tmp_path, monkeypatch, capsys):
+    import sys
+    from linux_run import check_run
+
+    # 1. Benign-only run: S10 chain skipped and exits cleanly (returns without sys.exit(2))
+    benign_dir = tmp_path / "20261116T000000Z"
+    benign_dir.mkdir()
+    (benign_dir / "alerts.jsonl").write_text("", encoding="utf-8")
+    (benign_dir / "alerts_attributed.jsonl").write_text("", encoding="utf-8")
+    (benign_dir / "baseline1_results.json").write_text(
+        json.dumps(
+            {
+                "benign_only": True,
+                "single_scenario_pass_count": 0,
+                "single_scenario_total": 0,
+                "s10_chain_all_stages_fired": None,
+                "attribution_summary": {
+                    "by_attribution": {
+                        "attack": 0,
+                        "attack_collateral": 0,
+                        "ambiguous": 0,
+                        "benign": 0,
+                        "setup": 0,
+                        "unattributed": 0,
+                    }
+                },
+                "results": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys, "argv", ["check_run.py", str(benign_dir)])
+    check_run.main()
+    out_benign = capsys.readouterr().out
+    assert "S10 chain: skipped (benign-only capture)" in out_benign
+    assert "Attribution counts:" in out_benign
+
+    # 2. Attack run with collateral alert prints collateral block
+    atk_dir = tmp_path / "20261116T000100Z"
+    atk_dir.mkdir()
+    collateral_alert = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Launch Sensitive Mount Container",
+        "timestamp": "2026-11-16T04:27:33Z",
+        "service": "pensive_knuth",
+        "attribution": "attack_collateral",
+        "attributed_scenario": "S5",
+        "rule_technique": "T1610",
+        "event": {"container.name": "pensive_knuth"},
+    }
+    (atk_dir / "alerts.jsonl").write_text(json.dumps(collateral_alert) + "\n", encoding="utf-8")
+    (atk_dir / "alerts_attributed.jsonl").write_text(json.dumps(collateral_alert) + "\n", encoding="utf-8")
+    (atk_dir / "baseline1_results.json").write_text(
+        json.dumps(
+            {
+                "benign_only": False,
+                "single_scenario_pass_count": 0,
+                "single_scenario_total": 0,
+                "s10_chain_all_stages_fired": False,
+                "attribution_summary": {
+                    "by_attribution": {
+                        "attack": 0,
+                        "attack_collateral": 1,
+                        "ambiguous": 0,
+                        "benign": 0,
+                        "setup": 0,
+                        "unattributed": 0,
+                    }
+                },
+                "results": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys, "argv", ["check_run.py", str(atk_dir)])
+    try:
+        check_run.main()
+    except SystemExit:
+        pass
+    out_atk = capsys.readouterr().out
+    assert "Collateral alerts (1):" in out_atk
+    assert "[S5] pensive_knuth / Launch Sensitive Mount Container (rule_technique=T1610)" in out_atk
