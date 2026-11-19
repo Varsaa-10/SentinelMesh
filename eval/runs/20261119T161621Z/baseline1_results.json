@@ -1,0 +1,122 @@
+{
+  "run_id": "20261119T161621Z",
+  "run_timestamp_utc": "20261119T161621Z",
+  "baseline": "Baseline 1 (Falco-only + log-tail + S7 Grafana detector, no RAG/graph/response)",
+  "include_stock_falco": true,
+  "privileged_debug": false,
+  "benign_only": true,
+  "benign_minutes": 60.0,
+  "benign_actions_count": 1235,
+  "scenario_windows": {},
+  "attribution_summary": {
+    "total_alerts": 434,
+    "attributed_count": 0,
+    "unattributed_count": 434,
+    "setup_count": 0,
+    "false_positive_count": 434,
+    "tag_mismatches": 0,
+    "by_scenario": {},
+    "by_attribution": {
+      "attack": 0,
+      "attack_collateral": 0,
+      "ambiguous": 0,
+      "benign": 434,
+      "setup": 0,
+      "unattributed": 0
+    },
+    "attack_count": 0,
+    "attack_collateral_count": 0,
+    "ambiguous_count": 0,
+    "benign_count": 434,
+    "ambiguous_excluded": {
+      "total_alerts": 434,
+      "attributed_count": 0,
+      "unattributed_count": 434,
+      "setup_count": 0,
+      "false_positive_count": 434,
+      "tag_mismatches": 0,
+      "by_scenario": {},
+      "by_attribution": {
+        "attack": 0,
+        "attack_collateral": 0,
+        "ambiguous": 0,
+        "benign": 434,
+        "setup": 0,
+        "unattributed": 0
+      }
+    },
+    "ambiguous_as_attack": {
+      "total_alerts": 434,
+      "attributed_count": 0,
+      "unattributed_count": 434,
+      "setup_count": 0,
+      "false_positive_count": 434,
+      "tag_mismatches": 0,
+      "by_scenario": {},
+      "by_attribution": {
+        "attack": 0,
+        "attack_collateral": 0,
+        "ambiguous": 0,
+        "benign": 434,
+        "setup": 0,
+        "unattributed": 0
+      }
+    }
+  },
+  "ground_truth_file": "/home/kali/SentinelMesh/eval/ground_truth.json",
+  "grafana_detector": "/home/kali/SentinelMesh/detection/log-tail/scenario7_detector.py",
+  "grafana_container": "sentinelmesh-dashboard",
+  "total_alerts_captured": 434,
+  "single_scenario_pass_count": 0,
+  "single_scenario_total": 0,
+  "s10_chain_all_stages_fired": null,
+  "results": {},
+  "reports": {
+    "ambiguous_excluded": {
+      "single_scenario_pass_count": 0,
+      "single_scenario_total": 0,
+      "s10_chain_all_stages_fired": null,
+      "attribution": {
+        "total_alerts": 434,
+        "attributed_count": 0,
+        "unattributed_count": 434,
+        "setup_count": 0,
+        "false_positive_count": 434,
+        "tag_mismatches": 0,
+        "by_scenario": {},
+        "by_attribution": {
+          "attack": 0,
+          "attack_collateral": 0,
+          "ambiguous": 0,
+          "benign": 434,
+          "setup": 0,
+          "unattributed": 0
+        }
+      },
+      "results": {}
+    },
+    "ambiguous_as_attack": {
+      "single_scenario_pass_count": 0,
+      "single_scenario_total": 0,
+      "s10_chain_all_stages_fired": null,
+      "attribution": {
+        "total_alerts": 434,
+        "attributed_count": 0,
+        "unattributed_count": 434,
+        "setup_count": 0,
+        "false_positive_count": 434,
+        "tag_mismatches": 0,
+        "by_scenario": {},
+        "by_attribution": {
+          "attack": 0,
+          "attack_collateral": 0,
+          "ambiguous": 0,
+          "benign": 434,
+          "setup": 0,
+          "unattributed": 0
+        }
+      },
+      "results": {}
+    }
+  }
+}

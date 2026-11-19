@@ -1,0 +1,70 @@
+date_utc: 2026-11-19T17:18:56Z
+running_containers: 5
+sentinelmesh-authservice image=sentinelmesh-authservice digest=sha256:79b68679f033865b3a6b516362303315f8fa4c2de85db5ef094f0e925bd6f5ac image_id=sha256:79b68679f033865b3a6b516362303315f8fa4c2de85db5ef094f0e925bd6f5ac
+sentinelmesh-dashboard image=sentinelmesh-dashboard digest=sha256:f0c859c6e9887b95d037d92616958af9b396ec4d7d0963d55b50126e6a805f20 image_id=sha256:f0c859c6e9887b95d037d92616958af9b396ec4d7d0963d55b50126e6a805f20
+sentinelmesh-database image=sentinelmesh-database digest=sha256:1198b7550b1923be9d696508309fdf3835fb3e4f92d8d2484aa5645738c0d68d image_id=sha256:1198b7550b1923be9d696508309fdf3835fb3e4f92d8d2484aa5645738c0d68d
+sentinelmesh-logcollector image=sentinelmesh-logcollector digest=sha256:1a33f2b8a53bb47146b2d833f5d5d39d2d618b2d41c19f193fa6f0fef4c45fa0 image_id=sha256:1a33f2b8a53bb47146b2d833f5d5d39d2d618b2d41c19f193fa6f0fef4c45fa0
+sentinelmesh-webapp image=sentinelmesh-webapp digest=sha256:667474ebe388205fd44f23fb61a20c16fe5d3cb9ddc371a816b0dd822c89afee image_id=sha256:667474ebe388205fd44f23fb61a20c16fe5d3cb9ddc371a816b0dd822c89afee
+date_utc: 2026-11-19T17:18:56Z
+host: Linux 6.12.13-amd64 x86_64
+Thu Nov 19 12:18:56 2026: Falco version: 0.45.0 (x86_64)
+Thu Nov 19 12:18:56 2026: Falco initialized with configuration files:
+Thu Nov 19 12:18:56 2026:    /etc/falco/config.d/engine-kind-falcoctl.yaml | schema validation: ok
+Thu Nov 19 12:18:56 2026:    /etc/falco/config.d/falco.container_plugin.yaml | schema validation: ok
+Thu Nov 19 12:18:56 2026:    /etc/falco/falco.yaml | schema validation: ok
+Thu Nov 19 12:18:56 2026: System info: Linux version 6.12.13-amd64 (devel@kali.org) (x86_64-linux-gnu-gcc-14 (Debian 14.2.0-16) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #1 SMP PREEMPT_DYNAMIC Kali 6.12.13-1kali1 (2025-02-11)
+falco: Falco version: 0.45.0
+docker: Docker version 28.5.2+dfsg4, build 9cc6dea35e9a963f281434761c656fba4ac43aed
+git_commit: 3906e500b095ec2d7538de213ccf4aa93e9a03a4
+d1cf78d9351dbb150ec4326995487558f86d98ae12cb20391ac7ecf0ad25ca3b  detection/falco-rules/s05_db_access.yaml
+b2ec8833a86ff17fa935076bbef1312bb0673102c6b04a52153c4415583eea54  detection/falco-rules/s06_log_tamper.yaml
+8aac3cba3759ea9b81b9f8acfa43e14badca3acc37b74cb26e7a8439be3bf677  detection/falco-rules/s08_exfiltration.yaml
+ebfdbb65dae93fb0f29cfe2fcc142059e35195589c20c26ba4a684ba5b8a9ad4  detection/falco-rules/s09_credential_access.yaml
+b384d16416ff610ca5672151e078fc62e7ea8d79f58d9851215a9d3d99e2e3b6  detection/falco-stock/falco-incubating_rules.yaml
+30a1a60263ab97650c851011468da03b17fc0096a7cfa3b6686eba5de73b865b  detection/falco-stock/falco_rules.yaml
+f05ad34f07c43930932ea6dd84c08a37bc8e5ba9f88901ca091ff1b52b3f33d3  detection/falco-stock/falco-sandbox_rules.yaml
+1a18f93fb9e696e8b85d55caf37c7a353778cf4baf97fb58d3a0c0994ae02d19  linux_run/benign_workload.sh
+061978714e8c73e1c827f5de937c794aa6311eefcd3f310a27d70fcbe31ad28e  eval/attribute.py
+48852d5273c59ac4eaab796668f7b103e3e70fb61fdf6a007c77943b2cd7853f  eval/ground_truth.json
+97c5e58f450fc8ebd3d78898c09ea70bc8e7681b5b15541314975ef793fcffee  attack_scripts/scenario10_chain.sh
+af782b0b635d4339d2cf6a283d24eab82d131325e8a5a751a5155ee427ca7d26  attack_scripts/scenario11_terminal_shell.sh
+fafc0cf0fe2dec190e16345498b133dcc5ad0e33b7ebd3a49d5e1b9ce005d43e  attack_scripts/scenario12_search_private_keys.sh
+1d42d1fcaad121eba46ca7423b61f0036c9f2a04bff67716f51790cdca08a1c6  attack_scripts/scenario13_memfd_exec.sh
+1e3befac22697e1a7418eedb44092e308957dc80d6d9f5de5b6b2f831ae58bcf  attack_scripts/scenario14_ptrace_attach.sh
+ef08830d90d61bbf0ee14ada9576945326a8457811f11d693861a557b9ab23ce  attack_scripts/scenario15_packet_socket.sh
+97a64d8ae50ddf06a7b6ef499260ae8f4df69c56ecb3941a12b34c0c2adcac50  attack_scripts/scenario16_remove_bulk_data.sh
+938bb76edbdfd9123fae788744149453c98cc4bc05207e867d5446cdf2fca503  attack_scripts/scenario17_exec_dev_shm.sh
+a7d605db069c144e95dfae75eddf6473c5625afcb237cd1a909fde67573a9915  attack_scripts/scenario18_cron_persistence.sh
+e64a33c3cb5da01ce1556e993477ba2efdf3bdd23cec2dcb8ed7ec5ad164d19c  attack_scripts/scenario19_shell_config.sh
+a960e04a8a3c1b8782b9e64ce3f8e4ae443dc7748ae35d9a03defe68566d1c22  attack_scripts/scenario1_sqli.sh
+9c9f209a89959bc32b1babae02d44d186ab7a312370eb01a6e705380844ad264  attack_scripts/scenario20_useradd.sh
+5543ff0a9c2336ca89440d1ab666768bfa625e9bae6c675d4c5d7b40afb757e1  attack_scripts/scenario21_setuid.sh
+a38780cf12bb4315c0359b8e0b358cdb9f0c996b04afc319ac139a0369eb0264  attack_scripts/scenario22_remote_file_copy.sh
+02a4dbd1adecf2fc7b53e0e9f59d4507b4fb3afec78e2b9ef31709b068edfb17  attack_scripts/scenario23_authorized_keys.sh
+a42819ea5edc6ad553ff74ea3eedd54462dfc0bf0627affe7d81ac64ea7d3062  attack_scripts/scenario24_read_proc_environ.sh
+5e6ae54ab44f54a6eb8861efa3113796b1804819abc25dad951b5dc4578251c8  attack_scripts/scenario25_network_tool.sh
+34549760d8932cec30b1a8f1b9e6c6578bc42ce16358070dfb0e249ed28ef9e8  attack_scripts/scenario26_hidden_files.sh
+a46a8eec06a25c6f36653400e30103e5f860c1785b37edd47e2577488d7ea228  attack_scripts/scenario27_decode_payload.sh
+e4b000443b6f2ab368e9238a4abbda2f815db071c9991cd912b72c8b1d614bc0  attack_scripts/scenario28_delete_shell_history.sh
+e20b77d42c8fc14f61fb6ceb7baac3a295fee831e1fce2c7740e8bd13a1335b7  attack_scripts/scenario29_privileged_mount.sh
+b68aa043a89efa78767689a7b7ad7d1b0f7a662de4c9dc7bbbad01be6b03db4d  attack_scripts/scenario2_bruteforce.sh
+fd6f43e3650cfc70d365c8c191ac414fdb07d15e17248672c2ed0afc1d58ca35  attack_scripts/scenario3_default_credentials.sh
+4010981cfba333ef1f43f76b418d80b978b2d754437cf88ec335f7ea7696a346  attack_scripts/scenario4_jwt_confusion.py
+8d98d3b13ddf734a5e03c9dcc1e67ddf9b7ad4adeca88c73a3f0807101cf8c20  attack_scripts/scenario5_db_connection.sh
+096c471b0af79fee2913410d9b26a930dfd725f70cbc936aa9b8d3084431e75e  attack_scripts/scenario6_log_tampering.sh
+aba1c3df2c060e1c3b0f819a7d9266665a39e53faf019f8e05507fdd005730d1  attack_scripts/scenario7_grafana_default_creds.sh
+1f85fabf975157a0477ce768741c714698152ff5dc54f2061da9f23d735b1810  attack_scripts/scenario8_exfiltration.sh
+c85e4c392799b24982b62ebeb7957d20528cf8f48c316c78d42dbefc1e1fbf3b  attack_scripts/scenario9_credential_access.sh
+2549c349824269226ee6cfc2e32d80cacd73c6b752912e5b533e6de1fb8ba75f  docker-compose.yml
+sentinelmesh-dashboard sentinelmesh-dashboard sha256:f0c859c6e9887b95d037d92616958af9b396ec4d7d0963d55b50126e6a805f20
+sentinelmesh-authservice sentinelmesh-authservice sha256:79b68679f033865b3a6b516362303315f8fa4c2de85db5ef094f0e925bd6f5ac
+sentinelmesh-webapp sentinelmesh-webapp sha256:667474ebe388205fd44f23fb61a20c16fe5d3cb9ddc371a816b0dd822c89afee
+sentinelmesh-logcollector sentinelmesh-logcollector sha256:1a33f2b8a53bb47146b2d833f5d5d39d2d618b2d41c19f193fa6f0fef4c45fa0
+sentinelmesh-database sentinelmesh-database sha256:1198b7550b1923be9d696508309fdf3835fb3e4f92d8d2484aa5645738c0d68d
+time="2026-11-19T12:18:56-05:00" level=warning msg="The \"NGROK_AUTHTOKEN\" variable is not set. Defaulting to a blank string."
+NAME                        IMAGE                       COMMAND                  SERVICE        CREATED             STATUS                       PORTS
+sentinelmesh-authservice    sentinelmesh-authservice    "python app.py"          authservice    About an hour ago   Up About an hour (healthy)   127.0.0.1:5001->5001/tcp
+sentinelmesh-dashboard      sentinelmesh-dashboard      "/run.sh"                dashboard      About an hour ago   Up About an hour             127.0.0.1:3000->3000/tcp
+sentinelmesh-database       sentinelmesh-database       "docker-entrypoint.s…"   database       About an hour ago   Up About an hour (healthy)   127.0.0.1:5432->5432/tcp
+sentinelmesh-logcollector   sentinelmesh-logcollector   "tini -- /bin/entryp…"   logcollector   About an hour ago   Up About an hour             5140/tcp, 127.0.0.1:24224->24224/tcp
+sentinelmesh-webapp         sentinelmesh-webapp         "python app.py"          webapp         About an hour ago   Up About an hour (healthy)   127.0.0.1:5000->5000/tcp

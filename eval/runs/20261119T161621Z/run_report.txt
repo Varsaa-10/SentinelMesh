@@ -1,0 +1,40 @@
+RUN 20261119T161621Z: 434 alerts, harness score 0/0, S10 stages all fired: None
+
+Attribution counts:
+  attack               0
+  attack_collateral    0
+  ambiguous            0
+  benign               434
+  setup                0
+  unattributed         0
+
+Per scenario
+  (stock) fired=-     alerts=434 matched=-   (expect ~n/a)
+  S1      fired=-     alerts=0   matched=-   (expect ~2)
+  S2      fired=-     alerts=0   matched=-   (expect ~n/a)
+  S3      fired=-     alerts=0   matched=-   (expect ~2)
+  S4      fired=-     alerts=0   matched=-   (expect ~2)
+  S5      fired=-     alerts=0   matched=-   (expect ~1)
+  S6      fired=-     alerts=0   matched=-   (expect ~1)
+  S7      fired=-     alerts=0   matched=-   (expect ~2)
+  S8      fired=-     alerts=0   matched=-   (expect ~6)
+  S9      fired=-     alerts=0   matched=-   (expect ~2)
+
+Collateral alerts (0):
+  (none)
+
+S8 alerts by (container, process, dest):
+  => 0 S8 alert(s) with a real external destination (expect 2: attack + chain)
+
+S5 alerts by source IP:
+
+S6 writes:
+
+S9 reads:
+
+S7 titles:
+
+S10 chain: skipped (benign-only capture)
+
+============================================================
+CLEAN: every scenario fired, no noise flagged. Safe to freeze.

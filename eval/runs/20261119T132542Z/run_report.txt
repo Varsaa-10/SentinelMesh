@@ -1,0 +1,77 @@
+RUN 20261119T132542Z: 157 alerts, harness score 28/28, S10 stages all fired: True
+
+Attribution counts:
+  attack               67
+  attack_collateral    11
+  ambiguous            0
+  benign               69
+  setup                0
+  unattributed         10
+
+Per scenario
+  (stock) fired=-     alerts=135 matched=-   (expect ~n/a)
+  S1      fired=True  alerts=2   matched=2   (expect ~2)
+  S2      fired=True  alerts=2   matched=2   (expect ~n/a)
+  S3      fired=True  alerts=2   matched=2   (expect ~2)
+  S4      fired=True  alerts=2   matched=2   (expect ~2)
+  S5      fired=True  alerts=2   matched=1   (expect ~1)
+  S6      fired=True  alerts=1   matched=1   (expect ~1)
+  S7      fired=True  alerts=2   matched=1   (expect ~2)
+  S8      fired=True  alerts=4   matched=4   (expect ~6)
+  S9      fired=True  alerts=5   matched=2   (expect ~2)
+  S11     fired=True  alerts=1   matched=1   (expect ~n/a)
+  S12     fired=True  alerts=3   matched=2   (expect ~n/a)
+  S13     fired=True  alerts=1   matched=1   (expect ~n/a)
+  S14     fired=True  alerts=1   matched=1   (expect ~n/a)
+  S15     fired=True  alerts=2   matched=1   (expect ~n/a)
+  S16     fired=True  alerts=5   matched=5   (expect ~n/a)
+  S17     fired=True  alerts=7   matched=1   (expect ~n/a)
+  S18     fired=True  alerts=4   matched=4   (expect ~n/a)
+  S19     fired=True  alerts=2   matched=2   (expect ~n/a)
+  S20     fired=False alerts=2   matched=0   (expect ~n/a)
+  S21     fired=True  alerts=1   matched=1   (expect ~n/a)
+  S22     fired=True  alerts=2   matched=1   (expect ~n/a)
+  S23     fired=True  alerts=1   matched=1   (expect ~n/a)
+  S24     fired=True  alerts=2   matched=1   (expect ~n/a)
+  S25     fired=True  alerts=3   matched=1   (expect ~n/a)
+  S26     fired=False alerts=5   matched=0   (expect ~n/a)
+  S27     fired=True  alerts=2   matched=2   (expect ~n/a)
+  S28     fired=True  alerts=2   matched=2   (expect ~n/a)
+  S29     fired=True  alerts=2   matched=1   (expect ~n/a)
+
+Collateral alerts (11):
+    8x  [S5] friendly_hofstadter / Launch Sensitive Mount Container (rule_technique=T1610)
+    1x  [S4] host / Unexpected UDP Traffic (rule_technique=None)
+    1x  [S25] sentinelmesh-database / SentinelMesh Unauthorized Database Connection (rule_technique=T1021)
+    1x  [S10] host / Unexpected UDP Traffic (rule_technique=None)
+
+S8 alerts by (container, process, dest):
+    3x  sentinelmesh-webapp / curl -> 104.20.23.154   [EXTERNAL (real S8)]
+    1x  sentinelmesh-webapp / curl -> 172.66.147.243   [EXTERNAL (real S8)]
+  => 4 S8 alert(s) with a real external destination (expect 2: attack + chain)
+
+S5 alerts by source IP:
+    1x  172.30.0.7  [ephemeral client (attacker)]
+
+S6 writes:
+    1x  sh -> /var/log/sentinelmesh/test.log
+
+S9 reads:
+    2x  ('/etc/shadow', 'cat', 'sentinelmesh-webapp')
+    1x  ('/etc/shadow', 'useradd', 'sentinelmesh-database')
+    1x  ('/etc/shadow', 'userdel', 'sentinelmesh-database')
+    1x  ('/root/.ssh/config', 'ssh', 'sentinelmesh-database')
+
+S7 titles:
+    1x  Grafana Login Succeeded (unconfirmed — username not visible 
+    1x  Grafana Anonymous Dashboard Access
+
+S10 chain: latest alert per stage (should increase S1<S3<S4<S9<S8):
+  S1: 2026-11-19T13:34:21Z
+  S3: 2026-11-19T13:34:23Z
+  S4: 2026-11-19T13:34:25Z
+  S9: 2026-11-19T13:34:28Z
+  S8: 2026-11-19T13:34:30Z
+
+============================================================
+CLEAN: every scenario fired, no noise flagged. Safe to freeze.
