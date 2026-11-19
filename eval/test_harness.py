@@ -512,3 +512,172 @@ def test_check_run_s5_lab_service_warning_skips_attack_collateral(tmp_path, monk
     assert "172.30.0.7" in s5_block
     assert "172.30.0.6" not in s5_block
     assert "S5 fired for lab service" not in out
+
+
+def test_check_run_matched_column_uses_designated_rule_and_attack(tmp_path, monkeypatch, capsys):
+    """F11: matched column counts designated_rule=True alerts with attribution in attack."""
+    import sys
+    from linux_run import check_run
+
+    run_dir = tmp_path / "20261119T104620Z"
+    run_dir.mkdir()
+    s7_login = {
+        "source": "log-tail",
+        "scenario": "S7",
+        "severity": "WARNING",
+        "title": "Grafana Login Succeeded (unconfirmed)",
+        "timestamp": "2026-11-19T10:47:00Z",
+        "service": "dashboard",
+        "attribution": "attack",
+        "attributed_scenario": "S7",
+        "designated_rule": True,
+    }
+    s7_anon = {
+        "source": "log-tail",
+        "scenario": "S7",
+        "severity": "WARNING",
+        "title": "Grafana Anonymous Dashboard Access",
+        "timestamp": "2026-11-19T10:47:01Z",
+        "service": "dashboard",
+        "attribution": "attack",
+        "attributed_scenario": "S7",
+        "designated_rule": True,
+    }
+    s7_non_designated = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Terminal shell in container",
+        "timestamp": "2026-11-19T10:47:01Z",
+        "service": "dashboard",
+        "attribution": "attack",
+        "attributed_scenario": "S7",
+        "designated_rule": False,
+    }
+    s7_collateral = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Grafana Login Succeeded",
+        "timestamp": "2026-11-19T10:47:01Z",
+        "service": "webapp",
+        "attribution": "attack_collateral",
+        "attributed_scenario": "S7",
+        "designated_rule": True,
+    }
+    raw_lines = "\n".join(json.dumps(a) for a in (s7_login, s7_anon)) + "\n"
+    att_lines = "\n".join(
+        json.dumps(a) for a in (s7_login, s7_anon, s7_non_designated, s7_collateral)
+    ) + "\n"
+    (run_dir / "alerts.jsonl").write_text(raw_lines, encoding="utf-8")
+    (run_dir / "alerts_attributed.jsonl").write_text(att_lines, encoding="utf-8")
+    (run_dir / "baseline1_results.json").write_text(
+        json.dumps(
+            {
+                "benign_only": False,
+                "single_scenario_pass_count": 1,
+                "single_scenario_total": 1,
+                "s10_chain_all_stages_fired": None,
+                "attribution_summary": {},
+                "results": {"S7": {"fired": True, "match_count": 1}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys, "argv", ["check_run.py", str(run_dir)])
+    try:
+        check_run.main()
+    except SystemExit:
+        pass
+    out = capsys.readouterr().out
+    s7_line = next(line for line in out.splitlines() if line.strip().startswith("S7 "))
+    assert "matched=2" in s7_line
+
+
+def test_reattribute_rebuilds_outputs_writes_prev_and_keeps_raw(tmp_path, capsys):
+    """F13: eval/reattribute.py backs up old derived files to *.prev without altering raw files."""
+    from eval import reattribute
+
+    run_dir = tmp_path / "20261119T104620Z"
+    run_dir.mkdir()
+    raw_falco = '{"rule":"Launch Sensitive Mount Container"}\n'
+    (run_dir / "falco_alerts_raw.jsonl").write_text(raw_falco, encoding="utf-8")
+
+    windows = {
+        "S5": {"start": "2026-11-19T10:46:40Z", "end": "2026-11-19T10:46:48Z"},
+        "S7": {"start": "2026-11-19T10:47:00Z", "end": "2026-11-19T10:47:05Z"},
+    }
+    (run_dir / "scenario_windows.json").write_text(json.dumps(windows), encoding="utf-8")
+    (run_dir / "benign_actions.jsonl").write_text("", encoding="utf-8")
+
+    alerts = [
+        {
+            "source": "falco",
+            "scenario": "",
+            "severity": "WARNING",
+            "title": "Launch Sensitive Mount Container",
+            "timestamp": "2026-11-19T10:46:42Z",
+            "service": "unknown",
+            "falco_tags": ["container", "T1610"],
+            "event": {
+                "container.name": None,
+                "container.id": "abc12345",
+                "container.image.repository": "postgres",
+            },
+        },
+        {
+            "source": "log-tail",
+            "scenario": "S7",
+            "severity": "WARNING",
+            "title": "Grafana Anonymous Dashboard Access",
+            "timestamp": "2026-11-19T10:47:02Z",
+            "service": "dashboard",
+        },
+    ]
+    raw_alerts_text = "\n".join(json.dumps(a) for a in alerts) + "\n"
+    (run_dir / "alerts.jsonl").write_text(raw_alerts_text, encoding="utf-8")
+
+    old_att_text = (
+        json.dumps(dict(alerts[0], attribution="unattributed", attributed_scenario="unattributed"))
+        + "\n"
+        + json.dumps(dict(alerts[1], attribution="attack", attributed_scenario="S7", designated_rule=False))
+        + "\n"
+    )
+    old_res_text = json.dumps({"include_stock_falco": True, "benign_only": False, "results": {}})
+    old_rep_text = "old report\n"
+    (run_dir / "alerts_attributed.jsonl").write_text(old_att_text, encoding="utf-8")
+    (run_dir / "baseline1_results.json").write_text(old_res_text, encoding="utf-8")
+    (run_dir / "run_report.txt").write_text(old_rep_text, encoding="utf-8")
+
+    rc = reattribute.main([str(run_dir)])
+    assert rc == 0
+
+    # *.prev backups keep previous contents cleanly; raw files are untouched
+    assert (run_dir / "alerts_attributed.jsonl.prev").read_text(encoding="utf-8") == old_att_text
+    assert (run_dir / "baseline1_results.json.prev").read_text(encoding="utf-8") == old_res_text
+    assert (run_dir / "run_report.txt.prev").read_text(encoding="utf-8") == old_rep_text
+    assert (run_dir / "falco_alerts_raw.jsonl").read_text(encoding="utf-8") == raw_falco
+    assert (run_dir / "alerts.jsonl").read_text(encoding="utf-8") == raw_alerts_text
+
+    new_att = [
+        json.loads(line)
+        for line in (run_dir / "alerts_attributed.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert new_att[0]["attribution"] == "attack_collateral"
+    assert new_att[0]["attributed_scenario"] == "S5"
+    assert new_att[1]["attribution"] == "attack"
+    assert new_att[1]["designated_rule"] is True
+
+    new_res = json.loads((run_dir / "baseline1_results.json").read_text(encoding="utf-8"))
+    assert new_res["attribution_summary"]["attack_collateral_count"] == 1
+    assert new_res["attribution_summary"]["attack_count"] == 1
+
+    report_text = (run_dir / "run_report.txt").read_text(encoding="utf-8")
+    s7_line = next(line for line in report_text.splitlines() if line.strip().startswith("S7 "))
+    assert "matched=1" in s7_line
+    assert "postgres / Launch Sensitive Mount Container" in report_text
+
+    printed = capsys.readouterr().out
+    assert "attack_collateral" in printed
+    assert "unattributed" in printed

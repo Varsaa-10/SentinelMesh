@@ -73,19 +73,49 @@ def _normalize_container(name: Any, allow_host: bool = False) -> str:
     return cleaned
 
 
-def alert_container_name(alert: Mapping[str, Any]) -> str:
-    """Extract the source container/service identifier from a normalized alert."""
+def _named_alert_container(alert: Mapping[str, Any]) -> str:
+    """Return the explicit container or service name, or '' if absent/unknown."""
     event = alert.get("event")
     if isinstance(event, Mapping):
         cname = event.get("container.name")
-        if cname and cname != "<NA>":
-            return str(cname).strip()
-    if alert.get("container"):
-        return str(alert["container"]).strip()
+        cname_str = str(cname).strip() if cname is not None else ""
+        if cname_str and cname_str not in ("<NA>", "unknown"):
+            return cname_str
+    cont = alert.get("container")
+    cont_str = str(cont).strip() if cont is not None else ""
+    if cont_str and cont_str not in ("<NA>", "unknown"):
+        return cont_str
     service = alert.get("service")
-    if service and service != "unknown":
-        return str(service).strip()
+    svc_str = str(service).strip() if service is not None else ""
+    if svc_str and svc_str not in ("<NA>", "unknown"):
+        return svc_str
     return ""
+
+
+def _unnamed_container_id(alert: Mapping[str, Any]) -> str:
+    """For unnamed non-host containers (container.id present and != 'host'), return repo or id."""
+    event = alert.get("event")
+    cid = event.get("container.id") if isinstance(event, Mapping) else None
+    if cid is None:
+        cid = alert.get("container.id")
+    cid_str = str(cid).strip() if cid is not None else ""
+    if not cid_str or cid_str in ("<NA>", "unknown", "host"):
+        return ""
+    repo = event.get("container.image.repository") if isinstance(event, Mapping) else None
+    if repo is None:
+        repo = alert.get("container.image.repository")
+    repo_str = str(repo).strip() if repo is not None else ""
+    if repo_str and repo_str not in ("<NA>", "unknown", "host"):
+        return repo_str
+    return cid_str
+
+
+def alert_container_name(alert: Mapping[str, Any]) -> str:
+    """Extract the source container/service identifier from a normalized alert."""
+    named = _named_alert_container(alert)
+    if named:
+        return named
+    return _unnamed_container_id(alert)
 
 
 def container_matches_target(alert_container: Any, target_container: Any) -> bool:
@@ -320,6 +350,7 @@ def attribute_alert(
     out["rule_technique"] = infer_rule_technique(out, scenarios)
 
     alert_ts = parse_utc_timestamp(out.get("timestamp"))
+    has_named_cont = bool(_named_alert_container(out))
     alert_cont = alert_container_name(out)
     matched_actions: List[Dict[str, Any]] = []
     if alert_ts is not None and alert_cont:
@@ -353,11 +384,12 @@ def attribute_alert(
     matched_sid: Optional[str] = None
     base_attribution: Optional[str] = None
     if matching_windows:
-        for sid, spec in matching_windows:
-            if container_matches_target(alert_cont, spec.get("target_container")):
-                matched_sid = sid
-                base_attribution = "attack"
-                break
+        if has_named_cont:
+            for sid, spec in matching_windows:
+                if container_matches_target(alert_cont, spec.get("target_container")):
+                    matched_sid = sid
+                    base_attribution = "attack"
+                    break
         if matched_sid is None:
             norm_cont = _normalize_container(alert_cont, allow_host=True)
             if norm_cont and norm_cont != "host":
