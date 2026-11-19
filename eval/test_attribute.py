@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from eval.attribute import (
+    alert_container_name,
     attribute_alert,
     attribute_alerts,
     is_designated_rule,
@@ -728,3 +729,89 @@ def test_f9_lab_detector_scenario_field_designation():
     assert is_designated_rule(stock_falco, "S11", scenarios) is False
     # Unattributed never designated
     assert is_designated_rule(s7_anon, "unattributed", scenarios) is False
+
+
+def test_f12_unnamed_container_with_id_gets_attack_collateral():
+    gt = _load_gt()
+    windows = {
+        "S1": {"start": "2026-11-19T10:46:20Z", "end": "2026-11-19T10:46:25Z"},
+        "S5": {"start": "2026-11-19T10:46:40Z", "end": "2026-11-19T10:46:48Z"},
+    }
+
+    psql_helper_repo = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Launch Sensitive Mount Container",
+        "timestamp": "2026-11-19T10:46:42Z",
+        "service": "unknown",
+        "falco_tags": ["container", "T1610"],
+        "event": {
+            "container.name": None,
+            "container.id": "a1b2c3d4e5f6",
+            "container.image.repository": "postgres",
+        },
+    }
+    unnamed_id_only = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Launch Sensitive Mount Container",
+        "timestamp": "2026-11-19T10:46:43Z",
+        "service": "unknown",
+        "falco_tags": ["container", "T1610"],
+        "event": {
+            "container.name": "",
+            "container.id": "deadbeef1234",
+            "container.image.repository": None,
+        },
+    }
+    unnamed_matching_repo_name = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Launch Privileged Container",
+        "timestamp": "2026-11-19T10:46:22Z",
+        "service": "unknown",
+        "falco_tags": ["container", "T1610"],
+        "event": {
+            "container.name": "<NA>",
+            "container.id": "cafe98765432",
+            "container.image.repository": "sentinelmesh-webapp",
+        },
+    }
+    host_none_name = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "WARNING",
+        "title": "Host Process Event",
+        "timestamp": "2026-11-19T10:46:44Z",
+        "service": "unknown",
+        "event": {
+            "container.name": None,
+            "container.id": "host",
+        },
+    }
+
+    assert alert_container_name(psql_helper_repo) == "postgres"
+    assert alert_container_name(unnamed_id_only) == "deadbeef1234"
+    assert alert_container_name(host_none_name) == ""
+
+    r_repo, r_id, r_col, r_host = attribute_alerts(
+        [psql_helper_repo, unnamed_id_only, unnamed_matching_repo_name, host_none_name],
+        windows,
+        gt,
+    )
+    assert r_repo["attribution"] == "attack_collateral"
+    assert r_repo["attributed_scenario"] == "S5"
+    assert r_repo["rule_technique"] == "T1610"
+    assert r_repo["designated_rule"] is False
+
+    assert r_id["attribution"] == "attack_collateral"
+    assert r_id["attributed_scenario"] == "S5"
+
+    assert r_col["attribution"] == "attack_collateral"
+    assert r_col["attributed_scenario"] == "S1"
+
+    assert r_host["attribution"] == "unattributed"
+    assert r_host["attributed_scenario"] == "unattributed"

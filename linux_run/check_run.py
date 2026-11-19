@@ -58,7 +58,18 @@ def main():
             )
         else:
             n = r.get("match_count", 0)
-        scored_n = r.get("match_count", n) if sid in res["results"] else n
+        # F11: compute matched from designated_rule == true and attribution in attack.
+        if attributed and sid and not benign_only:
+            matched_n = sum(
+                1
+                for a in attributed
+                if a.get("attributed_scenario") == sid
+                and a.get("designated_rule") is True
+                and a.get("attribution") in ("attack", "ambiguous")
+            )
+        else:
+            matched_n = r.get("match_count", "-") if sid in res["results"] else "-"
+        scored_n = matched_n if isinstance(matched_n, int) else n
         exp = EXPECT.get(sid)
         flag = ""
         if sid in res["results"] and not r.get("matches_expectation", r.get("fired")):
@@ -66,7 +77,7 @@ def main():
         elif exp is not None and scored_n > exp * 2:
             flag = f"  <-- {scored_n} alerts vs ~{exp} expected: noise"; review.append(f"{sid} noisy ({scored_n} vs ~{exp})")
         label = sid if sid else "(stock)"
-        print(f"  {label:<7} fired={str(r.get('fired','-')):<5} alerts={n:<3} matched={str(r.get('match_count','-')):<3} (expect ~{exp if exp else 'n/a'}){flag}")
+        print(f"  {label:<7} fired={str(r.get('fired','-')):<5} alerts={n:<3} matched={str(matched_n):<3} (expect ~{exp if exp else 'n/a'}){flag}")
     if "UNKNOWN" in by:
         review.append("alerts with scenario=UNKNOWN")
 
@@ -78,7 +89,11 @@ def main():
         c_col = Counter(
             (
                 a.get("attributed_scenario", "?"),
-                ev(a, "container.name") or a.get("service") or "unknown",
+                ev(a, "container.name")
+                or (None if a.get("service") in (None, "unknown") else a.get("service"))
+                or ev(a, "container.image.repository")
+                or ev(a, "container.id")
+                or "unknown",
                 a.get("title", ""),
                 a.get("rule_technique"),
             )
