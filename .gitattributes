@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.json -text
+*.jsonl -text
+*.png binary
+*.pdf binary
+*.onnx binary
+*.zip binary
