@@ -37,7 +37,7 @@ Rules that still cannot be parsed after this work stay in the study as detectors
 
 | Id | Host | Container runtime | Configuration differences | Captures |
 |---|---|---|---|---|
-| E1 | Existing lab setup (Ubuntu VM, Docker) | Docker | none (reference) | 6 attack + 2 benign-only |
+| E1 | Existing lab setup (Kali VM, kernel 6.12.13, Docker, Falco 0.45.0) | Docker | none (reference) | 6 attack + 2 benign-only |
 | E2 | Ubuntu 24.04 VM | Docker (latest stable) | new passwords, ports, log paths and container names | 6 attack + 2 benign-only |
 | E3 | Fedora VM | Podman with podman-compose (fallback: k3s with containerd, Falco as DaemonSet) | as E2, plus rootless containers | 6 attack + 2 benign-only |
 
@@ -132,7 +132,7 @@ For item 3, the same annotators write the field rules they would expect for 4 de
 | Id | Outcome | Unit and clustering |
 |---|---|---|
 | P1 | Detection rate per scenario and environment, and agreement with the predicted yes/no | captures |
-| P2 | False alarms per hour of benign activity, per rule and environment, and the share the gate routes to automatic action | captures |
+| P2 | False alarms per hour of benign activity, per rule and environment, and the share the gate routes to automatic action; report false alarms for container processes and host processes separately (the totals stay as defined) | captures |
 | P3 | Track A and Track B P@1, R@5, MRR, nDCG@5 per environment, and leave-one-environment-out | two-way cluster bootstrap over environment and scenario |
 | P4 | Leave-one-technique-out over all 25 techniques | technique clusters |
 | P5 | Gate: under-escalation, over-escalation, automatic action on a wrong prediction, and automatic action where correct (S15, S17, S24, S25, S26), with τ = 0.9 and thresholds 0.40/0.60 fixed | scenario clusters |
@@ -178,3 +178,9 @@ Statistical conventions for all analyses:
 | 2026-11-16 | F6 (health polling): replaced fixed `sleep 30` in `linux_run/run_linux_baseline.sh` (`--reset`) with 2 s polling (up to 180 s) of `webapp /health`, `authservice /health`, and `Grafana /api/health`, failing clearly if any remains down | ensure services are ready before preflight/harness without relying on a fixed sleep | none (smoke runs only, not analysed) |
 | 2026-11-16 | F7 (report): updated `linux_run/check_run.py` to skip the S10 chain check in `benign_only` captures | benign-only captures have no S10 attack chain and were falsely flagged as missing S10 stages | none (smoke runs only, not analysed) |
 | 2026-11-16 | Smoke runs 20261116T042649Z and 20261116T044115Z (E1) kept locally, not committed, not used in any analysis. | initial smoke runs prior to F1–F7 fixes | none (smoke runs only, not analysed) |
+| 2026-11-16 | F8 (quiet margin): updated `eval/harness.py` (`run_attack_scripts`) to wait 3 s after taking `SM_ATTACK_LOCK` and clearing the benign busy file before recording window `start` and firing the attack script, and to hold the lock 3 s (up from 2 s) after `end` | benign tolerance is ±2 s and timestamps round to whole seconds (`20261116T060830Z` had 16 alerts marked ambiguous by benign actions ending 1 s before window start) | none (smoke runs only, not analysed) |
+| 2026-11-16 | F9 (designated rule): updated `eval/attribute.py` (`is_designated_rule`) so a lab-detector alert (`log-tail`, Grafana detector, `s05`–`s09` Falco rules) whose own `scenario` equals the attributed scenario counts as designated (covering `"Grafana Anonymous Dashboard Access"` alongside login for S7) | ensure all designated alerts from multi-title lab detectors count toward scenario detection | none (smoke runs only, not analysed) |
+| 2026-11-16 | F10 (report): updated `linux_run/check_run.py` so the `"S5 fired for lab service"` warning and S5 source-IP summary skip alerts attributed to another scenario as `attack_collateral` | avoid flagging cross-scenario DB collateral traffic as S5 false positives | none (smoke runs only, not analysed) |
+| 2026-11-16 | Corrected Section 2 E1 host description from Ubuntu VM to Kali VM (kernel 6.12.13, Docker, Falco 0.45.0) | documentation accuracy matching actual E1 host environment | none (documentation only) |
+| 2026-11-16 | Updated Section 7 P2 to report false alarms for container processes and host processes separately while keeping totals as defined | separate host background noise from container false alarms without changing P2 totals | none (applies to P2 analysis reporting) |
+| 2026-11-16 | Kali desktop screen locker disabled on the E1 VM, and no desktop interaction during captures; the benign-only smoke run `20261116T062058Z` had 10 host alerts from `xfce4-screensaver` when the screen was unlocked | prevent spurious host desktop-session alerts during captures | none (smoke runs only, not analysed) |

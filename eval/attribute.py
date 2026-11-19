@@ -187,17 +187,42 @@ def infer_rule_technique(
     return None
 
 
+def _is_lab_detector_alert(alert: Mapping[str, Any]) -> bool:
+    """True for alerts emitted by lab detectors (log-tail, Grafana detector, s05-s09 Falco rules).
+
+    The Grafana detector emits via common.emit_alert (source "log-tail"); lab Falco
+    rules carry an sN tag, so falco_shim sets a non-empty "scenario" for them, while
+    stock Falco rules always get scenario "".
+    """
+    source = alert.get("source")
+    scen = str(alert.get("scenario") or "").strip()
+    if not scen:
+        return False
+    return source in ("log-tail", "falco")
+
+
 def is_designated_rule(
     alert: Mapping[str, Any],
     scenario_id: Optional[str],
     scenarios: Mapping[str, Any],
 ) -> bool:
-    """Return True when the alert's rule is scenario_id's designated rule."""
+    """Return True when the alert's rule is scenario_id's designated rule.
+
+    A lab-detector alert whose own "scenario" field equals the attributed scenario
+    also counts as designated (e.g. both S7 Grafana detector titles).
+    """
     if not scenario_id or scenario_id == "unattributed":
         return False
     spec = scenarios.get(scenario_id)
     if not isinstance(spec, Mapping):
         return False
+    if (
+        _is_lab_detector_alert(alert)
+        and str(alert.get("scenario")).strip() == scenario_id
+        and isinstance(spec.get("detection"), Mapping)
+        and spec["detection"].get("source") != "falco-stock"
+    ):
+        return True
     if scenario_id == "S10":
         det = spec.get("detection")
         stages = det.get("expected_alerts_in_order") if isinstance(det, Mapping) else None

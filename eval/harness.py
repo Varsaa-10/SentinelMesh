@@ -88,6 +88,7 @@ PRIVILEGED_DEBUG_SCENARIO = ("S29", "scenario29_privileged_mount.sh", "bash")
 
 
 SECONDS_BETWEEN_ATTACKS = 15
+QUIET_MARGIN_SECONDS = 3  # benign-free margin before window start and after window end
 
 
 # ---------------------------------------------------------------------------
@@ -427,9 +428,14 @@ def run_attack_scripts(
         lock_file.parent.mkdir(parents=True, exist_ok=True)
 
     scenario_windows = {}
+    quiet_margin = QUIET_MARGIN_SECONDS if lock_file is not None else 0
     post_wait = min(3, max(1, SECONDS_BETWEEN_ATTACKS - 1)) if SECONDS_BETWEEN_ATTACKS > 1 else 0
-    lock_tail_wait = 2 if SECONDS_BETWEEN_ATTACKS > 0 else 0
-    inter_gap = max(1, SECONDS_BETWEEN_ATTACKS - post_wait - lock_tail_wait) if SECONDS_BETWEEN_ATTACKS > 0 else 0
+    lock_tail_wait = quiet_margin if SECONDS_BETWEEN_ATTACKS > 0 else 0
+    inter_gap = (
+        max(1, SECONDS_BETWEEN_ATTACKS - quiet_margin - post_wait - lock_tail_wait)
+        if SECONDS_BETWEEN_ATTACKS > 0
+        else 0
+    )
 
     for scenario, filename, interpreter, extra_args in order:
         script_path = (attack_scripts_dir / filename).resolve()
@@ -454,6 +460,8 @@ def run_attack_scripts(
                         )
                         break
                     time.sleep(0.1)
+                # Quiet margin: benign tolerance is +/-2 s on whole-second timestamps.
+                time.sleep(quiet_margin)
 
             start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             log(f"firing {scenario}: {filename}")

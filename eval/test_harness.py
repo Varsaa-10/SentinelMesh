@@ -246,8 +246,61 @@ def test_run_attack_scripts_lock_busy_wait_and_seconds_between_attacks(tmp_path,
         w = windows[sid]
         assert w["lock_start"] <= w["start"] <= w["end"] <= w["lock_end"]
 
-    # Two busy-wait 0.1s ticks + two scenarios each with (post_wait=3, lock_tail=2, inter_gap=10)
-    assert sleeps == [0.1, 0.1, 3, 2, 10, 3, 2, 10]
+    # Two busy-wait 0.1s ticks + two scenarios each with
+    # (quiet_margin=3, post_wait=3, lock_tail=3, inter_gap=6)
+    assert sleeps == [0.1, 0.1, 3, 3, 3, 6, 3, 3, 3, 6]
+
+
+def test_run_attack_scripts_window_starts_3s_after_last_benign_action_end(tmp_path, monkeypatch):
+    """F8: window start >= 3 s after the benign busy file clears; lock held >= 3 s after window end."""
+    from datetime import datetime as real_datetime, timedelta, timezone
+
+    scripts_dir = tmp_path / "scripts"
+    scripts_dir.mkdir()
+    for _, fname, _ in harness.DEFAULT_ATTACK_ORDER[:2]:
+        (scripts_dir / fname).write_text("exit 0\n", encoding="utf-8")
+
+    lock_path = tmp_path / "attack.lock"
+    busy_path = Path(f"{lock_path}.busy")
+    busy_path.write_text("", encoding="utf-8")
+
+    base = real_datetime(2026, 11, 16, 6, 8, 30, tzinfo=timezone.utc)
+    clock = {"t": 0.0}
+    benign_end = {}
+
+    class FakeDatetime(real_datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return base + timedelta(seconds=clock["t"])
+
+    def fake_sleep(secs):
+        clock["t"] += secs
+        # Benign action finishes (busy file removed) at a fractional second.
+        if busy_path.exists() and clock["t"] >= 0.7:
+            busy_path.unlink()
+            benign_end["t"] = base + timedelta(seconds=clock["t"])
+
+    def fake_run(cmd, timeout=30, capture_output=True, text=True):
+        clock["t"] += 0.4
+        return type("Res", (), {"stdout": "", "stderr": "", "returncode": 0})()
+
+    monkeypatch.setattr(harness, "datetime", FakeDatetime)
+    monkeypatch.setattr(harness.time, "sleep", fake_sleep)
+    monkeypatch.setattr(harness.time, "monotonic", lambda: clock["t"])
+    monkeypatch.setattr(harness.subprocess, "run", fake_run)
+
+    windows, _ = harness.run_attack_scripts(scripts_dir, lock_path=lock_path)
+
+    def parse(ts):
+        return real_datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+    # Benign end is recorded at whole seconds by benign_workload.sh (truncated).
+    benign_end_whole = benign_end["t"].replace(microsecond=0)
+    s1 = windows["S1"]
+    assert (parse(s1["start"]) - benign_end_whole).total_seconds() >= 3
+    for sid in ("S1", "S2"):
+        w = windows[sid]
+        assert (parse(w["lock_end"]) - parse(w["end"])).total_seconds() >= 3
 
 
 def test_start_benign_workload_passes_attack_lock_env(tmp_path, monkeypatch):
@@ -407,3 +460,55 @@ def test_check_run_benign_only_skips_s10_and_reports_collateral(tmp_path, monkey
     out_atk = capsys.readouterr().out
     assert "Collateral alerts (1):" in out_atk
     assert "[S5] pensive_knuth / Launch Sensitive Mount Container (rule_technique=T1610)" in out_atk
+
+
+def test_check_run_s5_lab_service_warning_skips_attack_collateral(tmp_path, monkeypatch, capsys):
+    """F10: S5 source-IP block and lab-service warning ignore collateral of other scenarios."""
+    import sys
+    from linux_run import check_run
+
+    run_dir = tmp_path / "20261116T060830Z"
+    run_dir.mkdir()
+    s5_collateral = {
+        "source": "falco",
+        "scenario": "S5",
+        "severity": "WARNING",
+        "title": "SentinelMesh Unauthorized Database Connection",
+        "timestamp": "2026-11-16T06:10:00Z",
+        "service": "database",
+        "event": {"container.name": "sentinelmesh-database", "fd.rip": "172.30.0.6"},
+        "attribution": "attack_collateral",
+        "attributed_scenario": "S7",
+    }
+    s5_attack = dict(
+        s5_collateral,
+        event={"container.name": "sentinelmesh-database", "fd.rip": "172.30.0.7"},
+        attribution="attack",
+        attributed_scenario="S5",
+    )
+    lines = "\n".join(json.dumps(a) for a in (s5_collateral, s5_attack)) + "\n"
+    (run_dir / "alerts.jsonl").write_text(lines, encoding="utf-8")
+    (run_dir / "alerts_attributed.jsonl").write_text(lines, encoding="utf-8")
+    (run_dir / "baseline1_results.json").write_text(
+        json.dumps(
+            {
+                "benign_only": False,
+                "single_scenario_pass_count": 1,
+                "single_scenario_total": 1,
+                "s10_chain_all_stages_fired": None,
+                "attribution_summary": {},
+                "results": {"S5": {"fired": True, "match_count": 1}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys, "argv", ["check_run.py", str(run_dir)])
+    try:
+        check_run.main()
+    except SystemExit:
+        pass
+    out = capsys.readouterr().out
+    s5_block = out.split("S5 alerts by source IP:", 1)[1].split("S6 writes:", 1)[0]
+    assert "172.30.0.7" in s5_block
+    assert "172.30.0.6" not in s5_block
+    assert "S5 fired for lab service" not in out

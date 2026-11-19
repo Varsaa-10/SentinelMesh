@@ -107,7 +107,19 @@ def main():
         review.append("S8 'fired' but NO alert records an external destination — check raw output_fields in falco_alerts_raw.jsonl")
 
     print("\nS5 alerts by source IP:")
-    for rip, n in Counter(ev(a, "fd.rip") for a in by.get("S5", [])).most_common():
+    # Skip S5-rule alerts attributed to another scenario as attack_collateral.
+    if attributed:
+        s5_alerts = [
+            a for a in attributed
+            if a.get("scenario") == "S5"
+            and not (
+                a.get("attribution") == "attack_collateral"
+                and a.get("attributed_scenario") not in (None, "S5")
+            )
+        ]
+    else:
+        s5_alerts = by.get("S5", [])
+    for rip, n in Counter(ev(a, "fd.rip") for a in s5_alerts).most_common():
         who = LAB_STATIC.get(rip)
         if who: review.append(f"S5 fired for lab service {who} ({rip})")
         print(f"  {n:>3}x  {rip}  [{'LAB SERVICE: false positive' if who else 'ephemeral client (attacker)'}]")

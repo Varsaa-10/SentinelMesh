@@ -10,6 +10,7 @@ from pathlib import Path
 from eval.attribute import (
     attribute_alert,
     attribute_alerts,
+    is_designated_rule,
     summarize_attribution,
 )
 
@@ -692,4 +693,38 @@ def test_f3_rule_technique_and_designated_rule_stock_and_s09():
     assert r_s7_log["rule_technique"] == "T1078"
     assert r_s7_log["designated_rule"] is True
     assert r_s7_anon["rule_technique"] == "T1078"
-    assert r_s7_anon["designated_rule"] is False
+    # F9: lab-detector alert whose own scenario equals the attributed scenario is designated
+    assert r_s7_anon["designated_rule"] is True
+
+
+def test_f9_lab_detector_scenario_field_designation():
+    gt = _load_gt()
+    scenarios = gt["scenarios"]
+
+    s7_anon = {
+        "source": "log-tail",
+        "scenario": "S7",
+        "title": "Grafana Anonymous Dashboard Access",
+    }
+    s09_lab_falco = {
+        "source": "falco",
+        "scenario": "S9",
+        "title": "SentinelMesh Sensitive Credential File Read",
+    }
+    stock_falco = {
+        "source": "falco",
+        "scenario": "",
+        "title": "Some Other Stock Rule",
+        "falco_tags": ["T1059"],
+    }
+
+    # Lab detector, own scenario == attributed scenario -> designated (even with a non-designated title)
+    assert is_designated_rule(s7_anon, "S7", scenarios) is True
+    assert is_designated_rule(s09_lab_falco, "S9", scenarios) is True
+    # Own scenario differs from attributed scenario -> falls back to rule matching (not designated)
+    assert is_designated_rule(s7_anon, "S3", scenarios) is False
+    assert is_designated_rule(s09_lab_falco, "S20", scenarios) is False
+    # Stock Falco alerts never qualify via the scenario field
+    assert is_designated_rule(stock_falco, "S11", scenarios) is False
+    # Unattributed never designated
+    assert is_designated_rule(s7_anon, "unattributed", scenarios) is False
