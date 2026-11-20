@@ -1,10 +1,13 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
 echo "Scenario 18 - Schedule Cron Jobs"
 echo "========================================="
 
-MSYS_NO_PATHCONV=1 docker exec sentinelmesh-webapp sh -c '
+MSYS_NO_PATHCONV=1 docker exec -e MARKER="${CONTAINER_PREFIX}-s18" "$WEBAPP_CONTAINER" sh -c '
 HAD_CRON=0
 BACKUP="/tmp/s18_cron_backup"
 rm -f "$BACKUP"
@@ -13,14 +16,14 @@ if crontab -l > "$BACKUP" 2>/dev/null; then
 fi
 cleanup() {
     if [ "$HAD_CRON" -eq 1 ] && [ -f "$BACKUP" ]; then
-        grep -v "sentinelmesh-s18" "$BACKUP" | crontab - 2>/dev/null || true
+        grep -v "$MARKER" "$BACKUP" | crontab - 2>/dev/null || true
     else
         crontab -r 2>/dev/null || true
     fi
     rm -f "$BACKUP"
 }
 trap cleanup EXIT
-(grep -v "sentinelmesh-s18" "$BACKUP" 2>/dev/null || true; echo "* * * * * true # sentinelmesh-s18") | crontab -
+(grep -v "$MARKER" "$BACKUP" 2>/dev/null || true; echo "* * * * * true # $MARKER") | crontab -
 crontab -l >/dev/null 2>&1 || true
 '
 

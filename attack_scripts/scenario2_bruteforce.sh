@@ -1,4 +1,7 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
 echo "Scenario 2 - Brute Force Login"
@@ -8,7 +11,7 @@ for i in {1..6}
 do
     echo "Attempt $i"
 
-    curl -s -X POST http://localhost:5000/login \
+    curl -s -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
         -d '{
             "username":"admin",

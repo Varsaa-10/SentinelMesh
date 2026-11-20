@@ -1,10 +1,13 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
 echo "Scenario 14 - PTRACE Attach to Process"
 echo "========================================="
 
-MSYS_NO_PATHCONV=1 docker exec sentinelmesh-authservice python3 -c '
+MSYS_NO_PATHCONV=1 docker exec "$AUTHSERVICE_CONTAINER" python3 -c '
 import ctypes, os, signal, time
 libc = ctypes.CDLL("libc.so.6", use_errno=True)
 pid = os.fork()

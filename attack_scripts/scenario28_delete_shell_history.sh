@@ -1,10 +1,13 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
 echo "Scenario 28 - Delete or Rename Shell History"
 echo "========================================="
 
-MSYS_NO_PATHCONV=1 docker exec sentinelmesh-authservice sh -c '
+MSYS_NO_PATHCONV=1 docker exec -e MARKER="${CONTAINER_PREFIX}-s28" "$AUTHSERVICE_CONTAINER" sh -c '
 HIST="/root/.bash_history"
 BAK="/tmp/.s28_bash_history.bak"
 rm -f "$BAK"
@@ -13,7 +16,7 @@ if [ -f "$HIST" ]; then
     HAD_HIST=1
     cp -p "$HIST" "$BAK"
 else
-    echo "# sentinelmesh-s28" > "$HIST"
+    echo "# $MARKER" > "$HIST"
 fi
 cleanup() {
     if [ "$HAD_HIST" -eq 1 ] && [ -f "$BAK" ]; then

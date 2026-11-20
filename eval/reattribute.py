@@ -130,6 +130,7 @@ def reattribute_run(
         ground_truth,
         benign_only=benign_only,
         benign_actions=benign_actions,
+        manifest_path=run_path / "run_manifest.txt",
     )
     attribution_summary = summarize_attribution(attributed)
     dual_reports = build_dual_reports(

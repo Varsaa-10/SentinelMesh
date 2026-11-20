@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== SentinelMesh Lab Reset ==="
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
+# shellcheck source=linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
+
+echo "=== SentinelMesh Lab Reset (${ENV_ID}, project=${COMPOSE_PROJECT_NAME}) ==="
 
 # Tear down everything, including volumes and orphans
 echo "Tearing down existing containers and volumes..."

@@ -3,9 +3,15 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
+import subprocess
 from pathlib import Path
 
+import pytest
+
 from eval import harness
+from linux_run.lab_env import parse_env_file, read_prefix_from_manifest
 
 
 def test_build_falco_command_with_stock_rules_order(tmp_path):
@@ -681,3 +687,176 @@ def test_reattribute_rebuilds_outputs_writes_prev_and_keeps_raw(tmp_path, capsys
     printed = capsys.readouterr().out
     assert "attack_collateral" in printed
     assert "unattributed" in printed
+
+
+def test_write_run_manifest_records_env_profile_and_host_versions(tmp_path, monkeypatch):
+    repo_root = Path(__file__).resolve().parents[1]
+    e2_env_path = repo_root / "env" / "E2.env"
+    e2_values = parse_env_file(e2_env_path)
+
+    def fake_run(cmd, capture_output=True, text=True, timeout=15):
+        if cmd == ["docker", "--version"]:
+            return type("Res", (), {"returncode": 0, "stdout": "Docker version 27.3.1, build test\n"})()
+        if cmd == ["falco", "--version"]:
+            return type("Res", (), {"returncode": 0, "stdout": "Falco version: 0.45.0\n"})()
+        if cmd[:2] == ["docker", "ps"]:
+            return type("Res", (), {"returncode": 0, "stdout": ""})()
+        return type("Res", (), {"returncode": 1, "stdout": ""})()
+
+    fake_os_release = tmp_path / "os-release"
+    fake_os_release.write_text('PRETTY_NAME="Ubuntu 24.04.1 LTS"\n', encoding="utf-8")
+    monkeypatch.setattr(harness, "_OS_RELEASE_PATH", fake_os_release)
+    monkeypatch.setattr(harness.subprocess, "run", fake_run)
+
+    manifest = harness.write_run_manifest(tmp_path, env_file=e2_env_path)
+    text = manifest.read_text(encoding="utf-8")
+
+    assert "env_id: E2" in text
+    assert "container_prefix: smx" in text
+    assert "host_os: Ubuntu 24.04.1 LTS" in text
+    assert "kernel:" in text
+    assert "docker_version: Docker version 27.3.1, build test" in text
+    assert "falco_version: Falco version: 0.45.0" in text
+    for key, val in e2_values.items():
+        assert f"{key}={val}" in text
+    assert read_prefix_from_manifest(manifest) == "smx"
+
+
+def _find_working_bash() -> str | None:
+    candidates = []
+    if os.name == "nt":
+        candidates.extend([
+            r"C:\Program Files\Git\bin\bash.exe",
+            r"C:\Program Files\Git\usr\bin\bash.exe",
+        ])
+    which_bash = shutil.which("bash")
+    if which_bash and not which_bash.lower().endswith(r"\system32\bash.exe"):
+        candidates.append(which_bash)
+    for cand in candidates:
+        if cand and Path(cand).exists():
+            return cand
+    return None
+
+
+def _copy_managed_tree(src_root: Path, dst_root: Path) -> None:
+    rel_paths = [
+        "env",
+        "linux_run/set_env.sh",
+        "linux_run/set_subnet.sh",
+        "linux_run/preflight.sh",
+        "linux_run/check_run.py",
+        "docker-compose.yml",
+        "docker-compose.debug.yml",
+        "detection/falco-rules",
+        "detection/log-tail/tailer.py",
+        "services/logcollector/Dockerfile",
+        "services/logcollector/fluent.conf",
+        "services/database/init.sql",
+        "services/dashboard/provisioning/datasources.yml",
+    ]
+    for rel in rel_paths:
+        src = src_root / rel
+        dst = dst_root / rel
+        if src.is_dir():
+            shutil.copytree(src, dst)
+        else:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
+
+
+def test_set_env_roundtrip_and_leftover_refusal(tmp_path):
+    bash_bin = _find_working_bash()
+    if bash_bin is None:
+        pytest.skip("No working bash executable available for set_env.sh test")
+
+    repo_root = Path(__file__).resolve().parents[1]
+    _copy_managed_tree(repo_root, tmp_path)
+
+    managed_files = [
+        "docker-compose.yml",
+        "docker-compose.debug.yml",
+        "detection/falco-rules/s05_db_access.yaml",
+        "detection/falco-rules/s06_log_tamper.yaml",
+        "detection/falco-rules/s08_exfiltration.yaml",
+        "detection/falco-rules/s09_credential_access.yaml",
+        "detection/log-tail/tailer.py",
+        "linux_run/preflight.sh",
+        "linux_run/check_run.py",
+        "services/logcollector/Dockerfile",
+        "services/logcollector/fluent.conf",
+        "services/database/init.sql",
+        "services/dashboard/provisioning/datasources.yml",
+    ]
+    e1_snapshot = {rel: (tmp_path / rel).read_text(encoding="utf-8") for rel in managed_files}
+
+    def run_sh(*args: str):
+        snap = {
+            rel: (tmp_path / rel).read_bytes()
+            for rel in [*managed_files, ".env"]
+            if (tmp_path / rel).exists()
+        }
+        had_dot_env = (tmp_path / ".env").exists()
+        last = None
+        for _ in range(3 if os.name == "nt" else 1):
+            last = subprocess.run(
+                [bash_bin, *args],
+                cwd=tmp_path,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            if (
+                os.name == "nt"
+                and last.returncode != 0
+                and ("cygheap" in (last.stderr or "") or "Win32 error" in (last.stderr or ""))
+            ):
+                for rel, data in snap.items():
+                    (tmp_path / rel).write_bytes(data)
+                if not had_dot_env and (tmp_path / ".env").exists():
+                    (tmp_path / ".env").unlink()
+                continue
+            return last
+        return last
+
+    res_e2 = run_sh("linux_run/set_env.sh", "E2")
+    assert res_e2.returncode == 0, res_e2.stderr
+
+    dot_env = parse_env_file(tmp_path / ".env")
+    assert dot_env["ENV_ID"] == "E2"
+    assert dot_env["CONTAINER_PREFIX"] == "smx"
+    assert dot_env["WEBAPP_PORT"] == "6000"
+
+    compose_e2 = (tmp_path / "docker-compose.yml").read_text(encoding="utf-8")
+    assert "smx-webapp" in compose_e2
+    assert "smx_net" in compose_e2
+    assert "127.0.0.1:6000:5000" in compose_e2
+    assert "LOG_DIR=/srv/smx/logs" in compose_e2
+    assert "JWT_SECRET=smx_jwt_4b8e2f91c7d360a5e8b1d4f2" in compose_e2
+    assert "POSTGRES_DB=smx" in compose_e2
+    assert "sentinelmesh-webapp" not in compose_e2
+    assert "/var/log/sentinelmesh" not in compose_e2
+
+    s09_e2 = (tmp_path / "detection/falco-rules/s09_credential_access.yaml").read_text(encoding="utf-8")
+    assert 'container.name startswith "smx-"' in s09_e2
+
+    # Subnet switch commutes with E2 and reverts cleanly
+    assert run_sh("linux_run/set_subnet.sh", "172.18").returncode == 0
+    assert "172.18.0." in (tmp_path / "docker-compose.yml").read_text(encoding="utf-8")
+    assert "smx-webapp" in (tmp_path / "docker-compose.yml").read_text(encoding="utf-8")
+
+    # Switching back to E1 keeps current 172.18 subnet untouched
+    assert run_sh("linux_run/set_env.sh", "E1").returncode == 0
+    assert "172.18.0." in (tmp_path / "docker-compose.yml").read_text(encoding="utf-8")
+    assert "sentinelmesh-webapp" in (tmp_path / "docker-compose.yml").read_text(encoding="utf-8")
+
+    # Restoring subnet produces byte-identical E1 files
+    assert run_sh("linux_run/set_subnet.sh", "172.30").returncode == 0
+    for rel, original in e1_snapshot.items():
+        assert (tmp_path / rel).read_text(encoding="utf-8") == original
+
+    # Refuses to finish when a leftover deployment value cannot be cleared by rewriting s05
+    s05 = tmp_path / "detection/falco-rules/s05_db_access.yaml"
+    s05.write_text(s05.read_text(encoding="utf-8") + "\n# leftover /var/log/sentinelmesh\n", encoding="utf-8")
+    res_fail = run_sh("linux_run/set_env.sh", "E2")
+    assert res_fail.returncode != 0
+    assert "LEFTOVER" in res_fail.stderr

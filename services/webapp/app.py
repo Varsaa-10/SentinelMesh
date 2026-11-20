@@ -21,7 +21,7 @@ DB_USER = os.environ.get("DB_USER", "postgres")
 DB_PASS = os.environ.get("DB_PASS", "postgres")
 
 # Log file configuration for Detection module tailer
-LOG_DIR = "/var/log/sentinelmesh"
+LOG_DIR = os.environ.get("LOG_DIR", "/var/log/sentinelmesh")
 LOG_FILE = os.path.join(LOG_DIR, "webapp_events.log")
 
 

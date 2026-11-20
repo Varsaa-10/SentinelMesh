@@ -1,7 +1,10 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
-echo "SentinelMesh Scenario 10"
+echo "SentinelMesh Scenario 10 (${ENV_ID})"
 echo "Complete Attack Chain"
 echo "========================================="
 

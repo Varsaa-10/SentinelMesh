@@ -1,10 +1,13 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
 echo "Scenario 16 - Remove Bulk Data from Disk"
 echo "========================================="
 
-MSYS_NO_PATHCONV=1 docker exec sentinelmesh-database sh -c '
+MSYS_NO_PATHCONV=1 docker exec "$DATABASE_CONTAINER" sh -c '
 set -e
 DEST="/tmp/s16_data_copy"
 rm -rf "$DEST"

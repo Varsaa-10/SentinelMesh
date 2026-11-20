@@ -6,10 +6,11 @@
 #   ./linux_run/benign_workload.sh --duration MINUTES
 set -u
 
+_BENIGN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./lab_env.sh
+. "$_BENIGN_DIR/lab_env.sh"
+
 DURATION_MINUTES=""
-WEBAPP_URL="${WEBAPP_URL:-http://127.0.0.1:5000}"
-AUTHSERVICE_URL="${AUTHSERVICE_URL:-http://127.0.0.1:5001}"
-GRAFANA_URL="${GRAFANA_URL:-http://127.0.0.1:3000}"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -145,70 +146,72 @@ generate_strong_password() {
 }
 
 setup_grafana_viewer() {
-    local lookup uid created start_ts end_ts
+    local lookup uid created start_ts end_ts admin_auth
     GRAFANA_VIEWER_PASS=$(generate_strong_password)
+    admin_auth="${GRAFANA_ADMIN_USER}:${GRAFANA_ADMIN_PASS}"
 
     begin_benign_action || return 0
     start_ts=$(now_iso_utc)
-    lookup=$(curl -sf -m 5 -u admin:admin \
+    lookup=$(curl -sf -m 5 -u "$admin_auth" \
         "${GRAFANA_URL}/api/users/lookup?loginOrEmail=${GRAFANA_VIEWER_USER}" 2>/dev/null || true)
     end_ts=$(now_iso_utc)
     end_benign_action
-    log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
+    log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
 
     uid=$(echo "$lookup" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     if [ -z "$uid" ]; then
         begin_benign_action || return 0
         start_ts=$(now_iso_utc)
-        created=$(curl -sf -m 5 -u admin:admin -X POST "${GRAFANA_URL}/api/admin/users" \
+        created=$(curl -sf -m 5 -u "$admin_auth" -X POST "${GRAFANA_URL}/api/admin/users" \
             -H "Content-Type: application/json" \
-            -d "{\"name\":\"Benign Viewer\",\"email\":\"${GRAFANA_VIEWER_USER}@sentinelmesh.local\",\"login\":\"${GRAFANA_VIEWER_USER}\",\"password\":\"${GRAFANA_VIEWER_PASS}\"}" \
+            -d "{\"name\":\"Benign Viewer\",\"email\":\"${GRAFANA_VIEWER_USER}@${CONTAINER_PREFIX}.local\",\"login\":\"${GRAFANA_VIEWER_USER}\",\"password\":\"${GRAFANA_VIEWER_PASS}\"}" \
             2>/dev/null || true)
         end_ts=$(now_iso_utc)
         end_benign_action
-        log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
+        log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
         uid=$(echo "$created" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     else
         begin_benign_action || return 0
         start_ts=$(now_iso_utc)
-        curl -sf -m 5 -u admin:admin -X PUT "${GRAFANA_URL}/api/admin/users/${uid}/password" \
+        curl -sf -m 5 -u "$admin_auth" -X PUT "${GRAFANA_URL}/api/admin/users/${uid}/password" \
             -H "Content-Type: application/json" \
             -d "{\"password\":\"${GRAFANA_VIEWER_PASS}\"}" >/dev/null 2>&1 || true
         end_ts=$(now_iso_utc)
         end_benign_action
-        log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
+        log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
     fi
     if [ -n "$uid" ]; then
         begin_benign_action || return 0
         start_ts=$(now_iso_utc)
-        curl -sf -m 5 -u admin:admin -X PATCH "${GRAFANA_URL}/api/orgs/1/users/${uid}" \
+        curl -sf -m 5 -u "$admin_auth" -X PATCH "${GRAFANA_URL}/api/orgs/1/users/${uid}" \
             -H "Content-Type: application/json" \
             -d '{"role":"Viewer"}' >/dev/null 2>&1 || true
         end_ts=$(now_iso_utc)
         end_benign_action
-        log_action "sentinelmesh-dashboard" "grafana_setup" "$start_ts" "$end_ts"
+        log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
     fi
 }
 
 do_correct_logins() {
-    local start_ts end_ts
+    local start_ts end_ts creds
+    creds="{\"username\":\"${TEST_USER}\",\"password\":\"${TEST_PASS}\"}"
     begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${WEBAPP_URL}/login" \
         -H "Content-Type: application/json" \
-        -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
+        -d "$creds" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
     end_benign_action
-    log_action "sentinelmesh-webapp" "correct_login" "$start_ts" "$end_ts"
+    log_action "$WEBAPP_CONTAINER" "correct_login" "$start_ts" "$end_ts"
 
     begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     curl -sf -m 5 -X POST "${AUTHSERVICE_URL}/auth/login" \
         -H "Content-Type: application/json" \
-        -d '{"username":"testuser","password":"testpass"}' >/dev/null 2>&1 || true
+        -d "$creds" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
     end_benign_action
-    log_action "sentinelmesh-authservice" "correct_login" "$start_ts" "$end_ts"
+    log_action "$AUTHSERVICE_CONTAINER" "correct_login" "$start_ts" "$end_ts"
 }
 
 # Distinct accounts for single typos; per-account cooldown >= 65s guarantees <= 1 typo/account/min
@@ -233,7 +236,7 @@ do_single_typo() {
         -d "{\"username\":\"${acct}\",\"password\":\"wrongpass_typo\"}" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
     end_benign_action
-    log_action "sentinelmesh-webapp" "single_typo" "$start_ts" "$end_ts"
+    log_action "$WEBAPP_CONTAINER" "single_typo" "$start_ts" "$end_ts"
 }
 
 do_grafana_view() {
@@ -244,40 +247,40 @@ do_grafana_view() {
     curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/search?limit=10" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
     end_benign_action
-    log_action "sentinelmesh-dashboard" "grafana_view" "$start_ts" "$end_ts"
+    log_action "$DASHBOARD_CONTAINER" "grafana_view" "$start_ts" "$end_ts"
 }
 
 do_pg_dump() {
     local start_ts end_ts
     begin_benign_action || return 0
     start_ts=$(now_iso_utc)
-    MSYS_NO_PATHCONV=1 docker exec -e PGPASSWORD=postgres sentinelmesh-webapp \
-        sh -c 'pg_dump -h database -U postgres -d sentinelmesh -f /tmp/benign_pg_backup.sql >/dev/null 2>&1 && rm -f /tmp/benign_pg_backup.sql' \
+    MSYS_NO_PATHCONV=1 docker exec -e PGPASSWORD="$DB_PASS" "$WEBAPP_CONTAINER" \
+        sh -c "pg_dump -h database -U \"$DB_USER\" -d \"$DB_NAME\" -f /tmp/benign_pg_backup.sql >/dev/null 2>&1 && rm -f /tmp/benign_pg_backup.sql" \
         >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
     end_benign_action
-    log_action "sentinelmesh-webapp" "pg_dump" "$start_ts" "$end_ts"
+    log_action "$WEBAPP_CONTAINER" "pg_dump" "$start_ts" "$end_ts"
 }
 
 do_log_rotation() {
-    run_docker_exec_logged "sentinelmesh-webapp" "log_rotation" \
+    run_docker_exec_logged "$WEBAPP_CONTAINER" "log_rotation" \
         sh -c 'touch /tmp/benign_app.log && cp -f /tmp/benign_app.log /tmp/benign_app.log.1 && : > /tmp/benign_app.log && rm -f /tmp/benign_app.log /tmp/benign_app.log.1'
 }
 
 do_read_configs() {
-    run_docker_exec_logged "sentinelmesh-webapp" "read_configs" cat /app/requirements.txt
-    run_docker_exec_logged "sentinelmesh-authservice" "read_configs" cat /etc/hosts
-    run_docker_exec_logged "sentinelmesh-database" "read_configs" cat /etc/pg_hba_override/pg_hba.conf
+    run_docker_exec_logged "$WEBAPP_CONTAINER" "read_configs" cat /app/requirements.txt
+    run_docker_exec_logged "$AUTHSERVICE_CONTAINER" "read_configs" cat /etc/hosts
+    run_docker_exec_logged "$DATABASE_CONTAINER" "read_configs" cat /etc/pg_hba_override/pg_hba.conf
 }
 
 do_pkg_index_update() {
-    run_docker_exec_logged "sentinelmesh-database" "pkg_index_update" apk update
+    run_docker_exec_logged "$DATABASE_CONTAINER" "pkg_index_update" apk update
 }
 
 do_routine_docker_exec() {
-    run_docker_exec_logged "sentinelmesh-webapp" "routine_docker_exec" python --version
-    run_docker_exec_logged "sentinelmesh-database" "routine_docker_exec" pg_isready -U postgres
-    run_docker_exec_logged "sentinelmesh-logcollector" "routine_docker_exec" fluentd --version
+    run_docker_exec_logged "$WEBAPP_CONTAINER" "routine_docker_exec" python --version
+    run_docker_exec_logged "$DATABASE_CONTAINER" "routine_docker_exec" pg_isready -U "$DB_USER" -d "$DB_NAME"
+    run_docker_exec_logged "$LOGCOLLECTOR_CONTAINER" "routine_docker_exec" fluentd --version
 }
 
 HTTPS_SITES=("https://example.com" "https://www.wikipedia.org" "https://pypi.org")

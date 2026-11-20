@@ -38,7 +38,7 @@ Rules that still cannot be parsed after this work stay in the study as detectors
 | Id | Host | Container runtime | Configuration differences | Captures |
 |---|---|---|---|---|
 | E1 | Existing lab setup (Kali VM, kernel 6.12.13, Docker, Falco 0.45.0) | Docker | none (reference) | 6 attack + 2 benign-only |
-| E2 | Ubuntu 24.04 VM | Docker (latest stable) | new passwords, ports, log paths and container names | 6 attack + 2 benign-only |
+| E2 | Ubuntu 24.04 VM | Docker (latest stable) | `env/E2.env`: prefix `smx` (`smx-webapp`, `smx-authservice`, `smx-database`, `smx-logcollector`, `smx-dashboard`; network `smx_net`), host ports `6000/6001/6432/3300/25224`, log dir `/srv/smx/logs`, DB name `smx`, rotated non-attacked credentials (`DB_PASS`, `JWT_SECRET`, `TEST_PASS`), kept scenario-required credentials (`admin/admin123` for S3/S10, Grafana `admin/admin` for S7) | 6 attack + 2 benign-only |
 | E3 | Fedora VM | Podman with podman-compose (fallback: k3s with containerd, Falco as DaemonSet) | as E2, plus rootless containers | 6 attack + 2 benign-only |
 
 - Attack captures use three subnets per environment, two captures each (`linux_run/set_subnet.sh`).
@@ -139,6 +139,8 @@ For item 3, the same annotators write the field rules they would expect for 4 de
 | P6 | Calibration (Brier, 10-bin ECE) of the frozen calibrator on new data | original-alert clusters |
 | P7 | Annotator agreement (Cohen's and Fleiss' kappa), and agreement with Falco tags and with system output | alerts |
 
+P3 for E2/E3 uses the frozen E1 knowledge (primary); a secondary analysis regenerates knowledge from each environment's deployed rule files with the frozen generator.
+
 Statistical conventions for all analyses:
 - tests are two-sided at α = 0.05
 - Holm correction within each outcome family
@@ -189,3 +191,6 @@ Statistical conventions for all analyses:
 | 2026-11-19 | F12 (attribution): updated `eval/attribute.py` so alerts with empty/`None` `container.name` and a non-`"host"` `container.id` use `container.image.repository` (or `container.id`) as a non-lab container identifier and receive `attack_collateral` inside a scenario window | classify helper-container alerts (e.g. 7 `Launch Sensitive Mount Container` alerts from S5's `psql` helper with `container.name=None` in `20261119T104620Z`) as collateral rather than unattributed | label/report only; raw captures unchanged; applied to all E1 captures with `eval/reattribute.py` |
 | 2026-11-19 | F13 (relabel tool): added `eval/reattribute.py` to rebuild `alerts_attributed.jsonl`, `baseline1_results.json` scoring, and `run_report.txt` from saved `alerts.jsonl`, `scenario_windows.json`, `benign_actions.jsonl`, and `ground_truth.json` without touching raw files, backing up old files to `*.prev` and printing before/after attribution counts | reproducibly apply updated labelling and report logic to existing captures without re-running or altering raw capture logs | label/report only; raw captures unchanged; applied to all E1 captures with `eval/reattribute.py` |
 | 2026-11-19 | eval/reattribute.py was not run on the E1 captures (2b50188): their labels come from the A4f logic at 3906e50. A4g changes no E1 label (every helper-container alert in E1 has a container name); only the run_report.txt matched column would differ, and reports are not used in any analysis. | correction to the three A4g rows above | none |
+| 2026-11-20 | A2a: added `env/E1.env` and `env/E2.env`, `linux_run/set_env.sh`, shared `linux_run/lab_env.{sh,py}` loaders, and parameterized compose/service/attack/benign/reset/baseline scripts plus `S7` detector | prepare configurable E2 deployment while preserving E1 behavior and frozen rules, knowledge, weights, calibrator, thresholds, gate rules, and `ground_truth.json` | existing E1 captures unaffected; `./linux_run/set_env.sh E1` leaves `docker-compose.yml`, Falco rules, and E1 knowledge hash identical to `2b50188` |
+| 2026-11-20 | A2a: updated `eval/attribute.py` (and `eval/reattribute.py`) to read `container_prefix` from `run_manifest.txt`, and updated `eval/harness.py` `write_run_manifest` to record `env_id`, all env profile values, `host_os`, `kernel`, `docker_version`, and `falco_version` | ensure E2/E3 captures (`smx-*`) map cleanly to logical `ground_truth.json` targets and preserve full environment provenance per run | label/metadata plumbing only; E1 attribution outputs unchanged (`container_prefix: sentinelmesh` default) |
+| 2026-11-20 | Filled Section 2 E2 configuration row and added the Section 7 P3 E1-frozen vs regenerated knowledge note in `docs/PLAN_ENV2.md` | document concrete E2 profile values and primary/secondary P3 evaluation protocol | plan documentation only; none on captures |

@@ -33,12 +33,19 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Dict, List, Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from eval.attribute import attribute_alerts, summarize_attribution  # noqa: E402
+from linux_run.lab_env import (  # noqa: E402
+    DEFAULT_ENV,
+    load_lab_env,
+    parse_env_file,
+    resolve_active_env_file,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -388,16 +395,94 @@ def collect_container_image_digests():
     return entries
 
 
-def write_run_manifest(run_path):
-    """Write run metadata and running container image digests to run_manifest.txt."""
+def _read_command_version(cmd: List[str]) -> str:
+    """Return stripped stdout from a version command, or 'unknown' on failure."""
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+        if res.returncode == 0:
+            lines = [ln.strip() for ln in (res.stdout or "").splitlines() if ln.strip()]
+            if lines:
+                return "; ".join(lines[:2])
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return "unknown"
+
+
+_OS_RELEASE_PATH = Path("/etc/os-release")
+
+
+def collect_host_environment() -> Dict[str, str]:
+    """Collect host OS, kernel, Docker version, and Falco version strings."""
+    host_os = "Windows" if os.name == "nt" else os.name
+    kernel = "unknown"
+    if hasattr(os, "uname"):
+        u = os.uname()
+        host_os = f"{u.sysname} {u.machine}".strip() or host_os
+        kernel = u.release or kernel
+    elif hasattr(sys, "getwindowsversion"):
+        wv = sys.getwindowsversion()
+        kernel = f"{wv.major}.{wv.minor}.{wv.build}"
+        host_os = f"Windows {wv.major} (build {wv.build})"
+
+    if _OS_RELEASE_PATH.exists():
+        try:
+            for line in _OS_RELEASE_PATH.read_text(encoding="utf-8", errors="replace").splitlines():
+                if line.startswith("PRETTY_NAME="):
+                    pretty = line.split("=", 1)[1].strip().strip('"').strip("'")
+                    if pretty:
+                        host_os = pretty
+                    break
+        except OSError:
+            pass
+    return {
+        "host_os": host_os,
+        "kernel": kernel,
+        "docker_version": _read_command_version(["docker", "--version"]),
+        "falco_version": _read_command_version(["falco", "--version"]),
+    }
+
+
+def write_run_manifest(
+    run_path,
+    lab_env: Optional[Dict[str, str]] = None,
+    env_file: Optional[Path] = None,
+):
+    """Write env profile, host versions, and running container digests to run_manifest.txt."""
     run_path = Path(run_path)
     manifest_path = run_path / "run_manifest.txt"
     containers = collect_container_image_digests()
 
+    env_source = Path(env_file) if env_file is not None else resolve_active_env_file(REPO_ROOT)
+    file_values = parse_env_file(env_source) if env_source is not None else {}
+    effective = dict(load_lab_env(REPO_ROOT, env_file=env_source))
+    if lab_env:
+        effective.update(lab_env)
+
+    recorded_keys = list(file_values.keys())
+    for key in DEFAULT_ENV:
+        if key not in recorded_keys:
+            recorded_keys.append(key)
+    for key in effective:
+        if key not in recorded_keys and key not in {"WEBAPP_URL", "AUTHSERVICE_URL", "GRAFANA_URL"}:
+            recorded_keys.append(key)
+
+    host = collect_host_environment()
     lines = [
         f"date_utc: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
-        f"running_containers: {len(containers)}",
+        f"env_id: {effective.get('ENV_ID', 'E1')}",
+        f"container_prefix: {effective.get('CONTAINER_PREFIX', 'sentinelmesh')}",
+        f"env_file: {env_source if env_source is not None else 'defaults'}",
+        f"host_os: {host['host_os']}",
+        f"kernel: {host['kernel']}",
+        f"docker_version: {host['docker_version']}",
+        f"falco_version: {host['falco_version']}",
+        "[env]",
     ]
+    for key in recorded_keys:
+        if key in effective:
+            lines.append(f"{key}={effective[key]}")
+
+    lines.append(f"running_containers: {len(containers)}")
     for entry in containers:
         digest = entry["repo_digest"] or entry["image_id"] or "unknown"
         lines.append(
@@ -821,6 +906,7 @@ def build_dual_reports(
 
 def main():
 
+    lab_env = load_lab_env(REPO_ROOT)
     ap = argparse.ArgumentParser(
         description=(
             "SentinelMesh Module A3 logging harness / "
@@ -895,10 +981,10 @@ def main():
 
     ap.add_argument(
         "--grafana-container",
-        default="sentinelmesh-dashboard",
+        default=lab_env["DASHBOARD_CONTAINER"],
         help=(
             "Grafana Docker container name used by "
-            "the S7 detector"
+            "the S7 detector (defaults to active profile)"
         ),
     )
 
@@ -1382,6 +1468,8 @@ def main():
         with open(run_path / "scenario_windows.json", "w") as f:
             json.dump(scenario_windows, f, indent=2)
 
+    manifest_path = write_run_manifest(run_path, lab_env=lab_env)
+
     benign_actions = load_benign_actions(run_path / "benign_actions.jsonl")
     attributed = attribute_alerts(
         alerts,
@@ -1389,6 +1477,7 @@ def main():
         ground_truth,
         benign_only=args.benign_only,
         benign_actions=benign_actions,
+        manifest_path=manifest_path,
     )
     attribution_summary = summarize_attribution(attributed)
     with open(run_path / "alerts_attributed.jsonl", "w") as f:
@@ -1421,6 +1510,8 @@ def main():
     summary = {
         "run_id": run_id,
         "run_timestamp_utc": run_id,
+        "env_id": lab_env["ENV_ID"],
+        "container_prefix": lab_env["CONTAINER_PREFIX"],
         "baseline": (
             "Baseline 1 "
             "(Falco-only + log-tail + S7 Grafana detector, "
@@ -1481,8 +1572,6 @@ def main():
             indent=2,
             default=str,
         )
-
-    manifest_path = write_run_manifest(run_path)
 
     log(
         "Baseline 1 results written to: "

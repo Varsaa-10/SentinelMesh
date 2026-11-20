@@ -26,8 +26,18 @@ Rules (docs/PLAN_ENV2.md):
 from __future__ import annotations
 
 import re
+import sys
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
+
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from linux_run.lab_env import DEFAULT_ENV, read_prefix_from_manifest  # noqa: E402
+
+DEFAULT_CONTAINER_PREFIX = DEFAULT_ENV["CONTAINER_PREFIX"]
 
 ATTCK_TAG_RE = re.compile(r"^T\d{4}(?:\.\d{3})?$")
 DEFAULT_BENIGN_TOLERANCE_SECONDS = 2.0
@@ -60,7 +70,20 @@ def parse_utc_timestamp(ts: Any) -> Optional[datetime]:
     return parsed.astimezone(timezone.utc)
 
 
-def _normalize_container(name: Any, allow_host: bool = False) -> str:
+def _strip_prefix(name: str, prefix: Optional[str]) -> str:
+    if not prefix:
+        return name
+    prefix_dash = prefix if prefix.endswith("-") else f"{prefix}-"
+    if name.startswith(prefix_dash):
+        return name[len(prefix_dash):]
+    return name
+
+
+def _normalize_container(
+    name: Any,
+    allow_host: bool = False,
+    container_prefix: Optional[str] = DEFAULT_CONTAINER_PREFIX,
+) -> str:
     if not name or not isinstance(name, str):
         return ""
     cleaned = name.strip()
@@ -68,9 +91,18 @@ def _normalize_container(name: Any, allow_host: bool = False) -> str:
         return ""
     if cleaned == "host" and not allow_host:
         return ""
-    if cleaned.startswith("sentinelmesh-"):
-        return cleaned[len("sentinelmesh-"):]
-    return cleaned
+    return _strip_prefix(cleaned, container_prefix)
+
+
+def _normalize_target_container(
+    name: Any,
+    container_prefix: Optional[str] = DEFAULT_CONTAINER_PREFIX,
+) -> str:
+    """Normalize a logical ground_truth target name (always strips legacy 'sentinelmesh-')."""
+    norm = _normalize_container(name, allow_host=False, container_prefix=container_prefix)
+    if norm and DEFAULT_CONTAINER_PREFIX:
+        norm = _strip_prefix(norm, DEFAULT_CONTAINER_PREFIX)
+    return norm
 
 
 def _named_alert_container(alert: Mapping[str, Any]) -> str:
@@ -118,19 +150,34 @@ def alert_container_name(alert: Mapping[str, Any]) -> str:
     return _unnamed_container_id(alert)
 
 
-def container_matches_target(alert_container: Any, target_container: Any) -> bool:
+def container_matches_target(
+    alert_container: Any,
+    target_container: Any,
+    container_prefix: Optional[str] = DEFAULT_CONTAINER_PREFIX,
+) -> bool:
     """Check whether an alert's container matches any target in ground truth."""
-    norm_alert = _normalize_container(alert_container)
+    norm_alert = _normalize_container(alert_container, container_prefix=container_prefix)
     if not norm_alert or not target_container:
         return False
-    targets = [_normalize_container(part) for part in str(target_container).split(",")]
+    targets = [
+        _normalize_target_container(part, container_prefix=container_prefix)
+        for part in str(target_container).split(",")
+    ]
     return norm_alert in {t for t in targets if t}
 
 
-def _containers_match_benign(alert_container: Any, action_container: Any) -> bool:
+def _containers_match_benign(
+    alert_container: Any,
+    action_container: Any,
+    container_prefix: Optional[str] = DEFAULT_CONTAINER_PREFIX,
+) -> bool:
     """Compare container/host labels between an alert and a benign action entry."""
-    norm_alert = _normalize_container(alert_container, allow_host=True)
-    norm_action = _normalize_container(action_container, allow_host=True)
+    norm_alert = _normalize_container(
+        alert_container, allow_host=True, container_prefix=container_prefix
+    )
+    norm_action = _normalize_container(
+        action_container, allow_host=True, container_prefix=container_prefix
+    )
     return bool(norm_alert and norm_action and norm_alert == norm_action)
 
 
@@ -299,6 +346,7 @@ def _match_benign_actions(
     alert_cont: str,
     benign_actions: Optional[Sequence[Mapping[str, Any]]],
     tolerance_seconds: float,
+    container_prefix: Optional[str] = DEFAULT_CONTAINER_PREFIX,
 ) -> List[Dict[str, Any]]:
     if not benign_actions:
         return []
@@ -317,7 +365,9 @@ def _match_benign_actions(
         b_end = b_end or b_start
         if not ((b_start - tol) <= alert_ts <= (b_end + tol)):
             continue
-        if _containers_match_benign(alert_cont, entry.get("container")):
+        if _containers_match_benign(
+            alert_cont, entry.get("container"), container_prefix=container_prefix
+        ):
             matches.append(
                 {
                     "action": entry.get("action"),
@@ -329,6 +379,17 @@ def _match_benign_actions(
     return matches
 
 
+def _resolve_container_prefix(
+    container_prefix: Optional[str],
+    manifest_path: Optional[Union[str, Path]],
+) -> str:
+    if container_prefix is not None:
+        return container_prefix
+    if manifest_path is not None:
+        return read_prefix_from_manifest(manifest_path, default=DEFAULT_CONTAINER_PREFIX)
+    return DEFAULT_CONTAINER_PREFIX
+
+
 def attribute_alert(
     alert: Mapping[str, Any],
     scenario_windows: Mapping[str, Mapping[str, Any]],
@@ -336,12 +397,15 @@ def attribute_alert(
     benign_only: bool = False,
     benign_actions: Optional[Sequence[Mapping[str, Any]]] = None,
     benign_tolerance_seconds: float = DEFAULT_BENIGN_TOLERANCE_SECONDS,
+    container_prefix: Optional[str] = None,
+    manifest_path: Optional[Union[str, Path]] = None,
 ) -> Dict[str, Any]:
     """Return a copy of `alert` annotated with scenario & technique attribution.
 
     Pure function: never mutates `alert`, `scenario_windows`, `ground_truth`,
     or `benign_actions`.
     """
+    prefix = _resolve_container_prefix(container_prefix, manifest_path)
     out = dict(alert)
     falco_technique = extract_falco_technique(out)
     out["falco_technique"] = falco_technique
@@ -355,7 +419,11 @@ def attribute_alert(
     matched_actions: List[Dict[str, Any]] = []
     if alert_ts is not None and alert_cont:
         matched_actions = _match_benign_actions(
-            alert_ts, alert_cont, benign_actions, benign_tolerance_seconds
+            alert_ts,
+            alert_cont,
+            benign_actions,
+            benign_tolerance_seconds,
+            container_prefix=prefix,
         )
 
     matched_setup = [b for b in matched_actions if b.get("action") == "grafana_setup"]
@@ -386,12 +454,16 @@ def attribute_alert(
     if matching_windows:
         if has_named_cont:
             for sid, spec in matching_windows:
-                if container_matches_target(alert_cont, spec.get("target_container")):
+                if container_matches_target(
+                    alert_cont, spec.get("target_container"), container_prefix=prefix
+                ):
                     matched_sid = sid
                     base_attribution = "attack"
                     break
         if matched_sid is None:
-            norm_cont = _normalize_container(alert_cont, allow_host=True)
+            norm_cont = _normalize_container(
+                alert_cont, allow_host=True, container_prefix=prefix
+            )
             if norm_cont and norm_cont != "host":
                 matched_sid = matching_windows[0][0]
                 base_attribution = "attack_collateral"
@@ -442,8 +514,11 @@ def attribute_alerts(
     benign_only: bool = False,
     benign_actions: Optional[Sequence[Mapping[str, Any]]] = None,
     benign_tolerance_seconds: float = DEFAULT_BENIGN_TOLERANCE_SECONDS,
+    container_prefix: Optional[str] = None,
+    manifest_path: Optional[Union[str, Path]] = None,
 ) -> List[Dict[str, Any]]:
     """Pure batch wrapper around `attribute_alert`."""
+    prefix = _resolve_container_prefix(container_prefix, manifest_path)
     return [
         attribute_alert(
             a,
@@ -452,6 +527,7 @@ def attribute_alerts(
             benign_only=benign_only,
             benign_actions=benign_actions,
             benign_tolerance_seconds=benign_tolerance_seconds,
+            container_prefix=prefix,
         )
         for a in alerts
     ]

@@ -1,10 +1,13 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
 
 echo "========================================="
 echo "Scenario 25 - Launch Suspicious Network Tool in Container"
 echo "========================================="
 
-MSYS_NO_PATHCONV=1 docker exec sentinelmesh-dashboard sh -c '
+MSYS_NO_PATHCONV=1 docker exec "$DASHBOARD_CONTAINER" sh -c '
 set -- $(hostname -i)
 IP="$1"
 IFS=. read -r o1 o2 _ <<EOF

@@ -1,15 +1,17 @@
 #!/bin/bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../linux_run/lab_env.sh
+. "$ROOT/linux_run/lab_env.sh"
+
 echo "========================================="
 echo "Scenario 7 - Grafana Default Credentials & Anonymous Access"
 echo "========================================="
 
-GRAFANA_URL="http://localhost:3000"
-
 echo
-echo "[1/2] Default credential login (admin/admin)..."
+echo "[1/2] Default credential login (${GRAFANA_ADMIN_USER}/${GRAFANA_ADMIN_PASS})..."
 LOGIN_RESPONSE=$(curl -s -c /tmp/grafana_cookies.txt -X POST "${GRAFANA_URL}/login" \
     -H "Content-Type: application/json" \
-    -d '{"user":"admin","password":"admin"}')
+    -d "{\"user\":\"${GRAFANA_ADMIN_USER}\",\"password\":\"${GRAFANA_ADMIN_PASS}\"}")
 echo "Response: ${LOGIN_RESPONSE}"
 
 echo

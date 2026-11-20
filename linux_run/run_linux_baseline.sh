@@ -5,14 +5,16 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
 cd "$ROOT"
 [ "$(id -u)" -eq 0 ] || { echo "run with sudo"; exit 1; }
+# shellcheck source=./lab_env.sh
+. "$HERE/lab_env.sh"
 
 if [ "${1:-}" = "--reset" ]; then
   echo ">> resetting lab"
   ./reset_lab.sh
   echo ">> waiting up to 180s for webapp /health, authservice /health, and Grafana /api/health..."
-  WEBAPP_HEALTH_URL="${WEBAPP_URL:-http://127.0.0.1:5000}/health"
-  AUTHSERVICE_HEALTH_URL="${AUTHSERVICE_URL:-http://127.0.0.1:5001}/health"
-  GRAFANA_HEALTH_URL="${GRAFANA_URL:-http://127.0.0.1:3000}/api/health"
+  WEBAPP_HEALTH_URL="${WEBAPP_URL}/health"
+  AUTHSERVICE_HEALTH_URL="${AUTHSERVICE_URL}/health"
+  GRAFANA_HEALTH_URL="${GRAFANA_URL}/api/health"
   waited=0
   while true; do
     webapp_ok=0
@@ -56,7 +58,7 @@ echo ">> starting harness"
   --webapp-log "$WEBAPP_LOG" \
   --auth-log "$AUTH_LOG" \
   --grafana-detector detection/log-tail/scenario7_detector.py \
-  --grafana-container sentinelmesh-dashboard \
+  --grafana-container "$DASHBOARD_CONTAINER" \
   --auto-run-attacks \
   --attack-scripts-dir attack_scripts \
   --chain-script scenario10_chain.sh \
@@ -67,13 +69,14 @@ RUN="$(ls -1d "$RUN_DIR"/2* | sort | tail -n1)"
 [ "$(basename "$RUN")" != "$BEFORE" ] || { echo "no new run folder was created"; exit 1; }
 
 {
+  echo "env_id: ${ENV_ID}"
   echo "date_utc: $(date -u +%FT%TZ)"
   echo "host: $(uname -srm)"
   echo "falco: $(falco --version | head -n1)"
   echo "docker: $(docker --version)"
   echo "git_commit: $(git rev-parse HEAD 2>/dev/null || echo n/a)"
-  sha256sum detection/falco-rules/*.yaml detection/falco-stock/*.yaml linux_run/benign_workload.sh eval/attribute.py eval/ground_truth.json attack_scripts/* docker-compose.yml
-  for c in $(docker ps --format '{{.Names}}' | grep '^sentinelmesh-'); do
+  sha256sum detection/falco-rules/*.yaml detection/falco-stock/*.yaml linux_run/benign_workload.sh eval/attribute.py eval/ground_truth.json attack_scripts/* docker-compose.yml env/*.env
+  for c in $(docker ps --format '{{.Names}}' | grep "^${CONTAINER_PREFIX}-"); do
     echo "$c $(docker inspect -f '{{.Config.Image}} {{.Image}}' "$c")"
   done
   docker compose ps

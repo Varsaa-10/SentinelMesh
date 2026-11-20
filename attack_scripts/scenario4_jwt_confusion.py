@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 import base64
 import json
+import sys
+from pathlib import Path
 import requests
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+from linux_run.lab_env import load_lab_env
+
+LAB_ENV = load_lab_env(REPO_ROOT)
 
 print("=========================================")
 print("Scenario 4 - JWT Algorithm Confusion")
@@ -19,7 +28,7 @@ forged_token = f"{b64url(json.dumps(header).encode())}.{b64url(json.dumps(payloa
 
 try:
     response = requests.post(
-        "http://localhost:5001/auth/verify",
+        f"{LAB_ENV['AUTHSERVICE_URL']}/auth/verify",
         json={"token": forged_token},
         timeout=5
     )

@@ -58,8 +58,17 @@ import re
 import subprocess
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
-sys.path.insert(0, "..")
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:
+    from linux_run.lab_env import load_lab_env
+except Exception:
+    def load_lab_env():
+        return {"DASHBOARD_CONTAINER": "sentinelmesh-dashboard"}
 try:
     from common import emit_alert
 except ImportError:
@@ -130,8 +139,9 @@ def follow_docker_logs(container_name):
 
 
 def main():
+    lab_env = load_lab_env()
     ap = argparse.ArgumentParser(description="S7 Grafana default-creds / anonymous-access detector")
-    ap.add_argument("--container", default="sentinelmesh-dashboard")
+    ap.add_argument("--container", default=lab_env["DASHBOARD_CONTAINER"])
     ap.add_argument("--service", default="dashboard")
     args = ap.parse_args()
 

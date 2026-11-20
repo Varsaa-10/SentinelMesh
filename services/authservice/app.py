@@ -14,8 +14,8 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# JWT secret — hardcoded intentionally for lab
-JWT_SECRET = "sentinelmesh-secret-key"
+# JWT secret — configurable per lab profile (unused by S4 alg=none)
+JWT_SECRET = os.environ.get("JWT_SECRET", "sentinelmesh-secret-key")
 
 # Database configuration via environment variables
 DB_HOST = os.environ.get("DB_HOST", "database")
@@ -25,7 +25,7 @@ DB_USER = os.environ.get("DB_USER", "postgres")
 DB_PASS = os.environ.get("DB_PASS", "postgres")
 
 # Log file configuration for Detection module tailer
-LOG_DIR = "/var/log/sentinelmesh"
+LOG_DIR = os.environ.get("LOG_DIR", "/var/log/sentinelmesh")
 LOG_FILE = os.path.join(LOG_DIR, "auth_events.log")
 
 

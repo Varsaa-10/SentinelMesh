@@ -13,6 +13,9 @@ build/
 .venv/
 venv/
 env/
+!/env/
+/env/*
+!/env/*.env
 
 # Docker
 docker-compose.override.yml

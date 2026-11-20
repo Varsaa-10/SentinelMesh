@@ -815,3 +815,76 @@ def test_f12_unnamed_container_with_id_gets_attack_collateral():
 
     assert r_host["attribution"] == "unattributed"
     assert r_host["attributed_scenario"] == "unattributed"
+
+
+def test_attribute_alerts_strips_configured_prefix_from_manifest(tmp_path):
+    """Manifest container_prefix maps both E1 sentinelmesh-* and E2 smx-* alerts to logical targets."""
+    gt = json.loads(GT_PATH.read_text(encoding="utf-8"))
+    windows = {
+        "S1": {"start": "2026-11-20T10:00:00Z", "end": "2026-11-20T10:00:20Z"},
+    }
+
+    e1_manifest = tmp_path / "run_e1_manifest.txt"
+    e1_manifest.write_text("env_id: E1\ncontainer_prefix: sentinelmesh\n", encoding="utf-8")
+
+    e2_manifest = tmp_path / "run_e2_manifest.txt"
+    e2_manifest.write_text("env_id: E2\n[env]\nCONTAINER_PREFIX=smx\n", encoding="utf-8")
+
+    e1_sqli = {
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "HIGH",
+        "title": gt["scenarios"]["S1"]["detection"]["expected_title"],
+        "timestamp": "2026-11-20T10:00:05Z",
+        "service": "webapp",
+        "event": {"container.name": "sentinelmesh-webapp"},
+    }
+    e2_sqli = {
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "HIGH",
+        "title": gt["scenarios"]["S1"]["detection"]["expected_title"],
+        "timestamp": "2026-11-20T10:00:06Z",
+        "service": "webapp",
+        "event": {"container.name": "smx-webapp"},
+    }
+    e2_db_collateral = {
+        "source": "falco",
+        "scenario": "",
+        "severity": "NOTICE",
+        "title": "Read sensitive file untrusted",
+        "timestamp": "2026-11-20T10:00:07Z",
+        "service": "database",
+        "falco_tags": ["filesystem", "T1555"],
+        "event": {"container.name": "smx-database"},
+    }
+    e2_wrong_prefix = {
+        "source": "log-tail",
+        "scenario": "S1",
+        "severity": "HIGH",
+        "title": gt["scenarios"]["S1"]["detection"]["expected_title"],
+        "timestamp": "2026-11-20T10:00:08Z",
+        "service": "webapp",
+        "event": {"container.name": "sentinelmesh-webapp"},
+    }
+
+    [r_e1] = attribute_alerts([e1_sqli], windows, gt, manifest_path=e1_manifest)
+    assert r_e1["attribution"] == "attack"
+    assert r_e1["attributed_scenario"] == "S1"
+    assert r_e1["designated_rule"] is True
+
+    r_e2, r_col, r_wrong = attribute_alerts(
+        [e2_sqli, e2_db_collateral, e2_wrong_prefix],
+        windows,
+        gt,
+        manifest_path=e2_manifest,
+    )
+    assert r_e2["attribution"] == "attack"
+    assert r_e2["attributed_scenario"] == "S1"
+    assert r_e2["designated_rule"] is True
+
+    assert r_col["attribution"] == "attack_collateral"
+    assert r_col["attributed_scenario"] == "S1"
+
+    assert r_wrong["attribution"] == "attack_collateral"
+    assert r_wrong["attributed_scenario"] == "S1"
