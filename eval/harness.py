@@ -494,12 +494,28 @@ def write_run_manifest(
     return manifest_path
 
 
+BENIGN_BUSY_TIMEOUT_SECONDS = 150.0
+
+
+class BenignActionStillRunning(RuntimeError):
+    """The benign busy file did not clear in time; no window was opened."""
+
+    def __init__(self, scenario, waited_s, windows):
+        super().__init__(
+            f"benign action still running; window not opened "
+            f"({scenario}, waited {waited_s:.0f}s)"
+        )
+        self.scenario = scenario
+        self.waited_s = waited_s
+        self.windows = windows
+
+
 def run_attack_scripts(
     attack_scripts_dir,
     chain_script=None,
     privileged_debug=False,
     lock_path=None,
-    busy_timeout=60.0,
+    busy_timeout=BENIGN_BUSY_TIMEOUT_SECONDS,
 ):
     attack_scripts_dir = Path(attack_scripts_dir)
     order = build_attack_order(
@@ -533,18 +549,23 @@ def run_attack_scripts(
             continue
 
         lock_start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        busy_wait_s = 0.0
         try:
             if lock_file is not None:
                 lock_file.write_text(f"{scenario}\n", encoding="utf-8")
-                deadline = time.monotonic() + busy_timeout
+                busy_t0 = time.monotonic()
+                deadline = busy_t0 + busy_timeout
                 while busy_file.exists():
                     if time.monotonic() >= deadline:
+                        waited = time.monotonic() - busy_t0
                         log(
-                            f"WARNING: benign busy file {busy_file} still present after "
-                            f"{busy_timeout:.0f}s before {scenario}, continuing"
+                            f"ERROR: benign action still running; window not opened "
+                            f"(busy file {busy_file} present after {waited:.0f}s "
+                            f"before {scenario})"
                         )
-                        break
+                        raise BenignActionStillRunning(scenario, waited, scenario_windows)
                     time.sleep(0.1)
+                busy_wait_s = round(time.monotonic() - busy_t0, 1)
                 # Quiet margin: benign tolerance is +/-2 s on whole-second timestamps.
                 time.sleep(quiet_margin)
 
@@ -586,6 +607,7 @@ def run_attack_scripts(
                 "end": end_ts,
                 "lock_start": lock_start_ts,
                 "lock_end": lock_end_ts,
+                "busy_wait_s": busy_wait_s,
             }
         else:
             scenario_windows[scenario] = {"start": start_ts, "end": end_ts}
@@ -1270,6 +1292,7 @@ def main():
     # -----------------------------------------------------------------------
 
     attack_lock_path = run_path / "attack.lock"
+    abort_error = None
 
     try:
 
@@ -1340,6 +1363,14 @@ def main():
             time.sleep(
                 args.listen_seconds
             )
+
+    except BenignActionStillRunning as exc:
+
+        log(f"ERROR: {exc}")
+        abort_error = str(exc)
+        if exc.windows:
+            with open(run_path / "scenario_windows.json", "w") as f:
+                json.dump(exc.windows, f, indent=2)
 
     except KeyboardInterrupt:
 
@@ -1437,6 +1468,10 @@ def main():
                 f.close()
             except Exception:
                 pass
+
+    if abort_error:
+        log(f"run aborted: {abort_error}; no scoring done, run is not valid")
+        sys.exit(1)
 
     # -----------------------------------------------------------------------
     # Merge alerts

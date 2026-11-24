@@ -6,6 +6,7 @@ from pathlib import Path
 
 LAB_STATIC = {"172.30.0.2": "database", "172.30.0.3": "logcollector", "172.30.0.4": "webapp",
               "172.30.0.5": "authservice", "172.30.0.6": "dashboard"}
+BUSY_WAIT_WARN_S = 60.0
 EXPECT = {"S1": 2, "S2": None, "S3": 2, "S4": 2, "S5": 1, "S6": 1, "S7": 2, "S8": 6, "S9": 2}
 
 def load(p):
@@ -150,6 +151,29 @@ def main():
     print("\nS7 titles:")
     for t, n in Counter(a.get("title", "")[:60] for a in by.get("S7", [])).most_common():
         print(f"  {n:>3}x  {t}")
+
+    # F16: window/benign coordination checks.
+    win_path = run / "scenario_windows.json"
+    if win_path.exists():
+        windows = json.loads(win_path.read_text())
+        print("\nBenign/window coordination:")
+        slow = {
+            sid: w["busy_wait_s"]
+            for sid, w in windows.items()
+            if isinstance(w, dict) and (w.get("busy_wait_s") or 0) > BUSY_WAIT_WARN_S
+        }
+        for sid, secs in sorted(slow.items(), key=lambda kv: (len(kv[0]), kv[0])):
+            print(f"  {sid}: busy_wait_s={secs} (> {BUSY_WAIT_WARN_S:.0f})")
+            review.append(f"{sid} waited {secs}s for a benign action (busy_wait_s > {BUSY_WAIT_WARN_S:.0f})")
+        ben_path = run / "benign_actions.jsonl"
+        benign = load(ben_path) if ben_path.exists() else []
+        pauses = sum(1 for b in benign if b.get("action") == "pause")
+        timed_out = sum(1 for b in benign if b.get("timed_out"))
+        print(f"  windows={len(windows)} pause entries={pauses} timed-out benign actions={timed_out}")
+        if pauses != len(windows):
+            review.append(
+                f"pause entries ({pauses}) differ from scenario windows ({len(windows)})"
+            )
 
     if benign_only:
         print("\nS10 chain: skipped (benign-only capture)")

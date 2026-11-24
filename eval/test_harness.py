@@ -860,3 +860,218 @@ def test_set_env_roundtrip_and_leftover_refusal(tmp_path):
     res_fail = run_sh("linux_run/set_env.sh", "E2")
     assert res_fail.returncode != 0
     assert "LEFTOVER" in res_fail.stderr
+
+
+# ---------------------------------------------------------------------------
+# A2b: F14 (benign action limit), F15 (no window while busy), F16 (report checks)
+# ---------------------------------------------------------------------------
+
+
+def _make_scripts(tmp_path, n=2):
+    scripts_dir = tmp_path / "scripts"
+    scripts_dir.mkdir()
+    for _, fname, _ in harness.DEFAULT_ATTACK_ORDER[:n]:
+        (scripts_dir / fname).write_text("exit 0\n", encoding="utf-8")
+    return scripts_dir
+
+
+def test_f15_default_busy_timeout_is_150s():
+    import inspect
+
+    assert harness.BENIGN_BUSY_TIMEOUT_SECONDS == 150.0
+    sig = inspect.signature(harness.run_attack_scripts)
+    assert sig.parameters["busy_timeout"].default == 150.0
+
+
+def test_f15_busy_past_limit_stops_run_and_never_opens_window(tmp_path, monkeypatch):
+    scripts_dir = _make_scripts(tmp_path)
+    lock_path = tmp_path / "attack.lock"
+    busy_path = Path(f"{lock_path}.busy")
+    busy_path.write_text("", encoding="utf-8")  # never cleared
+    clock = {"t": 0.0}
+    fired = []
+
+    monkeypatch.setattr(harness.time, "sleep", lambda s: clock.__setitem__("t", clock["t"] + s))
+    monkeypatch.setattr(harness.time, "monotonic", lambda: clock["t"])
+    monkeypatch.setattr(harness.subprocess, "run", lambda *a, **k: fired.append(a))
+
+    with pytest.raises(harness.BenignActionStillRunning) as ei:
+        harness.run_attack_scripts(scripts_dir, lock_path=lock_path)
+
+    assert "benign action still running; window not opened" in str(ei.value)
+    assert fired == []  # attack script never fired
+    assert ei.value.windows == {}  # no window recorded
+    assert 150 <= ei.value.waited_s < 151
+    assert not lock_path.exists()  # lock released
+
+
+def test_f15_busy_clearing_before_limit_is_recorded_per_scenario(tmp_path, monkeypatch):
+    scripts_dir = _make_scripts(tmp_path)
+    lock_path = tmp_path / "attack.lock"
+    busy_path = Path(f"{lock_path}.busy")
+    busy_path.write_text("", encoding="utf-8")
+    clock = {"t": 0.0}
+    runs = []
+
+    def fake_sleep(secs):
+        clock["t"] += secs
+        if busy_path.exists() and clock["t"] >= 120.0:  # clears after 120 s (< 150)
+            busy_path.unlink()
+
+    def fake_run(cmd, timeout=30, capture_output=True, text=True):
+        runs.append(Path(cmd[1]).name)
+        return type("Res", (), {"stdout": "", "stderr": "", "returncode": 0})()
+
+    monkeypatch.setattr(harness.time, "sleep", fake_sleep)
+    monkeypatch.setattr(harness.time, "monotonic", lambda: clock["t"])
+    monkeypatch.setattr(harness.subprocess, "run", fake_run)
+
+    windows, _ = harness.run_attack_scripts(scripts_dir, lock_path=lock_path)
+    assert len(runs) == 2
+    assert 120.0 <= windows["S1"]["busy_wait_s"] < 121.0
+    assert windows["S2"]["busy_wait_s"] == 0.0  # busy file already gone
+    assert json.loads(json.dumps(windows))["S1"]["busy_wait_s"] == windows["S1"]["busy_wait_s"]
+
+
+def _benign_prefix(tmp_path):
+    """Copy of benign_workload.sh up to the main loop, so its functions can be sourced."""
+    repo = Path(__file__).resolve().parent.parent
+    d = tmp_path / "linux_run"
+    d.mkdir()
+    shutil.copy(repo / "linux_run" / "lab_env.sh", d / "lab_env.sh")
+    text = (repo / "linux_run" / "benign_workload.sh").read_text(encoding="utf-8")
+    prefix = text.split("START_EPOCH=$(now_epoch)")[0]
+    (d / "benign_prefix.sh").write_text(prefix, encoding="utf-8")
+    return d / "benign_prefix.sh"
+
+
+@pytest.mark.skipif(
+    shutil.which("timeout") is None or shutil.which("bash") is None,
+    reason="needs bash and coreutils timeout (Linux)",
+)
+def test_f14_benign_action_is_cut_at_limit_and_logged_timed_out(tmp_path):
+    import time
+
+    prefix = _benign_prefix(tmp_path)
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_docker = fake_bin / "docker"
+    fake_docker.write_text(
+        '#!/usr/bin/env bash\n'
+        'case "$*" in *slow*) sleep 30;; esac\n'
+        'exit 0\n',
+        encoding="utf-8",
+    )
+    fake_docker.chmod(0o755)
+
+    out = tmp_path / "out"
+    script = (
+        f'. "{prefix}" --duration 1\n'
+        'run_docker_exec_logged c1 slow_action slow\n'
+        'run_docker_exec_logged c1 quick_action quick\n'
+    )
+    env = {
+        **os.environ,
+        "PATH": f"{fake_bin}:{os.environ['PATH']}",
+        "OUT": str(out),
+        "BENIGN_ACTION_TIMEOUT": "2",
+    }
+    t0 = time.monotonic()
+    proc = subprocess.run(["bash", "-c", script], env=env, capture_output=True, text=True, timeout=25)
+    elapsed = time.monotonic() - t0
+    assert proc.returncode == 0, proc.stderr
+    assert elapsed < 15  # cut off long before the 30 s fake command ends
+
+    rows = [json.loads(l) for l in (out / "benign_actions.jsonl").read_text().splitlines()]
+    slow = next(r for r in rows if r["action"] == "slow_action")
+    quick = next(r for r in rows if r["action"] == "quick_action")
+    assert slow["timed_out"] is True
+    assert slow["start"] and slow["end"] and slow["end"] >= slow["start"]
+    assert "timed_out" not in quick  # flag only on cut-off actions
+
+
+def test_f14_every_benign_command_is_time_limited():
+    repo = Path(__file__).resolve().parent.parent
+    text = (repo / "linux_run" / "benign_workload.sh").read_text(encoding="utf-8")
+    assert 'BENIGN_ACTION_TIMEOUT="${BENIGN_ACTION_TIMEOUT:-90}"' in text
+    import re
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        if re.match(r"^(MSYS_NO_PATHCONV=1 )?(docker exec|curl)\b", stripped) or re.search(
+            r"\$\(curl\b", stripped
+        ):
+            pytest.fail(f"unlimited benign command: {stripped}")
+
+
+def _write_run(tmp_path, name, windows, pauses, busy=None):
+    d = tmp_path / name
+    d.mkdir()
+    (d / "alerts.jsonl").write_text("", encoding="utf-8")
+    (d / "alerts_attributed.jsonl").write_text("", encoding="utf-8")
+    (d / "baseline1_results.json").write_text(
+        json.dumps(
+            {
+                "benign_only": False,
+                "single_scenario_pass_count": 0,
+                "single_scenario_total": 0,
+                "s10_chain_all_stages_fired": None,
+                "results": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    wins = {}
+    for i in range(windows):
+        wins[f"S{i + 1}"] = {
+            "start": "2026-11-21T14:00:00Z",
+            "end": "2026-11-21T14:00:05Z",
+            "busy_wait_s": (busy or {}).get(f"S{i + 1}", 0.0),
+        }
+    (d / "scenario_windows.json").write_text(json.dumps(wins), encoding="utf-8")
+    lines = [json.dumps({"start": "t", "end": "t", "container": "", "action": "pause"})] * pauses
+    lines.append(json.dumps({"start": "t", "end": "t", "container": "host", "action": "outbound_https"}))
+    (d / "benign_actions.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return d
+
+
+def _run_check(check_run, monkeypatch, capsys, d):
+    import sys
+
+    monkeypatch.setattr(sys, "argv", ["check_run.py", str(d)])
+    code = 0
+    try:
+        check_run.main()
+    except SystemExit as exc:
+        code = exc.code
+    return code, capsys.readouterr().out
+
+
+def test_f16_check_run_warns_on_long_busy_wait(tmp_path, monkeypatch, capsys):
+    from linux_run import check_run
+
+    d = _write_run(tmp_path, "r1", windows=2, pauses=2, busy={"S2": 61.0})
+    code, out = _run_check(check_run, monkeypatch, capsys, d)
+    assert "S2 waited 61.0s for a benign action" in out
+    assert code == 2
+
+
+def test_f16_check_run_busy_wait_at_60s_is_not_flagged(tmp_path, monkeypatch, capsys):
+    from linux_run import check_run
+
+    d = _write_run(tmp_path, "r2", windows=2, pauses=2, busy={"S1": 60.0})
+    _, out = _run_check(check_run, monkeypatch, capsys, d)
+    assert "waited" not in out
+
+
+def test_f16_check_run_warns_when_pause_count_differs_from_windows(tmp_path, monkeypatch, capsys):
+    from linux_run import check_run
+
+    d = _write_run(tmp_path, "r3", windows=29, pauses=24)
+    code, out = _run_check(check_run, monkeypatch, capsys, d)
+    assert "pause entries (24) differ from scenario windows (29)" in out
+    assert code == 2
+
+    ok = _write_run(tmp_path, "r4", windows=3, pauses=3)
+    _, out_ok = _run_check(check_run, monkeypatch, capsys, ok)
+    assert "differ from scenario windows" not in out_ok
