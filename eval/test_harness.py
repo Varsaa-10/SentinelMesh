@@ -1075,3 +1075,221 @@ def test_f16_check_run_warns_when_pause_count_differs_from_windows(tmp_path, mon
     ok = _write_run(tmp_path, "r4", windows=3, pauses=3)
     _, out_ok = _run_check(check_run, monkeypatch, capsys, ok)
     assert "differ from scenario windows" not in out_ok
+
+
+# ---------------------------------------------------------------------------
+# A2b-1: F14b inner container timeout + E1/E2 database healthcheck check
+# ---------------------------------------------------------------------------
+
+
+def _run_bash_with_retry(bash_bin: str, script: str, env: dict, cwd: Path, timeout: int = 30):
+    last = None
+    for _ in range(3 if os.name == "nt" else 1):
+        last = subprocess.run(
+            [bash_bin, "-c", script],
+            cwd=cwd,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+        if (
+            os.name == "nt"
+            and last.returncode != 0
+            and ("cygheap" in (last.stderr or "") or "Win32 error" in (last.stderr or ""))
+        ):
+            continue
+        return last
+    return last
+
+
+def test_f14b_inner_container_timeout_on_pkg_update_and_pg_dump(tmp_path):
+    bash_bin = _find_working_bash()
+    if bash_bin is None:
+        pytest.skip("No working bash executable available")
+
+    prefix = _benign_prefix(tmp_path)
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    calls_log = tmp_path / "docker_calls.txt"
+    fake_docker = fake_bin / "docker"
+    fake_docker.write_text(
+        '#!/usr/bin/env bash\n'
+        f'printf "%s\\n" "$*" >> "{calls_log.as_posix()}"\n'
+        'exit 0\n',
+        encoding="utf-8",
+    )
+    fake_docker.chmod(0o755)
+
+    out = tmp_path / "out"
+    path_prefix = str(fake_bin)
+    if os.name == "nt":
+        git_usr_bin = str(Path(bash_bin).parent.parent / "usr" / "bin")
+        git_bin = str(Path(bash_bin).parent)
+        path_prefix = f"{path_prefix};{git_usr_bin};{git_bin}"
+        sep = ";"
+    else:
+        sep = ":"
+
+    script = (
+        f'. "{prefix}" --duration 1\n'
+        'echo "INNER=$BENIGN_ACTION_INNER_TIMEOUT"\n'
+        'do_pkg_index_update\n'
+        'do_pg_dump\n'
+    )
+    env = {
+        **os.environ,
+        "PATH": f"{path_prefix}{sep}{os.environ['PATH']}",
+        "OUT": str(out),
+    }
+    proc = _run_bash_with_retry(bash_bin, script, env=env, cwd=tmp_path)
+    assert proc.returncode == 0, proc.stderr
+    assert "INNER=85" in proc.stdout
+
+    recorded = calls_log.read_text(encoding="utf-8").splitlines()
+    assert any(
+        line == "exec sentinelmesh-database timeout -s KILL 85 apk update"
+        for line in recorded
+    ), f"missing expected inner timeout on apk update: {recorded}"
+    assert any(
+        "exec -e PGPASSWORD=" in line
+        and "sentinelmesh-webapp" in line
+        and 'timeout -s KILL "85" pg_dump' in line
+        for line in recorded
+    ), f"missing expected inner timeout on pg_dump: {recorded}"
+
+    # Verify run_limited treats both 124 and 137 (SIGKILL) as timed_out
+    fail_137 = fake_bin / "fail_137"
+    fail_137.write_text("#!/usr/bin/env bash\nexit 137\n", encoding="utf-8")
+    fail_137.chmod(0o755)
+    out_sig = tmp_path / "out_sig"
+    sig_script = (
+        f'. "{prefix}" --duration 1\n'
+        'begin_benign_action || exit 1\n'
+        'run_limited fail_137\n'
+        'end_benign_action\n'
+        'log_action "smx-database" "pkg_index_update" "2026-11-26T00:00:00Z" "2026-11-26T00:01:25Z"\n'
+    )
+    proc_sig = _run_bash_with_retry(
+        bash_bin,
+        sig_script,
+        env={**env, "OUT": str(out_sig)},
+        cwd=tmp_path,
+    )
+    assert proc_sig.returncode == 0, proc_sig.stderr
+    row = json.loads((out_sig / "benign_actions.jsonl").read_text(encoding="utf-8").splitlines()[-1])
+    assert row["timed_out"] is True
+
+
+def test_f14b_inner_timeout_kills_in_container_command_before_outer_timeout(tmp_path):
+    """Simulate slow inner apk update / pg_dump: inner timeout -s KILL stops them at inner limit."""
+    bash_bin = _find_working_bash()
+    if bash_bin is None or (
+        shutil.which("timeout") is None
+        and not (os.name == "nt" and (Path(bash_bin).parent.parent / "usr" / "bin" / "timeout.exe").exists())
+    ):
+        pytest.skip("needs bash and coreutils timeout")
+
+    import time
+
+    prefix = _benign_prefix(tmp_path)
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    # Execute container command arguments locally so inner `timeout -s KILL` runs.
+    fake_docker = fake_bin / "docker"
+    fake_docker.write_text(
+        '#!/usr/bin/env bash\n'
+        'if [ "$1" = "exec" ]; then\n'
+        '  shift\n'
+        '  while [ "$#" -gt 0 ] && [ "$1" = "-e" ]; do\n'
+        '    shift 2\n'
+        '  done\n'
+        '  shift\n'
+        '  exec "$@"\n'
+        'fi\n'
+        'exit 0\n',
+        encoding="utf-8",
+    )
+    fake_docker.chmod(0o755)
+    for cmd_name in ("apk", "pg_dump"):
+        stub = fake_bin / cmd_name
+        stub.write_text("#!/usr/bin/env bash\nsleep 30\n", encoding="utf-8")
+        stub.chmod(0o755)
+
+    out = tmp_path / "out"
+    sep = ";" if os.name == "nt" else ":"
+    path_parts = [str(fake_bin)]
+    if os.name == "nt":
+        path_parts.append(str(Path(bash_bin).parent.parent / "usr" / "bin"))
+    path_parts.append(os.environ["PATH"])
+
+    env = {
+        **os.environ,
+        "PATH": sep.join(path_parts),
+        "OUT": str(out),
+        "BENIGN_ACTION_TIMEOUT": "10",
+        "BENIGN_ACTION_INNER_TIMEOUT": "1",
+    }
+    t0 = time.monotonic()
+    proc = _run_bash_with_retry(
+        bash_bin,
+        f'. "{prefix}" --duration 1\ndo_pkg_index_update\ndo_pg_dump\n',
+        env=env,
+        cwd=tmp_path,
+        timeout=25,
+    )
+    elapsed = time.monotonic() - t0
+    assert proc.returncode == 0, proc.stderr
+    assert elapsed < 8  # stopped by 1s inner limits long before two 10s outer limits or 30s sleeps
+    rows = [json.loads(line) for line in (out / "benign_actions.jsonl").read_text(encoding="utf-8").splitlines()]
+    pkg = next(r for r in rows if r["action"] == "pkg_index_update")
+    dump = next(r for r in rows if r["action"] == "pg_dump")
+    assert pkg["timed_out"] is True
+    assert dump["timed_out"] is True
+
+
+def test_a2b1_database_healthcheck_uses_env_values_in_e1_and_e2(tmp_path):
+    """Finding 2: database healthcheck and POSTGRES_* env match E1 and E2 profiles."""
+    import re
+    import yaml
+
+    repo_root = Path(__file__).resolve().parents[1]
+    e1_env = parse_env_file(repo_root / "env" / "E1.env")
+    e2_env = parse_env_file(repo_root / "env" / "E2.env")
+
+    compose_e1 = yaml.safe_load((repo_root / "docker-compose.yml").read_text(encoding="utf-8"))
+    db_e1 = compose_e1["services"]["database"]
+    db_e1_env = dict(item.split("=", 1) for item in db_e1["environment"])
+    assert db_e1_env["POSTGRES_DB"] == e1_env["DB_NAME"]
+    assert db_e1_env["POSTGRES_USER"] == e1_env["DB_USER"]
+    assert db_e1_env["POSTGRES_PASSWORD"] == e1_env["DB_PASS"]
+    hc_e1 = " ".join(db_e1["healthcheck"]["test"])
+    assert f"pg_isready -U {e1_env['DB_USER']} -d {e1_env['DB_NAME']}" in hc_e1
+
+    bash_bin = _find_working_bash()
+    if bash_bin is None:
+        pytest.skip("No working bash executable available for set_env.sh E2 check")
+
+    _copy_managed_tree(repo_root, tmp_path)
+    last = None
+    for _ in range(3 if os.name == "nt" else 1):
+        last = subprocess.run(
+            [bash_bin, "linux_run/set_env.sh", "E2"],
+            cwd=tmp_path,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if not (os.name == "nt" and last.returncode != 0 and ("cygheap" in (last.stderr or "") or "Win32 error" in (last.stderr or ""))):
+            break
+    assert last.returncode == 0, last.stderr
+
+    compose_e2 = yaml.safe_load((tmp_path / "docker-compose.yml").read_text(encoding="utf-8"))
+    db_e2 = compose_e2["services"]["database"]
+    db_e2_env = dict(item.split("=", 1) for item in db_e2["environment"])
+    assert db_e2_env["POSTGRES_DB"] == e2_env["DB_NAME"]
+    assert db_e2_env["POSTGRES_USER"] == e2_env["DB_USER"]
+    assert db_e2_env["POSTGRES_PASSWORD"] == e2_env["DB_PASS"]
+    hc_e2 = " ".join(db_e2["healthcheck"]["test"])
+    assert f"pg_isready -U {e2_env['DB_USER']} -d {e2_env['DB_NAME']}" in hc_e2
+    assert not re.search(rf"\b{re.escape(e1_env['DB_NAME'])}\b", hc_e2)

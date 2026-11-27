@@ -60,13 +60,14 @@ trap 'RUNNING=0; cleanup_busy' TERM INT
 trap 'cleanup_busy' EXIT
 
 BENIGN_ACTION_TIMEOUT="${BENIGN_ACTION_TIMEOUT:-90}"
+BENIGN_ACTION_INNER_TIMEOUT="${BENIGN_ACTION_INNER_TIMEOUT:-$(( BENIGN_ACTION_TIMEOUT > 5 ? BENIGN_ACTION_TIMEOUT - 5 : (BENIGN_ACTION_TIMEOUT > 1 ? BENIGN_ACTION_TIMEOUT - 1 : 1) ))}"
 LAST_TIMED_OUT=false
 
-# run_limited CMD...: run CMD under `timeout`; sets LAST_TIMED_OUT (exit 124).
+# run_limited CMD...: run CMD under `timeout`; sets LAST_TIMED_OUT (exit 124 or 137).
 run_limited() {
     local rc=0
     timeout "$BENIGN_ACTION_TIMEOUT" "$@" || rc=$?
-    if [ "$rc" -eq 124 ]; then
+    if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
         LAST_TIMED_OUT=true
     fi
     return 0
@@ -274,7 +275,7 @@ do_pg_dump() {
     begin_benign_action || return 0
     start_ts=$(now_iso_utc)
     MSYS_NO_PATHCONV=1 run_limited docker exec -e PGPASSWORD="$DB_PASS" "$WEBAPP_CONTAINER" \
-        sh -c "pg_dump -h database -U \"$DB_USER\" -d \"$DB_NAME\" -f /tmp/benign_pg_backup.sql >/dev/null 2>&1 && rm -f /tmp/benign_pg_backup.sql" \
+        sh -c "timeout -s KILL \"$BENIGN_ACTION_INNER_TIMEOUT\" pg_dump -h database -U \"$DB_USER\" -d \"$DB_NAME\" -f /tmp/benign_pg_backup.sql >/dev/null 2>&1; rc=\$?; rm -f /tmp/benign_pg_backup.sql; exit \$rc" \
         >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
     end_benign_action
@@ -293,7 +294,8 @@ do_read_configs() {
 }
 
 do_pkg_index_update() {
-    run_docker_exec_logged "$DATABASE_CONTAINER" "pkg_index_update" apk update
+    run_docker_exec_logged "$DATABASE_CONTAINER" "pkg_index_update" \
+        timeout -s KILL "$BENIGN_ACTION_INNER_TIMEOUT" apk update
 }
 
 do_routine_docker_exec() {
