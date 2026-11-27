@@ -1293,3 +1293,100 @@ def test_a2b1_database_healthcheck_uses_env_values_in_e1_and_e2(tmp_path):
     hc_e2 = " ".join(db_e2["healthcheck"]["test"])
     assert f"pg_isready -U {e2_env['DB_USER']} -d {e2_env['DB_NAME']}" in hc_e2
     assert not re.search(rf"\b{re.escape(e1_env['DB_NAME'])}\b", hc_e2)
+
+
+def test_set_env_and_set_subnet_preserve_file_permissions(tmp_path):
+    """A2b-2: rewritten files remain world-readable and keep git execute bits across E2/E1/subnet switches."""
+    import stat
+
+    bash_bin = _find_working_bash()
+    if bash_bin is None:
+        pytest.skip("No working bash executable available")
+
+    repo_root = Path(__file__).resolve().parents[1]
+    _copy_managed_tree(repo_root, tmp_path)
+
+    managed_files = [
+        "docker-compose.yml",
+        "docker-compose.debug.yml",
+        "detection/falco-rules/s05_db_access.yaml",
+        "detection/falco-rules/s06_log_tamper.yaml",
+        "detection/falco-rules/s08_exfiltration.yaml",
+        "detection/falco-rules/s09_credential_access.yaml",
+        "detection/log-tail/tailer.py",
+        "linux_run/preflight.sh",
+        "linux_run/check_run.py",
+        "services/logcollector/Dockerfile",
+        "services/logcollector/fluent.conf",
+        "services/database/init.sql",
+        "services/dashboard/provisioning/datasources.yml",
+    ]
+
+    git_ls = subprocess.run(
+        ["git", "ls-files", "--stage", *managed_files],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert git_ls.returncode == 0, git_ls.stderr
+    expected_exec = {}
+    for line in git_ls.stdout.splitlines():
+        meta, path = line.split("\t", 1)
+        git_mode = meta.split()[0]
+        expected_exec[path] = git_mode == "100755"
+    assert set(expected_exec) == set(managed_files)
+    assert expected_exec["linux_run/preflight.sh"] is True
+    assert expected_exec["services/database/init.sql"] is False
+
+    for rel, is_exec in expected_exec.items():
+        os.chmod(tmp_path / rel, 0o755 if is_exec else 0o644)
+
+    def check_modes(stage: str) -> None:
+        if os.name != "nt":
+            for rel, is_exec in expected_exec.items():
+                mode = (tmp_path / rel).stat().st_mode & 0o777
+                assert mode & stat.S_IROTH, f"[{stage}] {rel} not readable by others: {oct(mode)}"
+                assert bool(mode & stat.S_IXUSR) == is_exec, (
+                    f"[{stage}] {rel} executable bit mismatch: {oct(mode)} vs exec={is_exec}"
+                )
+                assert mode == (0o755 if is_exec else 0o644), f"[{stage}] {rel} unexpected mode {oct(mode)}"
+            dot_env_mode = (tmp_path / ".env").stat().st_mode & 0o777
+            assert dot_env_mode & stat.S_IROTH, f"[{stage}] .env not readable by others: {oct(dot_env_mode)}"
+        else:
+            # Verify via MSYS2 stat under Git Bash that non-shebang data/YAML files are not 0600 and preflight stays +x
+            data_files = [
+                rel
+                for rel in managed_files
+                if not rel.endswith(".py")
+            ]
+            stat_cmd = "stat -c '%a %n' " + " ".join(f'"{r}"' for r in [*data_files, ".env"])
+            proc = _run_bash_with_retry(bash_bin, stat_cmd, env=os.environ.copy(), cwd=tmp_path)
+            assert proc.returncode == 0, proc.stderr
+            for line in proc.stdout.splitlines():
+                mode_str, rel = line.split(" ", 1)
+                mode_int = int(mode_str, 8)
+                assert mode_int & 0o004, f"[{stage}] {rel} not readable by others in MSYS2: {mode_str}"
+                if rel != ".env" and rel in expected_exec:
+                    if expected_exec[rel]:
+                        assert mode_int & 0o100, f"[{stage}] {rel} lost +x: {mode_str}"
+                    else:
+                        assert not (mode_int & 0o100), f"[{stage}] {rel} gained +x: {mode_str}"
+
+    for stage, cmd in [
+        ("E2", "umask 077 && bash linux_run/set_env.sh E2"),
+        ("E2+subnet", "umask 077 && bash linux_run/set_subnet.sh 172.18"),
+        ("E1", "umask 077 && bash linux_run/set_env.sh E1"),
+        ("E1+subnet", "umask 077 && bash linux_run/set_subnet.sh 172.30"),
+    ]:
+        snap = {
+            rel: (tmp_path / rel).read_bytes()
+            for rel in [*managed_files, ".env"]
+            if (tmp_path / rel).exists()
+        }
+        proc = _run_bash_with_retry(bash_bin, cmd, env=os.environ.copy(), cwd=tmp_path, timeout=60)
+        if proc.returncode != 0:
+            for rel, data in snap.items():
+                (tmp_path / rel).write_bytes(data)
+        assert proc.returncode == 0, f"{stage} failed: {proc.stderr}"
+        check_modes(stage)

@@ -67,7 +67,14 @@ CUR_RE="${CUR//./\\.}"
 # (<CUR>.0.<host>) or the subnet (<CUR>.0.0/16). Both begin "<CUR>.0.",
 # so we anchor on that and never touch 127.0.0.1, 0.0.0.0, ::1, 127.0.0.11.
 for f in "${FILES[@]}"; do
-  sed -i -E "s/${CUR_RE}\.0\./${NEW}.0./g" "$f"
+  tmp="$(mktemp)"
+  sed -E "s/${CUR_RE}\.0\./${NEW}.0./g" "$f" | tr -d '\r' > "$tmp"
+  if chmod --reference="$f" "$tmp" 2>/dev/null; then
+    mv "$tmp" "$f"
+  else
+    cat "$tmp" > "$f"
+    rm -f "$tmp"
+  fi
 done
 
 # --- verify: no old lab address of the form <CUR>.0.<n> remains ---

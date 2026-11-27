@@ -88,6 +88,7 @@ done
 
 # Always refresh root .env (gitignored compose env file) with LF endings
 tr -d '\r' < "$NEW_ENV_FILE" > .env
+chmod --reference="$NEW_ENV_FILE" .env 2>/dev/null || chmod 0644 .env
 
 escape_ere() {
   printf '%s' "$1" | sed -E 's/[][(){}.^$+*?|\\#]/\\&/g'
@@ -97,16 +98,24 @@ escape_sed_rep() {
   printf '%s' "$1" | sed -E 's/[&|\\#]/\\&/g'
 }
 
+replace_preserving_mode() {
+  local src="$1"
+  local dst="$2"
+  if chmod --reference="$dst" "$src" 2>/dev/null; then
+    mv "$src" "$dst"
+  else
+    cat "$src" > "$dst"
+    rm -f "$src"
+  fi
+}
+
 rewrite_file() {
   local file="$1"
   shift
   local tmp
   tmp="$(mktemp)"
   sed -E "$@" "$file" | tr -d '\r' > "$tmp"
-  if [ -x "$file" ]; then
-    chmod +x "$tmp"
-  fi
-  mv "$tmp" "$file"
+  replace_preserving_mode "$tmp" "$file"
 }
 
 if [ "$CUR" = "$TARGET" ]; then
@@ -197,7 +206,7 @@ awk -v target="$TARGET" -v log_dir="$NEW_LOG_DIR" -v jwt_sec="$NEW_JWT_SECRET" '
     }
   }
 ' docker-compose.yml | tr -d '\r' > "$tmp_dc"
-mv "$tmp_dc" docker-compose.yml
+replace_preserving_mode "$tmp_dc" "docker-compose.yml"
 
 # 2. docker-compose.debug.yml
 rewrite_file "docker-compose.debug.yml" \
