@@ -64,6 +64,17 @@ curl -sf http://127.0.0.1:5000/health >/dev/null && ok "webapp /health" || bad "
 curl -sf http://127.0.0.1:5001/health >/dev/null && ok "authservice /health" || bad "authservice /health"
 curl -sf -o /dev/null http://127.0.0.1:3000/api/health && ok "grafana /api/health" || bad "grafana /api/health"
 
+echo "== 8. Attack helper images"
+S5_HELPER_IMAGE="postgres:15-alpine@sha256:23799e521dee9265a8b388ecf3bc0f1eaa34b95be67f5a76af4f8f6adb44c720"
+S29_DEBUG_IMAGE="alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1"
+for img in "$S5_HELPER_IMAGE" "$S29_DEBUG_IMAGE"; do
+  if docker image inspect "$img" >/dev/null 2>&1; then
+    ok "attack helper image present: $img"
+  else
+    bad "missing attack helper image: $img (run docker pull $img or ./reset_lab.sh)"
+  fi
+done
+
 echo
 [ $FAIL -eq 0 ] && echo "PREFLIGHT PASSED" || echo "PREFLIGHT FAILED — fix the [FAIL] lines."
 exit $FAIL

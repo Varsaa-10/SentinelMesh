@@ -156,6 +156,16 @@ def main():
     win_path = run / "scenario_windows.json"
     if win_path.exists():
         windows = json.loads(win_path.read_text())
+        bad_rc = [
+            (sid, w["rc"])
+            for sid, w in sorted(windows.items(), key=lambda kv: (len(kv[0]), kv[0]))
+            if isinstance(w, dict) and w.get("rc") not in (None, 0)
+        ]
+        if bad_rc:
+            print("\nAttack script exit codes (non-zero):")
+            for sid, rc in bad_rc:
+                print(f"  {sid}: rc={rc}")
+                review.append(f"{sid} attack script exited non-zero (rc={rc})")
         print("\nBenign/window coordination:")
         slow = {
             sid: w["busy_wait_s"]

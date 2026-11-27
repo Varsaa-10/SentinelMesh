@@ -1390,3 +1390,215 @@ def test_set_env_and_set_subnet_preserve_file_permissions(tmp_path):
                 (tmp_path / rel).write_bytes(data)
         assert proc.returncode == 0, f"{stage} failed: {proc.stderr}"
         check_modes(stage)
+
+
+# ---------------------------------------------------------------------------
+# A2b-3: F17 (pinned/pre-pulled helper images), F18 (rc tracking), F19 (benign stop)
+# ---------------------------------------------------------------------------
+
+
+def test_f17_helper_images_pinned_prepulled_and_preflight_checked(tmp_path):
+    """F17: S5 uses pinned DB base image and fails non-zero when psql fails; reset pulls and preflight checks S5+S29 images."""
+    repo_root = Path(__file__).resolve().parents[1]
+    s5_expected_img = (
+        "postgres:15-alpine@sha256:23799e521dee9265a8b388ecf3bc0f1eaa34b95be67f5a76af4f8f6adb44c720"
+    )
+    s29_expected_img = (
+        "alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1"
+    )
+
+    db_df = (repo_root / "services" / "database" / "Dockerfile").read_text(encoding="utf-8")
+    dbg_dc = (repo_root / "docker-compose.debug.yml").read_text(encoding="utf-8")
+    assert s5_expected_img in db_df
+    assert s29_expected_img in dbg_dc
+
+    s5_text = (repo_root / "attack_scripts" / "scenario5_db_connection.sh").read_text(encoding="utf-8")
+    assert s5_expected_img in s5_text
+
+    reset_text = (repo_root / "reset_lab.sh").read_text(encoding="utf-8")
+    preflight_text = (repo_root / "linux_run" / "preflight.sh").read_text(encoding="utf-8")
+    for img in (s5_expected_img, s29_expected_img):
+        assert img in reset_text
+        assert img in preflight_text
+    assert "docker pull" in reset_text
+    assert "docker image inspect" in preflight_text
+
+    bash_bin = _find_working_bash()
+    if bash_bin is None:
+        pytest.skip("No working bash executable available")
+
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_docker = fake_bin / "docker"
+    # Fail on `docker run` (simulating failed S5 psql/pull) and on `docker image inspect` when MISSING_IMG matches.
+    fake_docker.write_text(
+        '#!/usr/bin/env bash\n'
+        'if [ "$1" = "network" ]; then exit 0; fi\n'
+        'if [ "$1" = "run" ]; then echo "psql: connection failed" >&2; exit 2; fi\n'
+        'if [ "$1" = "image" ] && [ "$2" = "inspect" ]; then\n'
+        '  if [ "$3" = "${MISSING_IMG:-}" ]; then exit 1; fi\n'
+        '  exit 0\n'
+        'fi\n'
+        'exit 0\n',
+        encoding="utf-8",
+    )
+    fake_docker.chmod(0o755)
+
+    sep = ";" if os.name == "nt" else ":"
+    env = {
+        **os.environ,
+        "PATH": f"{fake_bin}{sep}{os.environ['PATH']}",
+    }
+
+    # S5 script must exit non-zero (not print success and exit 0) when docker run/psql fails.
+    s5_proc = _run_bash_with_retry(
+        bash_bin,
+        f'bash "{(repo_root / "attack_scripts" / "scenario5_db_connection.sh").as_posix()}"',
+        env=env,
+        cwd=repo_root,
+    )
+    assert s5_proc.returncode == 2
+    assert "Connection attempt completed" not in s5_proc.stdout
+
+    # Check preflight section 8 directly fails when either S5 or S29 image is missing.
+    section8 = (
+        "FAIL=0\n"
+        "ok() { echo \"OK $*\"; }\n"
+        "bad() { echo \"FAIL $*\"; FAIL=1; }\n"
+        + preflight_text.split('echo "== 8. Attack helper images"', 1)[1].split("echo\n[ $FAIL", 1)[0]
+        + "\nexit $FAIL\n"
+    )
+    for missing in (s5_expected_img, s29_expected_img):
+        pf_proc = _run_bash_with_retry(
+            bash_bin,
+            section8,
+            env={**env, "MISSING_IMG": missing},
+            cwd=repo_root,
+        )
+        assert pf_proc.returncode != 0
+        assert f"FAIL missing attack helper image: {missing}" in pf_proc.stdout
+
+    pf_ok = _run_bash_with_retry(bash_bin, section8, env=env, cwd=repo_root)
+    assert pf_ok.returncode == 0, pf_ok.stdout
+
+
+def test_f18_harness_records_rc_and_check_run_warns_nonzero_rc(tmp_path, monkeypatch, capsys):
+    """F18: run_attack_scripts stores each script exit code as rc; check_run.py warns on non-zero rc."""
+    import subprocess as real_subprocess
+    from linux_run import check_run
+
+    scripts_dir = _make_scripts(tmp_path, n=3)
+    lock_path = tmp_path / "attack.lock"
+
+    def fake_run(cmd, timeout=30, capture_output=True, text=True):
+        name = Path(cmd[1]).name
+        if "scenario2_" in name:
+            return type("Res", (), {"stdout": "", "stderr": "boom", "returncode": 2})()
+        if "scenario3_" in name:
+            raise real_subprocess.TimeoutExpired(cmd=cmd, timeout=timeout)
+        return type("Res", (), {"stdout": "ok", "stderr": "", "returncode": 0})()
+
+    monkeypatch.setattr(harness.time, "sleep", lambda _s: None)
+    monkeypatch.setattr(harness.subprocess, "run", fake_run)
+
+    windows, _ = harness.run_attack_scripts(scripts_dir, lock_path=lock_path)
+    assert windows["S1"]["rc"] == 0
+    assert windows["S2"]["rc"] == 2
+    assert windows["S3"]["rc"] == 124
+
+    # Check non-locked path also records rc
+    windows_nolock, _ = harness.run_attack_scripts(scripts_dir, lock_path=None)
+    assert windows_nolock["S2"]["rc"] == 2
+
+    # check_run.py flags non-zero rc in scenario_windows.json
+    d_bad = _write_run(tmp_path, "run_bad_rc", windows=2, pauses=2)
+    win_data = json.loads((d_bad / "scenario_windows.json").read_text(encoding="utf-8"))
+    win_data["S1"]["rc"] = 0
+    win_data["S2"]["rc"] = 2
+    (d_bad / "scenario_windows.json").write_text(json.dumps(win_data), encoding="utf-8")
+
+    code, out = _run_check(check_run, monkeypatch, capsys, d_bad)
+    assert code == 2
+    assert "S2: rc=2" in out
+    assert "S2 attack script exited non-zero (rc=2)" in out
+
+    # All rc=0 produces no exit-code review warning
+    d_ok = _write_run(tmp_path, "run_ok_rc", windows=2, pauses=2)
+    win_ok = json.loads((d_ok / "scenario_windows.json").read_text(encoding="utf-8"))
+    for w in win_ok.values():
+        w["rc"] = 0
+    (d_ok / "scenario_windows.json").write_text(json.dumps(win_ok), encoding="utf-8")
+    _, out_ok = _run_check(check_run, monkeypatch, capsys, d_ok)
+    assert "exited non-zero" not in out_ok
+
+
+def test_f19_stop_benign_workload_waits_for_busy_and_cleans_locks(tmp_path, monkeypatch):
+    """F19: stop_benign_workload waits up to 95 s for busy file to clear before stopping and removes locks."""
+    assert harness.BENIGN_STOP_WAIT_SECONDS == 95.0
+
+    # 1. Busy clears at 15 s -> waits before sending SIGTERM, does not kill, logs and removes lock/busy
+    lock1 = tmp_path / "run1" / "attack.lock"
+    lock1.parent.mkdir()
+    lock1.write_text("S29\n", encoding="utf-8")
+    busy1 = Path(f"{lock1}.busy")
+    busy1.write_text("", encoding="utf-8")
+
+    clock = {"t": 0.0}
+    events = []
+
+    class FakeProc:
+        def __init__(self, exit_on_term=True):
+            self.exit_on_term = exit_on_term
+            self.rc = None
+
+        def poll(self):
+            return self.rc
+
+        def send_signal(self, sig):
+            events.append(("sig", sig, clock["t"], busy1.exists()))
+            if self.exit_on_term:
+                self.rc = 0
+
+        def wait(self, timeout=None):
+            if self.rc is None:
+                clock["t"] += timeout or 0
+                raise subprocess.TimeoutExpired(cmd="benign", timeout=timeout)
+            return self.rc
+
+        def kill(self):
+            events.append(("kill", clock["t"]))
+            self.rc = -9
+
+    def fake_sleep_clear(secs):
+        clock["t"] += secs
+        if busy1.exists() and clock["t"] >= 15.0:
+            busy1.unlink()
+
+    monkeypatch.setattr(harness.time, "monotonic", lambda: clock["t"])
+    monkeypatch.setattr(harness.time, "sleep", fake_sleep_clear)
+
+    proc1 = FakeProc()
+    harness.stop_benign_workload(proc1, lock1)
+    assert len(events) == 1
+    assert events[0][0] == "sig"
+    assert events[0][2] >= 15.0  # waited for busy to clear before stopping
+    assert events[0][3] is False  # busy file was cleared before SIGTERM
+    assert not lock1.exists()
+    assert not busy1.exists()
+
+    # 2. Busy never clears -> stops waiting at 95 s and cleans up attack.lock and attack.lock.busy
+    lock2 = tmp_path / "run2" / "attack.lock"
+    lock2.parent.mkdir()
+    lock2.write_text("S29\n", encoding="utf-8")
+    busy2 = Path(f"{lock2}.busy")
+    busy2.write_text("", encoding="utf-8")
+    clock["t"] = 0.0
+    events.clear()
+    monkeypatch.setattr(harness.time, "sleep", lambda s: clock.__setitem__("t", clock["t"] + s))
+
+    proc2 = FakeProc(exit_on_term=False)
+    harness.stop_benign_workload(proc2, lock2)
+    assert any(e[0] == "sig" and 95.0 <= e[2] < 96.0 for e in events)
+    assert any(e[0] == "kill" for e in events)
+    assert not lock2.exists()
+    assert not busy2.exists()

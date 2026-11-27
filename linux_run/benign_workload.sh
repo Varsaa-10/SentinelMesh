@@ -153,8 +153,8 @@ run_docker_exec_logged() {
     start_ts=$(now_iso_utc)
     MSYS_NO_PATHCONV=1 run_limited docker exec "$container" "$@" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$container" "$action" "$start_ts" "$end_ts"
+    end_benign_action
 }
 
 GRAFANA_VIEWER_USER="benign_viewer"
@@ -175,8 +175,8 @@ setup_grafana_viewer() {
     lookup=$(timeout "$BENIGN_ACTION_TIMEOUT" curl -sf -m 5 -u "$admin_auth" \
         "${GRAFANA_URL}/api/users/lookup?loginOrEmail=${GRAFANA_VIEWER_USER}" 2>/dev/null || true)
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
+    end_benign_action
 
     uid=$(echo "$lookup" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     if [ -z "$uid" ]; then
@@ -187,8 +187,8 @@ setup_grafana_viewer() {
             -d "{\"name\":\"Benign Viewer\",\"email\":\"${GRAFANA_VIEWER_USER}@${CONTAINER_PREFIX}.local\",\"login\":\"${GRAFANA_VIEWER_USER}\",\"password\":\"${GRAFANA_VIEWER_PASS}\"}" \
             2>/dev/null || true)
         end_ts=$(now_iso_utc)
-        end_benign_action
         log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
+        end_benign_action
         uid=$(echo "$created" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
     else
         begin_benign_action || return 0
@@ -197,8 +197,8 @@ setup_grafana_viewer() {
             -H "Content-Type: application/json" \
             -d "{\"password\":\"${GRAFANA_VIEWER_PASS}\"}" >/dev/null 2>&1 || true
         end_ts=$(now_iso_utc)
-        end_benign_action
         log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
+        end_benign_action
     fi
     if [ -n "$uid" ]; then
         begin_benign_action || return 0
@@ -207,8 +207,8 @@ setup_grafana_viewer() {
             -H "Content-Type: application/json" \
             -d '{"role":"Viewer"}' >/dev/null 2>&1 || true
         end_ts=$(now_iso_utc)
-        end_benign_action
         log_action "$DASHBOARD_CONTAINER" "grafana_setup" "$start_ts" "$end_ts"
+        end_benign_action
     fi
 }
 
@@ -221,8 +221,8 @@ do_correct_logins() {
         -H "Content-Type: application/json" \
         -d "$creds" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$WEBAPP_CONTAINER" "correct_login" "$start_ts" "$end_ts"
+    end_benign_action
 
     begin_benign_action || return 0
     start_ts=$(now_iso_utc)
@@ -230,8 +230,8 @@ do_correct_logins() {
         -H "Content-Type: application/json" \
         -d "$creds" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$AUTHSERVICE_CONTAINER" "correct_login" "$start_ts" "$end_ts"
+    end_benign_action
 }
 
 # Distinct accounts for single typos; per-account cooldown >= 65s guarantees <= 1 typo/account/min
@@ -255,8 +255,8 @@ do_single_typo() {
         -H "Content-Type: application/json" \
         -d "{\"username\":\"${acct}\",\"password\":\"wrongpass_typo\"}" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$WEBAPP_CONTAINER" "single_typo" "$start_ts" "$end_ts"
+    end_benign_action
 }
 
 do_grafana_view() {
@@ -266,8 +266,8 @@ do_grafana_view() {
     run_limited curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/dashboards/home" >/dev/null 2>&1 || true
     run_limited curl -sf -m 5 -u "${GRAFANA_VIEWER_USER}:${GRAFANA_VIEWER_PASS}" "${GRAFANA_URL}/api/search?limit=10" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$DASHBOARD_CONTAINER" "grafana_view" "$start_ts" "$end_ts"
+    end_benign_action
 }
 
 do_pg_dump() {
@@ -278,8 +278,8 @@ do_pg_dump() {
         sh -c "timeout -s KILL \"$BENIGN_ACTION_INNER_TIMEOUT\" pg_dump -h database -U \"$DB_USER\" -d \"$DB_NAME\" -f /tmp/benign_pg_backup.sql >/dev/null 2>&1; rc=\$?; rm -f /tmp/benign_pg_backup.sql; exit \$rc" \
         >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "$WEBAPP_CONTAINER" "pg_dump" "$start_ts" "$end_ts"
+    end_benign_action
 }
 
 do_log_rotation() {
@@ -315,8 +315,8 @@ do_outbound_https() {
     start_ts=$(now_iso_utc)
     run_limited curl -sS -m 5 -o /dev/null "$url" >/dev/null 2>&1 || true
     end_ts=$(now_iso_utc)
-    end_benign_action
     log_action "host" "outbound_https" "$start_ts" "$end_ts"
+    end_benign_action
 }
 
 START_EPOCH=$(now_epoch)

@@ -300,6 +300,56 @@ def build_attack_order(chain_script=None, privileged_debug=False):
     return order
 
 
+BENIGN_BUSY_TIMEOUT_SECONDS = 150.0
+BENIGN_STOP_WAIT_SECONDS = 95.0
+
+
+def stop_benign_workload(
+    benign_proc,
+    lock_path,
+    busy_wait_timeout=BENIGN_STOP_WAIT_SECONDS,
+    stop_wait=5.0,
+):
+    """Wait for any in-flight benign action to finish before stopping benign_workload, then clean lock files."""
+    lock_file = Path(lock_path) if lock_path is not None else None
+    busy_file = Path(f"{lock_file}.busy") if lock_file is not None else None
+    try:
+        if benign_proc is not None and benign_proc.poll() is None:
+            if busy_file is not None and busy_file.exists():
+                log(
+                    f"waiting up to {busy_wait_timeout:.0f}s for current benign action "
+                    f"to finish before stopping benign workload..."
+                )
+                deadline = time.monotonic() + busy_wait_timeout
+                while benign_proc.poll() is None and busy_file.exists():
+                    if time.monotonic() >= deadline:
+                        log(
+                            f"WARNING: benign busy file {busy_file} still present after "
+                            f"{busy_wait_timeout:.0f}s while stopping benign workload"
+                        )
+                        break
+                    time.sleep(0.1)
+            if benign_proc.poll() is None:
+                try:
+                    log("stopping benign workload")
+                    benign_proc.send_signal(signal.SIGTERM)
+                except Exception:
+                    pass
+                try:
+                    benign_proc.wait(timeout=stop_wait)
+                except Exception:
+                    if benign_proc.poll() is None:
+                        try:
+                            benign_proc.kill()
+                        except Exception:
+                            pass
+    finally:
+        if lock_file is not None:
+            lock_file.unlink(missing_ok=True)
+        if busy_file is not None:
+            busy_file.unlink(missing_ok=True)
+
+
 def start_benign_workload(script_path, duration_minutes, log_path, out_dir=None, attack_lock_path=None):
     """Launch linux_run/benign_workload.sh asynchronously and return (proc, log_f)."""
     cmd = ["bash", str(script_path), "--duration", str(duration_minutes)]
@@ -494,9 +544,6 @@ def write_run_manifest(
     return manifest_path
 
 
-BENIGN_BUSY_TIMEOUT_SECONDS = 150.0
-
-
 class BenignActionStillRunning(RuntimeError):
     """The benign busy file did not clear in time; no window was opened."""
 
@@ -571,6 +618,7 @@ def run_attack_scripts(
 
             start_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             log(f"firing {scenario}: {filename}")
+            script_rc = 0
 
             try:
                 result = subprocess.run(
@@ -579,6 +627,7 @@ def run_attack_scripts(
                     capture_output=True,
                     text=True,
                 )
+                script_rc = result.returncode
 
                 if result.stdout:
                     log(f"{scenario} stdout:\n{result.stdout.strip()}")
@@ -586,10 +635,15 @@ def run_attack_scripts(
                 if result.stderr:
                     log(f"{scenario} stderr:\n{result.stderr.strip()}")
 
+                if script_rc != 0:
+                    log(f"WARNING: {filename} exited with rc={script_rc}")
+
             except subprocess.TimeoutExpired:
+                script_rc = 124
                 log(f"WARNING: {filename} timed out after 30s, continuing")
 
             except Exception as exc:
+                script_rc = 1
                 log(f"WARNING: {filename} raised {exc}, continuing")
 
             time.sleep(post_wait)
@@ -608,9 +662,10 @@ def run_attack_scripts(
                 "lock_start": lock_start_ts,
                 "lock_end": lock_end_ts,
                 "busy_wait_s": busy_wait_s,
+                "rc": script_rc,
             }
         else:
-            scenario_windows[scenario] = {"start": start_ts, "end": end_ts}
+            scenario_windows[scenario] = {"start": start_ts, "end": end_ts, "rc": script_rc}
         if inter_gap:
             time.sleep(inter_gap)
 
@@ -1380,17 +1435,13 @@ def main():
 
     finally:
 
-        attack_lock_path.unlink(missing_ok=True)
+        stop_benign_workload(benign_proc, attack_lock_path)
 
         # ---------------------------------------------------------------
         # Stop all detector processes
         # ---------------------------------------------------------------
 
         processes = [
-            (
-                "benign workload",
-                benign_proc,
-            ),
             (
                 "grafana detector",
                 grafana_proc,
